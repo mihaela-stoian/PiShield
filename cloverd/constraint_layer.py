@@ -12,7 +12,7 @@ EPSILON = 1e-12
 
 
 class ConstraintLayer(torch.nn.Module):
-    def __init__(self, ordering_choice:str, constraints_filepath:str, num_variables: int):
+    def __init__(self, num_variables: int, constraints_filepath: str, ordering_choice: str = 'given'):
         super().__init__()
         self.num_variables = num_variables
         ordering, constraints = parse_constraints_file(constraints_filepath)
@@ -28,7 +28,7 @@ class ConstraintLayer(torch.nn.Module):
         pos_matrices: {Variable: torch.Tensor} = {}
         neg_matrices: {Variable: torch.Tensor} = {}
         for x in self.sets_of_constr:
-            x:Variable
+            x: Variable
             # print(x.id)
             x_constr = get_constr_at_level_x(x, self.sets_of_constr)
             pos_x_constr, neg_x_constr = get_pos_neg_x_constr(x, x_constr)
@@ -47,7 +47,7 @@ class ConstraintLayer(torch.nn.Module):
                 dense_ordering.append(x)
         return dense_ordering
 
-    def create_matrix(self, x:Variable, x_constr:List[Constraint], positive_x:bool) -> Union[torch.Tensor, float]:
+    def create_matrix(self, x: Variable, x_constr: List[Constraint], positive_x: bool) -> Union[torch.Tensor, float]:
         if len(x_constr) == 0:
             return -INFINITY if positive_x else INFINITY
 
@@ -55,13 +55,13 @@ class ConstraintLayer(torch.nn.Module):
         x_unsigned_coefficients = torch.ones((len(x_constr),), dtype=torch.float)  # bias (i.e. the constraint constant)
         bias = torch.zeros((len(x_constr),), dtype=torch.float)
         for constr_index, constr in enumerate(x_constr):
-            constr:Constraint
+            constr: Constraint
 
             is_strict_inequality = True if constr.single_inequality.ineq_sign == '>' else False
             constant = constr.single_inequality.constant
             epsilon = EPSILON if is_strict_inequality else 0.
             bias[constr_index] = constant + epsilon
-            complementary_atoms:List[Atom] = constr.get_body_atoms()
+            complementary_atoms: List[Atom] = constr.get_body_atoms()
             for atom in complementary_atoms:
                 atom_id = atom.variable.id
                 if atom_id == x.id:
@@ -72,7 +72,7 @@ class ConstraintLayer(torch.nn.Module):
                     matrix[constr_index, atom_id] = signed_coefficient
 
         # next, divide by the unsigned coefficients of x:
-        matrix = matrix / x_unsigned_coefficients.unsqueeze(-1) # num constraints that contain x x num variables
+        matrix = matrix / x_unsigned_coefficients.unsqueeze(-1)  # num constraints that contain x x num variables
 
         # if x is positive, multiply by -1 the matrix
         if positive_x:
@@ -87,10 +87,10 @@ class ConstraintLayer(torch.nn.Module):
         return matrix
 
     # def __call__(self, preds, *args, **kwargs):
-    def __call__(self, preds:torch.Tensor):
+    def __call__(self, preds: torch.Tensor):
         device = preds.device
         N = preds.shape[-1]
-        corrected_preds = torch.cat([preds.clone(), torch.ones(preds.shape[0],1, device=device)], dim=1)
+        corrected_preds = torch.cat([preds.clone(), torch.ones(preds.shape[0], 1, device=device)], dim=1)
         preds = corrected_preds.clone()
 
         for x in self.dense_ordering:
@@ -103,21 +103,21 @@ class ConstraintLayer(torch.nn.Module):
             corrected_preds[:, pos] = get_final_x_correction(preds[:, pos], pos_matrix, neg_matrix)
             preds = corrected_preds.clone()
             corrected_preds = preds.clone()
-        return corrected_preds[:,:N]
+        return corrected_preds[:, :N]
 
-    def apply_matrix(self, preds:torch.Tensor, matrix:Union[torch.Tensor, float], reduction='none') -> torch.Tensor:
+    def apply_matrix(self, preds: torch.Tensor, matrix: Union[torch.Tensor, float], reduction='none') -> torch.Tensor:
         if type(matrix) != torch.Tensor:
             return matrix
         else:
             matrix = matrix.to(preds.device)
 
-        B = preds.shape[0]   # batch size
+        B = preds.shape[0]  # batch size
         C = matrix.shape[0]  # num constraints in the current set
-        N = matrix.shape[1]   # num variables
+        N = matrix.shape[1]  # num variables
 
         # expand tensors
-        preds = preds.unsqueeze(1).expand((B,C,N))
-        matrix = matrix.clone().unsqueeze(0).expand((B,C,N))
+        preds = preds.unsqueeze(1).expand((B, C, N))
+        matrix = matrix.clone().unsqueeze(0).expand((B, C, N))
 
         result = (preds * matrix).sum(dim=2)
         if reduction == 'amax':
@@ -127,4 +127,3 @@ class ConstraintLayer(torch.nn.Module):
         else:
             pass
         return result
-
