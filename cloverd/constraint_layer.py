@@ -57,12 +57,11 @@ class ConstraintLayer(torch.nn.Module):
         for constr_index, constr in enumerate(x_constr):
             constr:Constraint
 
-            is_strict_inequality = True if constr.inequality_list[0].ineq_sign == '>' else False
-            constant = constr.inequality_list[0].constant
+            is_strict_inequality = True if constr.single_inequality.ineq_sign == '>' else False
+            constant = constr.single_inequality.constant
             epsilon = EPSILON if is_strict_inequality else 0.
-            bias[constr_index] = constant + epsilon  # TODO: picked the first ineq from list, because of disjunctions; if removed disjunctions, change accordingly
-            # complementary_atoms:List[Atom] = constr.get_body_atoms(x)[0]  # TODO: this will return a list of lists of atoms, because of DisjunctIneq class, so take the first element, since we don't have disjunctions
-            complementary_atoms:List[Atom] = constr.get_body_atoms()  # TODO: this will return a list of lists of atoms, because of DisjunctIneq class, so take the first element, since we don't have disjunctions
+            bias[constr_index] = constant + epsilon
+            complementary_atoms:List[Atom] = constr.get_body_atoms()
             for atom in complementary_atoms:
                 atom_id = atom.variable.id
                 if atom_id == x.id:

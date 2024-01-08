@@ -3,6 +3,7 @@ import torch
 
 TOLERANCE=1e-2
 
+
 class Variable():
     def __init__(self, variable: str):
         super().__init__()
@@ -110,15 +111,6 @@ class Inequality():
             results = eval('(eval_body_value >= self.constant - TOLERANCE) | (eval_body_value >= self.constant + TOLERANCE)')
         return results, eval_body_value, self.constant, self.ineq_sign
 
-
-    # def check_satisfaction(self, preds: torch.Tensor, tolerance=1e-4) -> torch.Tensor:
-    #     eval_body_value = eval_atoms_list(self.body, preds)
-    #     eval_body_value -= self.constant
-    #     if self.ineq_sign == '>':
-    #         results = eval('eval_body_value + tolerance > 0') | eval('eval_body_value - tolerance > 0')
-    #     elif self.ineq_sign == '>=':
-    #         results =  eval('eval_body_value + tolerance >= 0') | eval('eval_body_value - tolerance >= 0')
-    #     return results #.all()
 
 class Constraint():
     def __init__(self, inequality_list: List[Inequality]):

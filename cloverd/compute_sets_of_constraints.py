@@ -2,11 +2,10 @@ import numpy as np
 from typing import List
 
 from cloverd.classes import Variable, Constraint, Atom, Inequality
-from cloverd.parser import parse_constraints_file
 
 
 def collapse_atoms(atom_list):
-    # merge any duplicated atoms in a atom list
+    # merge any duplicated atoms in an atom list
     merged_atoms = {}
     merged_atoms: {int: Atom}
     for atom in atom_list:
@@ -71,7 +70,6 @@ def create_constr_by_reduction(y: Variable, constraints_with_y: List[Constraint]
 
             _, ineq_sign_p, constant_p = p.single_inequality.get_ineq_attributes()
             _, ineq_sign_q, constant_q = q.single_inequality.get_ineq_attributes()
-            # TODO: what happens if ineq_sign_p is >= and ineq_sign_q is > ? priority >?
             new_ineq_sign = ineq_sign_p
             new_constant = constant_p + constant_q
             if p_complementary_body != []:
@@ -152,29 +150,3 @@ def compute_sets_of_constraints(ordering: List[Variable], constraints: List[Cons
     print('-'*80)
 
     return ordered_constraints
-
-
-def main():
-    # ordering, constraints = parser.parse_constraints_file('../data/tiny_constraints.txt')
-    ordering, constraints = parse_constraints_file('../data/heloc/heloc_constraints.txt')
-    # for constr in constraints:
-    #     print(constr.readable())
-    #     # for elem in constr.inequality_list[-1].body:
-    #     #     print('id', elem.get_variable_id())
-
-    print('verbose constr')
-    for constr in constraints:
-        print(constr.verbose_readable())
-    # print(constraints)
-
-    print('compute sets of constraints')
-    sets_of_constr = compute_sets_of_constraints(ordering, constraints, verbose=True)
-    # for var in ordering:
-    #     print(var.readable())
-    #     set_of_constr = sets_of_constr[var]
-    #     for constr in set_of_constr:
-    #         print(constr.verbose_readable())
-    #     print()
-
-if __name__ == '__main__':
-    main()
