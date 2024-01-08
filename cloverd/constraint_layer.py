@@ -4,19 +4,19 @@ import torch
 from cloverd.classes import Variable, Constraint, Atom
 from cloverd.compute_sets_of_constraints import get_pos_neg_x_constr, compute_sets_of_constraints
 from cloverd.correct_predictions import get_constr_at_level_x, get_final_x_correction
-from feature_orderings import set_ordering
-from parser import parse_constraints_file
+from cloverd.feature_orderings import set_ordering
+from cloverd.parser import parse_constraints_file
 
 INFINITY = torch.inf
 EPSILON = 1e-12
 
 
 class ConstraintLayer(torch.nn.Module):
-    def __init__(self, ordering_choice:str, constraints_filepath:str, num_variables: int, use_case:str):
+    def __init__(self, ordering_choice:str, constraints_filepath:str, num_variables: int):
         super().__init__()
         self.num_variables = num_variables
         ordering, constraints = parse_constraints_file(constraints_filepath)
-        self.ordering = set_ordering(use_case, ordering, ordering_choice)
+        self.ordering = set_ordering(ordering, ordering_choice)
         self.constraints = constraints
         self.sets_of_constr = compute_sets_of_constraints(ordering, constraints, verbose=True)
         self.pos_matrices, self.neg_matrices = self.create_matrices()
