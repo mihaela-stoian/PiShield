@@ -31,7 +31,7 @@ ordering y_0 y_1 y_2
 -y_0 >= -3
 y_0 >= 3
 y_0 - y_1 >= 0
-- y_0 - y_2 >= 0
+-y_0 - y_2 >= 0
 ```
 
 To correct predictions at inference time such that they satisfy the constraints, we can use CLOVERD as follows:
