@@ -58,10 +58,10 @@ def check_all_constraints_are_sat(constraints, preds, corrected_preds, verbose=F
         print('All constraints are satisfied after correction!')
     if not all_sat_after_correction:
         print('There are still constraint violations!!!')
-        with open('./TEMP_uncons.pkl', 'wb') as f:
-            pkl.dump(preds, f, -1)
-        with open('./TEMP_cons.pkl', 'wb') as f:
-            pkl.dump(corrected_preds, f, -1)
+        # with open('./TEMP_uncons.pkl', 'wb') as f:
+        #     pkl.dump(preds, f, -1)
+        # with open('./TEMP_cons.pkl', 'wb') as f:
+        #     pkl.dump(corrected_preds, f, -1)
     return all_sat_after_correction
 
 

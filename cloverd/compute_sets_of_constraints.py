@@ -138,15 +138,15 @@ def compute_sets_of_constraints(ordering: List[Variable], constraints: List[Cons
         ordered_constraints[x] = set_of_constraints
         prev_x = x
 
-    print('-'*80)
-    for x in ordering:
-        print(f' *** Constraints for {x.readable()} ***')
-        for i,constr in enumerate(ordered_constraints[x]):
-            print(f'constr number {i}')
-            print(constr.readable())
-        if len(ordered_constraints[x]) == 0:
-            print('empty set')
-        print('***\n')
-    print('-'*80)
+    # print('-'*80)
+    # for x in ordering:
+    #     print(f' *** Constraints for {x.readable()} ***')
+    #     for i,constr in enumerate(ordered_constraints[x]):
+    #         print(f'constr number {i}')
+    #         print(constr.readable())
+    #     if len(ordered_constraints[x]) == 0:
+    #         print('empty set')
+    #     print('***\n')
+    # print('-'*80)
 
     return ordered_constraints

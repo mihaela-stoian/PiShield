@@ -32,11 +32,10 @@ class TestConstraintCorrection(unittest.TestCase):
 
     def test_tiny1(self):
         predictions = [-1.0, 5.0, 2.0]
-        # expected_correction = torch.tensor([-1.0, 5.0, 2.0])
-        # expected_correction = torch.stack([expected_correction, expected_correction],dim=0)
-        predictions, corrected_preds, all_sat = make_constraints('../data/tiny_constraints1.txt', predictions)
-        # self.assertTrue(expected_correction.eq(corrected_preds).all(), f'Expected {expected_correction} but got {corrected_preds}')
-        self.assertTrue(all_sat)
+        constraints_path = '../data/tiny_constraints1.txt'
+        ordering_choice = 'given'
+        self.apply_test_CL(predictions, constraints_path, ordering_choice)
+
 
     def test_tiny2(self):
         predictions = [-6.0, 15.0, 1.0]
@@ -122,27 +121,16 @@ class TestConstraintCorrection(unittest.TestCase):
     def test_url_predictions(self):
         predictions = example_predictions_url()
         constraints_path = '../data/url/url_constraints.txt'
-        ordering_choice = 'random'
+        ordering_choice = 'given'
         self.apply_test_CL(predictions, constraints_path, ordering_choice)
 
 
     def test_botnet_predictions(self):
         predictions = example_predictions_botnet()
-        predictions.requires_grad = True
+        constraints_path = '../data/botnet/botnet_constraints.txt'
+        ordering_choice = 'given'
+        self.apply_test_CL(predictions, constraints_path, ordering_choice)
 
-        ordering, constraints = parse_constraints_file(('../data/botnet/botnet_constraints.txt'))
-        sets_of_constr = compute_sets_of_constraints(ordering, constraints, verbose=True)
-        print('\n\n Start correcting predictions')
-        predictions = torch.tensor(predictions)
-        predictions.requires_grad = True
-        # predictions = predictions.clamp(-1000,1000)
-
-        corrected_preds = correct_preds(predictions, ordering, sets_of_constr)
-        all_sat = check_all_constraints_are_sat(constraints, predictions, corrected_preds)
-        print(predictions)
-        print(corrected_preds)
-        self.assertTrue(all_sat)
-        self.assertFalse(corrected_preds.sum().abs().isinf())
 
     def apply_test_CL(self, predictions, constraints_path, ordering_choice):
         ordering, constraints = parse_constraints_file((constraints_path))
@@ -164,7 +152,9 @@ class TestConstraintCorrection(unittest.TestCase):
         CL_all_sat = check_all_constraints_are_sat(constraints, predictions, CL_corrected_preds)
         self.assertTrue(CL_all_sat)
         self.assertFalse(CL_corrected_preds.sum().abs().isinf())
-        print('CL correction same as manual correction:', (corrected_preds-CL_corrected_preds).abs().sum() == 0)
+        diff = corrected_preds-CL_corrected_preds
+        print('CL correction same as manual correction:', diff.abs().sum() == 0)
+        print('differences:', diff[diff!=0])
 
 
 if __name__ == '__main__':

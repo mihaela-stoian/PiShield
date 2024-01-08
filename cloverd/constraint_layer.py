@@ -29,7 +29,7 @@ class ConstraintLayer(torch.nn.Module):
         neg_matrices: {Variable: torch.Tensor} = {}
         for x in self.sets_of_constr:
             x:Variable
-            print(x.id)
+            # print(x.id)
             x_constr = get_constr_at_level_x(x, self.sets_of_constr)
             pos_x_constr, neg_x_constr = get_pos_neg_x_constr(x, x_constr)
 
