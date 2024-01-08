@@ -1,0 +1,2 @@
+ordering y_0
+y_0 >= 3

@@ -75,6 +75,13 @@ class TestConstraintCorrection(unittest.TestCase):
         ordering_choice = 'given'
         self.apply_test_CL(predictions, constraints_path, ordering_choice)
 
+    def test_equality3(self):
+        predictions = [-5., -2., -1.]
+        predictions = torch.tensor(predictions).unsqueeze(0)
+        constraints_path = '../data/custom_constraints/equality_constraints3.txt'
+        ordering_choice = 'given'
+        self.apply_test_CL(predictions, constraints_path, ordering_choice)
+
     def test_url_predictions(self):
         predictions = example_predictions_url()
         constraints_path = '../data/url/url_constraints.txt'
@@ -105,6 +112,7 @@ class TestConstraintCorrection(unittest.TestCase):
         CL = ConstraintLayer(num_variables, constraints_path, ordering_choice=ordering_choice)
         CL_corrected_preds = CL(predictions.clone())
         CL_all_sat = check_all_constraints_are_sat(constraints, predictions, CL_corrected_preds)
+        print(CL_corrected_preds)
         self.assertTrue(CL_all_sat)
         self.assertFalse(CL_corrected_preds.sum().abs().isinf())
         diff = corrected_preds - CL_corrected_preds
