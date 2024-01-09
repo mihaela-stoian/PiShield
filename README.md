@@ -24,7 +24,7 @@ pip install cloverd
 
 ## Usage
 
-### Simple Example 1
+### Simple Example 1: Tabular Data Generation
 Assume we have the following constraints and ordering of the variables in a file `example_constraints_tabular.txt`:
 ```
 ordering y_0 y_1 y_2
@@ -34,6 +34,7 @@ y_0 - y_1 >= 0
 -y_0 - y_2 >= 0
 ```
 
+#### Inference time
 To correct predictions at inference time such that they satisfy the constraints, we can use CLOVERD as follows:
 ```
 from cloverd.constraint_layer import ConstraintLayer
@@ -47,3 +48,9 @@ CL = ConstraintLayer(num_variables, constraints_path)
 # apply CL from CLOVERD to get the corrected predictions
 corrected_predictions = CL(predictions.clone())  # returns tensor([[ 3., -2., -3.]], which satisfies the constraints
 ```
+
+#### Training time
+Assume a Deep Generative Model (DGM) is used to obtain synthetic tabular data.
+Using CLOVERD at training time is easy, as it requires two steps:
+1. Instantiating the ConstraintLayer class from CLOVERD in the DGM's constructor.
+2. Applying the ConstraintLayer on the generated data obtained from the DGM before updating the loss function of the DGM.
