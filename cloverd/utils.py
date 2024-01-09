@@ -17,3 +17,16 @@ def eval_atoms_list(atoms_list: List, preds: torch.Tensor, reduction='sum'):
     else:
         raise Exception(f'{reduction} reduction not implemented!')
     return result
+
+
+def check_constraint_satisfaction(preds: torch.Tensor, constraints: List) -> bool:
+    all_constr_sat = True
+    for constr in constraints:
+        sat = constr.check_satisfaction_per_sample(preds)
+        if not sat.all():
+            all_constr_sat = False
+            # raise Exception('Not satisfied!', constr.readable())
+            print('Not satisfied!', constr.readable())
+    if all_constr_sat:
+        print('All constraints are satisfied!')
+    return all_constr_sat

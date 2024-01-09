@@ -103,6 +103,8 @@ class Inequality():
             results = eval('(eval_body_value > self.constant - TOLERANCE) | (eval_body_value > self.constant + TOLERANCE)')
         elif self.ineq_sign == '>=':
             results = eval('(eval_body_value >= self.constant - TOLERANCE) | (eval_body_value >= self.constant + TOLERANCE)')
+        # if not results.all():
+        #     print('Problem here:', eval_body_value[eval_body_value<=self.constant-TOLERANCE])
         return results #.all()
 
     def detailed_sat_check(self, preds: torch.Tensor) -> torch.Tensor:
