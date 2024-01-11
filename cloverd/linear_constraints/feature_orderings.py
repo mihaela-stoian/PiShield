@@ -1,7 +1,7 @@
 import random
 from typing import List
 
-from cloverd.classes import Variable
+from cloverd.linear_constraints.classes import Variable
 
 random.seed(0)
 

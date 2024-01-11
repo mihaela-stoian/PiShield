@@ -1,11 +1,11 @@
 from typing import List, Union
 import torch
 
-from cloverd.classes import Variable, Constraint, Atom
-from cloverd.compute_sets_of_constraints import get_pos_neg_x_constr, compute_sets_of_constraints
-from cloverd.correct_predictions import get_constr_at_level_x, get_final_x_correction
-from cloverd.feature_orderings import set_ordering
-from cloverd.parser import parse_constraints_file
+from cloverd.linear_constraints.classes import Variable, Constraint, Atom
+from cloverd.linear_constraints.compute_sets_of_constraints import get_pos_neg_x_constr, compute_sets_of_constraints
+from cloverd.linear_constraints.correct_predictions import get_constr_at_level_x, get_final_x_correction
+from cloverd.linear_constraints.feature_orderings import set_ordering
+from cloverd.linear_constraints.parser import parse_constraints_file
 
 INFINITY = torch.inf
 EPSILON = 1e-12

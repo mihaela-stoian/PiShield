@@ -2,11 +2,11 @@ import unittest
 
 import torch
 
-from cloverd.compute_sets_of_constraints import compute_sets_of_constraints
-from cloverd.constraint_layer import ConstraintLayer
-from cloverd.correct_predictions import check_all_constraints_are_sat
-from cloverd.manual_correct import correct_preds
-from cloverd.parser import parse_constraints_file
+from cloverd.linear_constraints.compute_sets_of_constraints import compute_sets_of_constraints
+from cloverd.linear_constraints.constraint_layer import ConstraintLayer
+from cloverd.linear_constraints.correct_predictions import check_all_constraints_are_sat
+from cloverd.linear_constraints.manual_correct import correct_preds
+from cloverd.linear_constraints.parser import parse_constraints_file
 from example_predictions import example_predictions_url, example_predictions_botnet
 
 

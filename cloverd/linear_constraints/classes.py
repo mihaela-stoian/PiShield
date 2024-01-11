@@ -1,7 +1,7 @@
 from typing import List
 import torch
 
-from cloverd.utils import eval_atoms_list
+from cloverd.linear_constraints.utils import eval_atoms_list
 
 TOLERANCE=1e-2
 

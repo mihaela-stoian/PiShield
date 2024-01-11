@@ -1,7 +1,7 @@
 import numpy as np
 from typing import List
 
-from cloverd.classes import Variable, Constraint, Atom, Inequality
+from cloverd.linear_constraints.classes import Variable, Constraint, Atom, Inequality
 
 
 def collapse_atoms(atom_list):
