@@ -17,7 +17,7 @@ def test_gradual_atoms():
         ConstraintsGroup([Constraint('n1 :- 0'), Constraint('1 :- n2')]),
         ConstraintsGroup([Constraint('4 :- n1'), Constraint('n3 :- 1')])
     ]
-    layer = ConstraintsLayer(groups, num_classes=5)
+    layer = ConstraintsLayer(num_classes=5, constraints=groups)
     assert layer.gradual_prefix(0) == ({0, 2}, 0)
     assert layer.gradual_prefix(0.33) == ({0, 2}, 0)
     assert layer.gradual_prefix(0.59) == ({0, 2}, 0)
@@ -41,7 +41,7 @@ def test_two_modules():
     ])
     group = group0 + group1
 
-    layer = ConstraintsLayer([group0, group1], 3)
+    layer = ConstraintsLayer(num_classes=3, constraints=[group0, group1])
     preds = torch.rand((5000, 3))
     updated = run_layer(layer, preds)
     assert group.coherent_with(updated.numpy()).all()
@@ -52,7 +52,7 @@ def _test_many_clauses(centrality, device, batch=1500, max_clauses=150, goals=5,
     goal = np.random.randint(low=0, high=2, size=(goals, num_classes))
     clauses = ClausesGroup.random(min_clauses=min(10, max_clauses), max_clauses=max_clauses, num_classes=num_classes,
                                   coherent_with=goal)
-    layer = ConstraintsLayer.from_clauses_group(clauses, num_classes=num_classes, centrality=centrality)
+    layer = ConstraintsLayer.from_clauses_group(num_classes=num_classes, clauses_group=clauses, centrality=centrality)
     preds = torch.rand((batch, num_classes))
 
     layer, preds = layer.to(device), preds.to(device)
@@ -125,7 +125,7 @@ def test_cuda_memory():
     constraints = ConstraintsGroup('../../data/propositional_constraints/custom_constraints/constraints_full_example.txt')
     clauses = ClausesGroup.from_constraints_group(constraints)
     clauses = clauses.add_detection_label(False)
-    layer = ConstraintsLayer.from_clauses_group(clauses, num_classes, 'rev-katz').to(device)
+    layer = ConstraintsLayer.from_clauses_group(num_classes=num_classes, clauses_group=clauses, centrality='rev-katz').to(device)
 
     with profiler.watch('complete'):
         with profiler.watch('preds'):

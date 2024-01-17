@@ -1,14 +1,41 @@
 import math
+from typing import Union, List
+
 import torch
 from torch import nn
 
+from cloverd.propositional_constraints.clauses_group import ClausesGroup
+from cloverd.propositional_constraints.constraints_group import ConstraintsGroup
 from cloverd.propositional_constraints.constraints_module import ConstraintsModule
 from cloverd.propositional_constraints.slicer import Slicer
+from cloverd.propositional_constraints.util import get_order_and_centrality
 
 
 class ConstraintsLayer(nn.Module):
-    def __init__(self, strata, num_classes):
+
+    def __init__(self, num_classes: int,
+                 constraints: Union[str, List[ConstraintsGroup]] = None,
+                 ordering_choice: str = None,
+                 custom_ordering: List = None):
         super(ConstraintsLayer, self).__init__()
+
+        if type(constraints) == 'str':
+            constraints_filepath = constraints
+            constraints = ConstraintsGroup(constraints_filepath)
+            clauses = ClausesGroup.from_constraints_group(constraints)
+
+            # forced = False  # TODO: what's this for?
+            # clauses = clauses.add_detection_label(forced)
+            # print(f"Shifted atoms and added n0 to all clauses (forced {forced})")
+
+            centrality = get_order_and_centrality(ordering_choice, custom_ordering)
+            strata = clauses.stratify(centrality)
+            print(f"Generated {len(strata)} strata of constraints with {centrality} centrality")
+        elif type(constraints) == list:
+            strata = constraints
+        else:
+            raise Exception(
+                'constraints argument should be either str (i.e. filepath of the constraints) or List (i.e. strata)')
 
         # ConstraintsLayer([ConstraintsGroup], int)
         self.num_classes = num_classes
@@ -29,8 +56,8 @@ class ConstraintsLayer(nn.Module):
         self.strata = strata
 
     @classmethod
-    def from_clauses_group(cls, group, num_classes, centrality):
-        return cls(group.stratify(centrality), num_classes)
+    def from_clauses_group(cls, num_classes, clauses_group, centrality):
+        return cls(num_classes=num_classes, constraints=clauses_group.stratify(centrality))
 
     def gradual_prefix(self, ratio):
         atoms = self.core

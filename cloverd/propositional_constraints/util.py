@@ -3,13 +3,14 @@ import pytest
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 def train(dataloader, model, clayer, loss_fn, optimizer, device, ratio=1.):
     size = len(dataloader.dataset)
     model, clayer = model.to(device), clayer.to(device)
     slicer = clayer.slicer(ratio)
     model.train()
 
-    for batch, (X, y) in enumerate(dataloader):   
+    for batch, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
 
         # Compute prediction error
@@ -18,7 +19,7 @@ def train(dataloader, model, clayer, loss_fn, optimizer, device, ratio=1.):
 
         constrained, y = slicer.slice_atoms(constrained), slicer.slice_atoms(y)
         loss = loss_fn(constrained, y)
-        
+
         # Backpropagation
         optimizer.zero_grad()
         loss.backward()
@@ -28,6 +29,7 @@ def train(dataloader, model, clayer, loss_fn, optimizer, device, ratio=1.):
             loss, current = loss.item(), batch * len(X)
             print(f"loss: {loss:>7f} [{current:>5d}/{size:>5d}]")
 
+
 @pytest.mark.skip(reason="this is not a test")
 def test(dataloader, model, clayer, loss_fn, device):
     size = len(dataloader.dataset)
@@ -36,7 +38,7 @@ def test(dataloader, model, clayer, loss_fn, device):
 
     test_loss = 0.
     correct = 0.
-    
+
     with torch.no_grad():
         for X, y in dataloader:
             X, y = X.to(device), y.to(device)
@@ -55,8 +57,9 @@ def test(dataloader, model, clayer, loss_fn, device):
     print(f" Avg loss: {test_loss:>8f} \n")
     return test_loss, correct
 
+
 def draw_classes(model, draw=None, path=None, device='cpu', show=False):
-    dots = np.arange(0., 1., 0.001, dtype = "float32")
+    dots = np.arange(0., 1., 0.001, dtype="float32")
     grid = torch.tensor([(x, y) for y in dots for x in dots]).to(device)
     model = model.to(device)
     preds = model(grid).detach()
@@ -77,14 +80,14 @@ def draw_classes(model, draw=None, path=None, device='cpu', show=False):
         ax.contourf(
             dots,
             dots,
-            image, 
-            cmap='hot', 
-            origin='lower', 
+            image,
+            cmap='hot',
+            origin='lower',
             extent=(0., 1., 0., 1.),
             vmin=0.1,
             vmax=1.
         )
-        if draw != None: draw(ax, i)    
+        if draw != None: draw(ax, i)
 
     if show:
         plt.show()
@@ -96,4 +99,14 @@ def draw_classes(model, draw=None, path=None, device='cpu', show=False):
     return fig
 
 
-
+def get_order_and_centrality(ordering_choice: str, custom_ordering: list):
+    if custom_ordering is None:
+        return ordering_choice
+    if 'custom' in ordering_choice:
+        order = custom_ordering.split(',')
+        centrality = np.array([int(nr) for nr in order])
+        if 'rev' in ordering_choice:
+            centrality = centrality[::-1]
+    else:
+        centrality = ordering_choice
+    return centrality
