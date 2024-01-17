@@ -159,7 +159,9 @@ class ClausesGroup:
             # print(f"Eliminating %{atom} from %{len(clauses)} clauses\n")
             constraints, clauses = clauses.resolution(atom)
             if len(constraints.constraints_list):
-                constraints = strong_coherency_constraint_preprocessing(constraints.constraints_list, atoms)
+                strongly_coherent_constraints = strong_coherency_constraint_preprocessing(constraints.constraints_list, atoms)
+                if strongly_coherent_constraints is not None:
+                    constraints = strongly_coherent_constraints
             group = group + constraints
 
         if len(clauses):

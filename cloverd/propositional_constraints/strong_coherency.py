@@ -6,6 +6,8 @@ from cloverd.propositional_constraints.literal import Literal
 
 def get_max_ranking_atom(atoms_list, ranking):
     ranks = [list(ranking).index(atom) for atom in atoms_list]
+    if len(ranks) == 0:
+        return None, None
     return atoms_list[np.argmin(ranks)], np.min(ranks)
 
 
@@ -62,6 +64,8 @@ def strong_coherency_constraint_preprocessing(R_atom, literal_ranking):
     # l = max_lambda over literals in R+ and R-
     max_ranking_body_literal = get_max_ranking_eligible_atom_from_sets_of_rules(R_atom_plus, R_atom_minus,
                                                                                 literal_ranking)
+    if max_ranking_body_literal is None:
+        return None
 
     if len(R_atom_plus):
         R_atom_plus = extend_rules_set(R=R_atom_plus, max_ranking_body_literal=max_ranking_body_literal)
