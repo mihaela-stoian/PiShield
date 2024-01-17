@@ -44,7 +44,7 @@ def example_predictions_url():
 
 def example_predictions_botnet():
     # preds = pkl.load(open('../data/botnet/example_botnet_preds', 'rb'))
-    preds = pkl.load(open('../../data/botnet/example_predictions.pkl', 'rb'))
+    preds = pkl.load(open('../../data/linear_constraints/botnet/example_predictions.pkl', 'rb'))
     original_preds = preds['original'].detach()
     corrected_preds = preds['corrected'].detach()
     original_preds = original_preds.clamp(-1e3, 1e3)
