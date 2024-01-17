@@ -16,7 +16,7 @@ class ConstraintsLayer(nn.Module):
     def __init__(self, num_classes: int,
                  constraints: Union[str, List[ConstraintsGroup]] = None,
                  ordering_choice: str = None,
-                 custom_ordering: List = None):
+                 custom_ordering: str = None):
         super(ConstraintsLayer, self).__init__()
 
         if type(constraints) == str:

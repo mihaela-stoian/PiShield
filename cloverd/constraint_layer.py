@@ -28,8 +28,7 @@ def build_constraint_layer(num_variables: int,
         return PropositionalConstraintLayer(num_variables, constraints_filepath, ordering_choice, custom_ordering=custom_ordering)
     elif constraints_type == 'auto':
         detected_constraints_type = detect_constraints_type(constraints_filepath)
-        return build_constraint_layer(num_variables, constraints_filepath, ordering_choice,
-                                      constraints_type=detected_constraints_type)
+        return build_constraint_layer(num_variables, constraints_filepath, ordering_choice, custom_ordering=custom_ordering, constraints_type=detected_constraints_type)
     else:
         raise Exception('Unknown constraints type!')
 

@@ -99,7 +99,7 @@ def draw_classes(model, draw=None, path=None, device='cpu', show=False):
     return fig
 
 
-def get_order_and_centrality(ordering_choice: str, custom_ordering: list):
+def get_order_and_centrality(ordering_choice: str, custom_ordering: str):
     if custom_ordering is None:
         return ordering_choice
     if 'custom' in ordering_choice:
