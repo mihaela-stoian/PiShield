@@ -1,14 +1,15 @@
 # CLOVERD: Building Constraint Layers over Deep Neural Networks
 
 ## Dependencies
-CLOVERD requires PyTorch, NumPy, and Python 3.8 or later.
+CLOVERD requires Python 3.8 or later and PyTorch.
 
 *Optional step*: conda environment setup, using cpu-only PyTorch here. Different PyTorch versions can be specified following the instructions [here](https://pytorch.org/get-started/locally/).
 ```
 conda create -n "cloverd" python=3.11 ipython
 conda activate cloverd
+
 conda install pytorch cpuonly -c pytorch 
-pip install numpy
+pip install -r requirements.txt
 ```
 
 ## Installation
