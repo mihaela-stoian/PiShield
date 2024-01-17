@@ -1,9 +1,13 @@
+from typing import List
+
 from cloverd.linear_constraints.constraint_layer import ConstraintLayer as LinearConstraintLayer
+from cloverd.propositional_constraints.constraints_layer import ConstraintsLayer as PropositionalConstraintLayer
 
 
 def build_constraint_layer(num_variables: int,
                            constraints_filepath: str,
                            ordering_choice: str = 'given',
+                           custom_ordering: List = None,
                            constraints_type='auto'):
     """
     Build a constraint layer using the given constraints.
@@ -21,8 +25,7 @@ def build_constraint_layer(num_variables: int,
     if constraints_type == 'linear':
         return LinearConstraintLayer(num_variables, constraints_filepath, ordering_choice)
     elif constraints_type == 'propositional':
-        # return PropositionalConstraintLayer(num_variables, constraints_filepath, ordering_choice)
-        pass
+        return PropositionalConstraintLayer(num_variables, constraints_filepath, ordering_choice, custom_ordering=custom_ordering)
     elif constraints_type == 'auto':
         detected_constraints_type = detect_constraints_type(constraints_filepath)
         return build_constraint_layer(num_variables, constraints_filepath, ordering_choice,
