@@ -19,7 +19,7 @@ class ConstraintsLayer(nn.Module):
                  custom_ordering: List = None):
         super(ConstraintsLayer, self).__init__()
 
-        if type(constraints) == 'str':
+        if type(constraints) == str:
             constraints_filepath = constraints
             constraints = ConstraintsGroup(constraints_filepath)
             clauses = ClausesGroup.from_constraints_group(constraints)
