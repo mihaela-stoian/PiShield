@@ -5,7 +5,7 @@ from cloverd.linear_constraints.classes import Variable, Constraint, Atom
 from cloverd.linear_constraints.compute_sets_of_constraints import get_pos_neg_x_constr, compute_sets_of_constraints
 from cloverd.linear_constraints.correct_predictions import get_constr_at_level_x, get_final_x_correction
 from cloverd.linear_constraints.feature_orderings import set_ordering
-from cloverd.linear_constraints.parser import parse_constraints_file
+from cloverd.linear_constraints.parser import parse_constraints_file, split_constraints
 
 INFINITY = torch.inf
 EPSILON = 1e-12
@@ -16,6 +16,7 @@ class ConstraintLayer(torch.nn.Module):
         super().__init__()
         self.num_variables = num_variables
         ordering, constraints = parse_constraints_file(constraints_filepath)
+        # clustered_constraints = split_constraints(constraints)
         self.ordering = set_ordering(ordering, ordering_choice)
         self.constraints = constraints
         self.sets_of_constr = compute_sets_of_constraints(ordering, constraints, verbose=True)

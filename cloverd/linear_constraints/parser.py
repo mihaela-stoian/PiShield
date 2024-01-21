@@ -111,3 +111,23 @@ def parse_constraints_file(file: str) -> (List[Variable], List[Constraint]):
     return ordering, constraints
 
 
+def split_constraints(constraints: List[Constraint]):
+    """
+    Splits a list of constraints into groups Gi of lists of constraints,
+    such that Vars(Gi) \intersect Vars(Gj) = null.
+    """
+    constr_vars = {}
+    for i,constr in enumerate(constraints):
+        vars_in_constr = constr.single_inequality.get_body_variables()
+        constr_vars[i] = set([var.id for var in vars_in_constr])
+
+    clustered_constraints = list(range(len(constraints)))
+    for constr_i in range(len(constraints)):
+        vars_in_constr_i = constr_vars[constr_i]
+        for constr_j in range(constr_i+1, len(constraints)):
+
+            vars_in_constr_j = constr_vars[constr_j]
+            if vars_in_constr_i.intersection(vars_in_constr_j):
+                clustered_constraints[constr_j] = clustered_constraints[constr_i]
+    return clustered_constraints
+
