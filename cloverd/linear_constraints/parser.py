@@ -121,13 +121,20 @@ def split_constraints(constraints: List[Constraint]):
         vars_in_constr = constr.single_inequality.get_body_variables()
         constr_vars[i] = set([var.id for var in vars_in_constr])
 
-    clustered_constraints = list(range(len(constraints)))
+    clustered_constraints_ids = list(range(len(constraints)))
     for constr_i in range(len(constraints)):
         vars_in_constr_i = constr_vars[constr_i]
         for constr_j in range(constr_i+1, len(constraints)):
 
             vars_in_constr_j = constr_vars[constr_j]
             if vars_in_constr_i.intersection(vars_in_constr_j):
-                clustered_constraints[constr_j] = clustered_constraints[constr_i]
+                clustered_constraints_ids[constr_j] = clustered_constraints_ids[constr_i]
+
+    clustered_constraints = {id:[] for id in set(clustered_constraints_ids)}
+    for cluster_id in clustered_constraints:
+        ids_cluster_components = [id for id, group_id in enumerate(clustered_constraints_ids) if group_id == cluster_id]
+        clustered_constraints[cluster_id] = [constraints[cluster_component] for cluster_component in ids_cluster_components]
+
+    clustered_constraints = list(clustered_constraints.values())
     return clustered_constraints
 
