@@ -16,7 +16,7 @@ class ConstraintLayer(torch.nn.Module):
         super().__init__()
         self.num_variables = num_variables
         ordering, constraints = parse_constraints_file(constraints_filepath)
-        # clustered_constraints = split_constraints(constraints)
+        # clustered_constraints = split_constraints(ordering, constraints)
         self.ordering = set_ordering(ordering, ordering_choice)
         self.constraints = constraints
         self.sets_of_constr = compute_sets_of_constraints(ordering, constraints, verbose=True)

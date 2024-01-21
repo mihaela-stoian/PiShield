@@ -111,7 +111,7 @@ def parse_constraints_file(file: str) -> (List[Variable], List[Constraint]):
     return ordering, constraints
 
 
-def split_constraints(constraints: List[Constraint]):
+def split_constraints(ordering: List[Variable], constraints: List[Constraint]):
     """
     Splits a list of constraints into groups Gi of lists of constraints,
     such that Vars(Gi) \intersect Vars(Gj) = null.
@@ -131,10 +131,16 @@ def split_constraints(constraints: List[Constraint]):
                 clustered_constraints_ids[constr_j] = clustered_constraints_ids[constr_i]
 
     clustered_constraints = {id:[] for id in set(clustered_constraints_ids)}
+    clustered_orderings = {id:[] for id in set(clustered_constraints_ids)}
+    var_ordering = [var.id for var in ordering]
     for cluster_id in clustered_constraints:
         ids_cluster_components = [id for id, group_id in enumerate(clustered_constraints_ids) if group_id == cluster_id]
         clustered_constraints[cluster_id] = [constraints[cluster_component] for cluster_component in ids_cluster_components]
 
+        cluster_ordering = set.union(*[constr_vars[constr_i] for constr_i in ids_cluster_components])
+        clustered_orderings[cluster_id] = [var for var in var_ordering if var in cluster_ordering]
+
     clustered_constraints = list(clustered_constraints.values())
-    return clustered_constraints
+    clustered_orderings = list(clustered_orderings.values())
+    return clustered_orderings, clustered_constraints
 
