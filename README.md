@@ -38,16 +38,32 @@ y_0 - y_1 >= 0
 #### Inference time
 To correct predictions at inference time such that they satisfy the constraints, we can use CLOVERD as follows:
 ```
-from cloverd.constraint_layer import ConstraintLayer
+import torch
+from cloverd.constraint_layer import build_constraint_layer
 
 predictions = torch.tensor([[-5., -2., -1.]])
 constraints_path = 'example_constraints_tabular.txt'
 
 num_variables = predictions.shape[-1]
-CL = ConstraintLayer(num_variables, constraints_path)
+CL = build_constraint_layer(num_variables, constraints_path)
 
 # apply CL from CLOVERD to get the corrected predictions
 corrected_predictions = CL(predictions.clone())  # returns tensor([[ 3., -2., -3.]], which satisfies the constraints
+```
+
+```
+import torch
+from cloverd.constraint_layer import build_constraint_layer
+
+def correct_predictions(predictions: torch.Tensor, constraints_path: str):
+    num_variables = predictions.shape[-1]
+    
+    # build a constraint layer CL using CLOVERD
+    CL = build_constraint_layer(num_variables, constraints_path)
+    
+    # apply CLOVERD to get corrected predictions, which satisfy the constraints
+    corrected_predictions = CL(predictions)
+    return corrected_predictions
 ```
 
 #### Training time
