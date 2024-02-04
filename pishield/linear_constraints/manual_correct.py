@@ -3,10 +3,10 @@ from typing import List
 
 import torch
 
-from cloverd.linear_constraints.classes import Variable, Constraint
-from cloverd.linear_constraints.compute_sets_of_constraints import get_pos_neg_x_constr
-from cloverd.linear_constraints.correct_predictions import get_constr_at_level_x, get_final_x_correction
-from cloverd.linear_constraints.utils import eval_atoms_list
+from pishield.linear_constraints.classes import Variable, Constraint
+from pishield.linear_constraints.compute_sets_of_constraints import get_pos_neg_x_constr
+from pishield.linear_constraints.correct_predictions import get_constr_at_level_x, get_final_x_correction
+from pishield.linear_constraints.utils import eval_atoms_list
 
 INFINITY = torch.inf
 

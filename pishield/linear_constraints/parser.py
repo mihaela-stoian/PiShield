@@ -1,6 +1,6 @@
 from typing import List
 
-from cloverd.linear_constraints.classes import Variable, Atom, Inequality, Constraint
+from pishield.linear_constraints.classes import Variable, Atom, Inequality, Constraint
 
 ALLOWED_BOOL_OPS = ['or', 'neg']
 ALLOWED_OPS = ['+', '-', '*', '/']

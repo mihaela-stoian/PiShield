@@ -1,7 +1,7 @@
 import numpy as np
 
-from cloverd.propositional_constraints.constraints_group import ConstraintsGroup, Constraint
-from cloverd.propositional_constraints.literal import Literal
+from pishield.propositional_constraints.constraints_group import ConstraintsGroup, Constraint
+from pishield.propositional_constraints.literal import Literal
 
 
 def get_max_ranking_atom(atoms_list, ranking):

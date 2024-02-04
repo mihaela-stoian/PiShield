@@ -1,8 +1,8 @@
 import numpy as np
 import torch
 
-from cloverd.propositional_constraints.clauses_group import ClausesGroup
-from cloverd.propositional_constraints.constraints_group import ConstraintsGroup
+from pishield.propositional_constraints.clauses_group import ClausesGroup
+from pishield.propositional_constraints.constraints_group import ConstraintsGroup
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(device)

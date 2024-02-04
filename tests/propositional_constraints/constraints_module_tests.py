@@ -4,9 +4,9 @@ import numpy as np
 import pytest
 import torch
 
-from cloverd.propositional_constraints.constraint import Constraint
-from cloverd.propositional_constraints.constraints_group import ConstraintsGroup
-from cloverd.propositional_constraints.constraints_module import ConstraintsModule, run_cm
+from pishield.propositional_constraints.constraint import Constraint
+from pishield.propositional_constraints.constraints_group import ConstraintsGroup
+from pishield.propositional_constraints.constraints_module import ConstraintsModule, run_cm
 
 
 def test_symmetric():

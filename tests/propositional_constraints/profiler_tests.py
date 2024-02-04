@@ -3,7 +3,7 @@ import time
 import pytest
 import torch
 
-from cloverd.propositional_constraints.profiler import PeakMemoryManager, Profiler
+from pishield.propositional_constraints.profiler import PeakMemoryManager, Profiler
 
 
 def test_one_manager():

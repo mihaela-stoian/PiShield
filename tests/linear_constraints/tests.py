@@ -1,12 +1,11 @@
 import unittest
 
 import torch
-
-from cloverd.linear_constraints.compute_sets_of_constraints import compute_sets_of_constraints
-from cloverd.linear_constraints.constraint_layer import ConstraintLayer
-from cloverd.linear_constraints.correct_predictions import check_all_constraints_are_sat
-from cloverd.linear_constraints.manual_correct import correct_preds
-from cloverd.linear_constraints.parser import parse_constraints_file
+from pishield.linear_constraints.compute_sets_of_constraints import compute_sets_of_constraints
+from pishield.linear_constraints.constraint_layer import ConstraintLayer
+from pishield.linear_constraints.correct_predictions import check_all_constraints_are_sat
+from pishield.linear_constraints.manual_correct import correct_preds
+from pishield.linear_constraints.parser import parse_constraints_file
 from example_predictions import example_predictions_url, example_predictions_botnet
 
 

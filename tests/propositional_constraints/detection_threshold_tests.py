@@ -1,6 +1,6 @@
 import torch
 
-from cloverd.propositional_constraints.detection_threshold import DetectionThreshold
+from pishield.propositional_constraints.detection_threshold import DetectionThreshold
 
 
 def test():

@@ -1,8 +1,8 @@
 import numpy as np
 
-from cloverd.propositional_constraints.clause import Clause
-from cloverd.propositional_constraints.constraint import Constraint
-from cloverd.propositional_constraints.literal import Literal
+from pishield.propositional_constraints.clause import Clause
+from pishield.propositional_constraints.constraint import Constraint
+from pishield.propositional_constraints.literal import Literal
 
 
 def test_eq():

@@ -4,12 +4,12 @@ import numpy as np
 import pytest
 import torch
 
-from cloverd.propositional_constraints.clauses_group import ClausesGroup
-from cloverd.propositional_constraints.constraint import Constraint
-from cloverd.propositional_constraints.constraints_group import ConstraintsGroup
-from cloverd.propositional_constraints.constraints_layer import ConstraintsLayer, run_layer
-from cloverd.propositional_constraints.constraints_module import ConstraintsModule
-from cloverd.propositional_constraints.profiler import Profiler
+from pishield.propositional_constraints.clauses_group import ClausesGroup
+from pishield.propositional_constraints.constraint import Constraint
+from pishield.propositional_constraints.constraints_group import ConstraintsGroup
+from pishield.propositional_constraints.constraints_layer import ConstraintsLayer, run_layer
+from pishield.propositional_constraints.constraints_module import ConstraintsModule
+from pishield.propositional_constraints.profiler import Profiler
 
 
 def test_gradual_atoms():

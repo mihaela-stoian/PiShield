@@ -1,8 +1,8 @@
 import torch
 
 from torch import nn
-from cloverd.propositional_constraints.literal import Literal
-from cloverd.propositional_constraints.profiler import Profiler
+from pishield.propositional_constraints.literal import Literal
+from pishield.propositional_constraints.profiler import Profiler
 
 
 class ConstraintsModule(nn.Module):

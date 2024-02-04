@@ -1,5 +1,5 @@
 import numpy as np
-from cloverd.propositional_constraints.literal import Literal
+from pishield.propositional_constraints.literal import Literal
 
 
 class Constraint:

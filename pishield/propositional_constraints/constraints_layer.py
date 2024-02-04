@@ -4,11 +4,11 @@ from typing import Union, List
 import torch
 from torch import nn
 
-from cloverd.propositional_constraints.clauses_group import ClausesGroup
-from cloverd.propositional_constraints.constraints_group import ConstraintsGroup
-from cloverd.propositional_constraints.constraints_module import ConstraintsModule
-from cloverd.propositional_constraints.slicer import Slicer
-from cloverd.propositional_constraints.util import get_order_and_centrality
+from pishield.propositional_constraints.clauses_group import ClausesGroup
+from pishield.propositional_constraints.constraints_group import ConstraintsGroup
+from pishield.propositional_constraints.constraints_module import ConstraintsModule
+from pishield.propositional_constraints.slicer import Slicer
+from pishield.propositional_constraints.util import get_order_and_centrality
 
 
 class ConstraintsLayer(nn.Module):

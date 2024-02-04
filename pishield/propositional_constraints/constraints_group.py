@@ -1,7 +1,7 @@
 import numpy as np
 import networkx as nx
-from cloverd.propositional_constraints.constraint import Constraint
-from cloverd.propositional_constraints.literal import Literal
+from pishield.propositional_constraints.constraint import Constraint
+from pishield.propositional_constraints.literal import Literal
 
 
 class ConstraintsGroup:

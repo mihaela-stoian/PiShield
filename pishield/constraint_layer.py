@@ -1,7 +1,7 @@
 from typing import List
 
-from cloverd.linear_constraints.constraint_layer import ConstraintLayer as LinearConstraintLayer
-from cloverd.propositional_constraints.constraints_layer import ConstraintsLayer as PropositionalConstraintLayer
+from pishield.linear_constraints.constraint_layer import ConstraintLayer as LinearConstraintLayer
+from pishield.propositional_constraints.constraints_layer import ConstraintsLayer as PropositionalConstraintLayer
 
 
 def build_constraint_layer(num_variables: int,

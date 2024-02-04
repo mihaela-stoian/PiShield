@@ -1,7 +1,7 @@
 import random
 from typing import List
 
-from cloverd.linear_constraints.classes import Variable
+from pishield.linear_constraints.classes import Variable
 
 random.seed(0)
 
