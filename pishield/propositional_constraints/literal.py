@@ -1,5 +1,5 @@
 class Literal:
-    def __init__(self, *args):
+    def __init__(self, *args, reversed_sign=False):
         if len(args) == 2:
             # Literal(int, bool)
             self.atom = args[0]
@@ -7,12 +7,26 @@ class Literal:
         else:
             # Literal(string)
             plain = args[0]
-            if 'n' in plain:
-                self.atom = int(plain[1:])
-                self.positive = False
+            if 'y_' in plain:
+                if 'not ' in plain:
+                    self.atom = int(plain[6:])
+                    if reversed_sign:
+                        self.positive = True   # set to True, to account for the :- format, which the code uses
+                    else:
+                        self.positive = False   # set to True, to account for the :- format, which the code uses
+                else:
+                    self.atom = int(plain[2:])
+                    if reversed_sign:
+                        self.positive = False  # set to False, to account for the :- format, which the code uses
+                    else:
+                        self.positive = True
             else:
-                self.atom = int(plain)
-                self.positive = True
+                if 'n' in plain:
+                    self.atom = int(plain[1:])
+                    self.positive = False
+                else:
+                    self.atom = int(plain)
+                    self.positive = True
 
     def __str__(self):
         return str(self.atom) if self.positive else 'n' + str(self.atom)

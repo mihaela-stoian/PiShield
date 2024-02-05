@@ -149,6 +149,8 @@ class ClausesGroup:
             centrality = self.centrality(centrality)
             atoms = list(self.atoms())
             atoms.sort(key=lambda x: centrality[x])
+        if centrality == None:  # get atoms in the order they appear in constraints
+            atoms = list(self.atoms())
 
         # Apply resolution repeatedly
         atoms = atoms[::-1]

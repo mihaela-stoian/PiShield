@@ -10,12 +10,18 @@ class Constraint:
             self.body = frozenset(args[1])
         else:
             # Constraint(string)
-            line = args[0].split(' ')
-            if line[2] == ':-':
-                line = line[1:]
-            assert line[1] == ':-'
-            self.head = Literal(line[0])
-            self.body = frozenset(Literal(lit) for lit in line[2:])
+            if ':-' in args[0]:
+                line = args[0].split(' ')
+                if line[2] == ':-':
+                    line = line[1:]
+                assert line[1] == ':-'
+                self.head = Literal(line[0])
+                self.body = frozenset(Literal(lit) for lit in line[2:])
+            elif 'or' in args[0]:
+                # Constraint(string)
+                line = args[0].split(' or ')
+                self.head = Literal(line[0])
+                self.body = frozenset(Literal(lit, reversed_sign=True) for lit in line[1:])
 
     def __eq__(self, other):
         if not isinstance(other, Constraint): return False
