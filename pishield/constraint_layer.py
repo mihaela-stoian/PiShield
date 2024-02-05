@@ -36,7 +36,7 @@ def build_pishield_layer(num_variables: int,
 def detect_constraints_type(constraints_filepath: str) -> str:
     f = open(constraints_filepath, 'r')
     linear_keywords = ['>', '>=', '<', '<=']
-    propositional_keywords = [':-']
+    propositional_keywords = [':-', 'or', 'not']
     for line in f:
         line = line.strip()
         if 'ordering' in line:
