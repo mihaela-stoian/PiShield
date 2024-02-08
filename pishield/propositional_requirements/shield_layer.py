@@ -4,20 +4,20 @@ from typing import Union, List
 import torch
 from torch import nn
 
-from pishield.propositional_constraints.clauses_group import ClausesGroup
-from pishield.propositional_constraints.constraints_group import ConstraintsGroup
-from pishield.propositional_constraints.constraints_module import ConstraintsModule
-from pishield.propositional_constraints.slicer import Slicer
-from pishield.propositional_constraints.util import get_order_and_centrality
+from pishield.propositional_requirements.clauses_group import ClausesGroup
+from pishield.propositional_requirements.constraints_group import ConstraintsGroup
+from pishield.propositional_requirements.constraints_module import ConstraintsModule
+from pishield.propositional_requirements.slicer import Slicer
+from pishield.propositional_requirements.util import get_order_and_centrality
 
 
-class ConstraintsLayer(nn.Module):
+class ShieldLayer(nn.Module):
 
     def __init__(self, num_classes: int,
                  constraints: Union[str, List[ConstraintsGroup]] = None,
                  ordering_choice: str = None,
                  custom_ordering: str = None):
-        super(ConstraintsLayer, self).__init__()
+        super(ShieldLayer, self).__init__()
 
         self.num_classes = num_classes
         self.ordering_choice = ordering_choice

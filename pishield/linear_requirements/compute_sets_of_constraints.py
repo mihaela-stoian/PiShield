@@ -1,7 +1,7 @@
 import numpy as np
 from typing import List
 
-from pishield.linear_constraints.classes import Variable, Constraint, Atom, Inequality
+from pishield.linear_requirements.classes import Variable, Constraint, Atom, Inequality
 
 
 def collapse_atoms(atom_list):

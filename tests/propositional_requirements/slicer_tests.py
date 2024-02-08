@@ -1,6 +1,6 @@
 import torch
 
-from pishield.propositional_constraints.slicer import Slicer
+from pishield.propositional_requirements.slicer import Slicer
 
 
 def test_slicer():

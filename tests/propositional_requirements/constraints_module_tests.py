@@ -4,9 +4,9 @@ import numpy as np
 import pytest
 import torch
 
-from pishield.propositional_constraints.constraint import Constraint
-from pishield.propositional_constraints.constraints_group import ConstraintsGroup
-from pishield.propositional_constraints.constraints_module import ConstraintsModule, run_cm
+from pishield.propositional_requirements.constraint import Constraint
+from pishield.propositional_requirements.constraints_group import ConstraintsGroup
+from pishield.propositional_requirements.constraints_module import ConstraintsModule, run_cm
 
 
 def test_symmetric():
@@ -131,7 +131,7 @@ def test_lb_ub():
 
 
 def _test_time(iterative, device):
-    group = ConstraintsGroup('../../data/propositional_constraints/custom_constraints/constraints_full_example.txt')
+    group = ConstraintsGroup('../../data/propositional_requirements/custom_constraints/constraints_full_example.txt')
     cm = ConstraintsModule(group, 41).to(device)
     preds = torch.rand(5000, 41, device=device)
     cm(preds, iterative=iterative)

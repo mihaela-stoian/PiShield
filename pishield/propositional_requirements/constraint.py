@@ -1,5 +1,5 @@
 import numpy as np
-from pishield.propositional_constraints.literal import Literal
+from pishield.propositional_requirements.literal import Literal
 
 
 class Constraint:

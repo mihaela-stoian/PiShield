@@ -4,12 +4,12 @@ import numpy as np
 import pytest
 import torch
 
-from pishield.propositional_constraints.clauses_group import ClausesGroup
-from pishield.propositional_constraints.constraint import Constraint
-from pishield.propositional_constraints.constraints_group import ConstraintsGroup
-from pishield.propositional_constraints.constraints_layer import ConstraintsLayer, run_layer
-from pishield.propositional_constraints.constraints_module import ConstraintsModule
-from pishield.propositional_constraints.profiler import Profiler
+from pishield.propositional_requirements.clauses_group import ClausesGroup
+from pishield.propositional_requirements.constraint import Constraint
+from pishield.propositional_requirements.constraints_group import ConstraintsGroup
+from pishield.propositional_requirements.shield_layer import ShieldLayer, run_layer
+from pishield.propositional_requirements.constraints_module import ConstraintsModule
+from pishield.propositional_requirements.profiler import Profiler
 
 
 def test_gradual_atoms():
@@ -17,7 +17,7 @@ def test_gradual_atoms():
         ConstraintsGroup([Constraint('n1 :- 0'), Constraint('1 :- n2')]),
         ConstraintsGroup([Constraint('4 :- n1'), Constraint('n3 :- 1')])
     ]
-    layer = ConstraintsLayer(num_classes=5, constraints=groups)
+    layer = ShieldLayer(num_classes=5, constraints=groups)
     assert layer.gradual_prefix(0) == ({0, 2}, 0)
     assert layer.gradual_prefix(0.33) == ({0, 2}, 0)
     assert layer.gradual_prefix(0.59) == ({0, 2}, 0)
@@ -41,7 +41,7 @@ def test_two_modules():
     ])
     group = group0 + group1
 
-    layer = ConstraintsLayer(num_classes=3, constraints=[group0, group1])
+    layer = ShieldLayer(num_classes=3, constraints=[group0, group1])
     preds = torch.rand((5000, 3))
     updated = run_layer(layer, preds)
     assert group.coherent_with(updated.numpy()).all()
@@ -52,7 +52,7 @@ def _test_many_clauses(centrality, device, batch=1500, max_clauses=150, goals=5,
     goal = np.random.randint(low=0, high=2, size=(goals, num_classes))
     clauses = ClausesGroup.random(min_clauses=min(10, max_clauses), max_clauses=max_clauses, num_classes=num_classes,
                                   coherent_with=goal)
-    layer = ConstraintsLayer.from_clauses_group(num_classes=num_classes, clauses_group=clauses, centrality=centrality)
+    layer = ShieldLayer.from_clauses_group(num_classes=num_classes, clauses_group=clauses, centrality=centrality)
     preds = torch.rand((batch, num_classes))
 
     layer, preds = layer.to(device), preds.to(device)
@@ -122,10 +122,10 @@ def test_cuda_memory():
     total_classes = num_classes + 100
     batch = 1000
 
-    constraints = ConstraintsGroup('../../data/propositional_constraints/custom_constraints/constraints_full_example.txt')
+    constraints = ConstraintsGroup('../../data/propositional_requirements/custom_constraints/constraints_full_example.txt')
     clauses = ClausesGroup.from_constraints_group(constraints)
     clauses = clauses.add_detection_label(False)
-    layer = ConstraintsLayer.from_clauses_group(num_classes=num_classes, clauses_group=clauses, centrality='rev-katz').to(device)
+    layer = ShieldLayer.from_clauses_group(num_classes=num_classes, clauses_group=clauses, centrality='rev-katz').to(device)
 
     with profiler.watch('complete'):
         with profiler.watch('preds'):

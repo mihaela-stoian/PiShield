@@ -1,7 +1,7 @@
 import random
 from typing import List
 
-from pishield.linear_constraints.classes import Variable
+from pishield.linear_requirements.classes import Variable
 
 random.seed(0)
 

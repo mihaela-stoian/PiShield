@@ -1,4 +1,4 @@
-from pishield.propositional_constraints.literal import Literal
+from pishield.propositional_requirements.literal import Literal
 
 
 def test_init_and_str():

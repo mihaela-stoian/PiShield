@@ -1,7 +1,7 @@
 from typing import List
 import torch
 
-from pishield.linear_constraints.utils import eval_atoms_list
+from pishield.linear_requirements.utils import eval_atoms_list
 
 TOLERANCE=1e-2
 

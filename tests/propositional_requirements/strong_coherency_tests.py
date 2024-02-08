@@ -1,8 +1,8 @@
 import numpy as np
 import torch
 
-from pishield.propositional_constraints.clauses_group import ClausesGroup
-from pishield.propositional_constraints.constraints_group import ConstraintsGroup
+from pishield.propositional_requirements.clauses_group import ClausesGroup
+from pishield.propositional_requirements.constraints_group import ConstraintsGroup
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(device)
@@ -27,7 +27,7 @@ def test_constraints():
     centrality = centrality[::-1]
 
     constraints = ConstraintsGroup(
-        '../../data/propositional_constraints/custom_constraints/constraints_full_example.txt')
+        '../../data/propositional_requirements/custom_constraints/constraints_full_example.txt')
     print(len(constraints))
 
     clauses = ClausesGroup.from_constraints_group(constraints)

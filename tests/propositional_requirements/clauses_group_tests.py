@@ -2,10 +2,10 @@ import networkx as nx
 import numpy as np
 import pytest
 
-from pishield.propositional_constraints.clause import Clause
-from pishield.propositional_constraints.clauses_group import ClausesGroup
-from pishield.propositional_constraints.constraint import Constraint
-from pishield.propositional_constraints.constraints_group import ConstraintsGroup
+from pishield.propositional_requirements.clause import Clause
+from pishield.propositional_requirements.clauses_group import ClausesGroup
+from pishield.propositional_requirements.constraint import Constraint
+from pishield.propositional_requirements.constraints_group import ConstraintsGroup
 
 
 def test_eq():

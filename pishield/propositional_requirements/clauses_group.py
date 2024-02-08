@@ -1,9 +1,9 @@
 import numpy as np
 import networkx as nx
-from pishield.propositional_constraints.literal import Literal
-from pishield.propositional_constraints.clause import Clause
-from pishield.propositional_constraints.constraints_group import ConstraintsGroup
-from pishield.propositional_constraints.strong_coherency import strong_coherency_constraint_preprocessing
+from pishield.propositional_requirements.literal import Literal
+from pishield.propositional_requirements.clause import Clause
+from pishield.propositional_requirements.constraints_group import ConstraintsGroup
+from pishield.propositional_requirements.strong_coherency import strong_coherency_constraint_preprocessing
 
 
 class ClausesGroup:

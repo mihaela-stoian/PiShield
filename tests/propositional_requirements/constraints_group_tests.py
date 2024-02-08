@@ -1,7 +1,7 @@
 import numpy as np
 
-from pishield.propositional_constraints.constraint import Constraint
-from pishield.propositional_constraints.constraints_group import ConstraintsGroup
+from pishield.propositional_requirements.constraint import Constraint
+from pishield.propositional_requirements.constraints_group import ConstraintsGroup
 
 
 def test_str():
@@ -13,12 +13,12 @@ def test_str():
 
 
 def test_from_file():
-    group = ConstraintsGroup('../../data/propositional_constraints/custom_constraints/constraints_simple_example.txt')
+    group = ConstraintsGroup('../../data/propositional_requirements/custom_constraints/constraints_simple_example.txt')
     assert str(group) == "n0 :- 1\n0 :- 1 n2\n1 :- n2"
 
 
 def test_coherent_with():
-    group = ConstraintsGroup('../../data/propositional_constraints/custom_constraints/constraints_simple_example.txt')
+    group = ConstraintsGroup('../../data/propositional_requirements/custom_constraints/constraints_simple_example.txt')
     assert (group.coherent_with(np.array([
         [0.1, 0.2, 0.3, 0.4],
         [0.7, 0.2, 0.3, 0.4],
@@ -39,19 +39,19 @@ def test_add():
 
 
 def test_atoms():
-    group = ConstraintsGroup('../../data/propositional_constraints/custom_constraints/constraints_full_example.txt')
+    group = ConstraintsGroup('../../data/propositional_requirements/custom_constraints/constraints_full_example.txt')
     assert group.atoms() == set(range(41))
 
 
 def test_graph():
-    group = ConstraintsGroup('../../data/propositional_constraints/custom_constraints/constraints_simple_example.txt')
+    group = ConstraintsGroup('../../data/propositional_requirements/custom_constraints/constraints_simple_example.txt')
     graph = group.graph()
     assert set(graph.nodes()) == {0, 1, 2}
     assert set(graph.edges()) == {(1, 0), (2, 1), (2, 0)}
 
 
 def test_duograph():
-    group = ConstraintsGroup('../../data/propositional_constraints/custom_constraints/constraints_simple_example.txt')
+    group = ConstraintsGroup('../../data/propositional_requirements/custom_constraints/constraints_simple_example.txt')
     graph = group.duograph()
     print(graph)
     print(graph.nodes())
@@ -61,7 +61,7 @@ def test_duograph():
 
 
 def test_heads():
-    group = ConstraintsGroup('../../data/propositional_constraints/custom_constraints/constraints_simple_example.txt')
+    group = ConstraintsGroup('../../data/propositional_requirements/custom_constraints/constraints_simple_example.txt')
     assert group.heads() == {0, 1}
 
 
