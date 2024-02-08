@@ -14,7 +14,7 @@ from pishield.propositional_requirements.util import get_order_and_centrality
 class ShieldLayer(nn.Module):
 
     def __init__(self, num_classes: int,
-                 constraints: Union[str, List[ConstraintsGroup]] = None,
+                 requirements: Union[str, List[ConstraintsGroup]] = None,
                  ordering_choice: str = None,
                  custom_ordering: str = None):
         super(ShieldLayer, self).__init__()
@@ -22,10 +22,10 @@ class ShieldLayer(nn.Module):
         self.num_classes = num_classes
         self.ordering_choice = ordering_choice
         self.custom_ordering = custom_ordering
-        self.constraints = constraints
+        self.constraints = requirements
 
-        if type(constraints) == str:
-            constraints_filepath = constraints
+        if type(requirements) == str:
+            constraints_filepath = requirements
             constraints_group = ConstraintsGroup(constraints_filepath)
             clauses_group = ClausesGroup.from_constraints_group(constraints_group)
 
@@ -38,8 +38,8 @@ class ShieldLayer(nn.Module):
             self.stratified_constraints = strata
 
             print(f"Generated {len(strata)} strata of constraints with {centrality} centrality")
-        elif type(constraints) == list:
-            strata = constraints
+        elif type(requirements) == list:
+            strata = requirements
             centrality = None
         else:
             raise Exception(
@@ -66,7 +66,7 @@ class ShieldLayer(nn.Module):
     @classmethod
     def from_clauses_group(cls, num_classes, clauses_group, centrality):
         cls.centrality = centrality
-        return cls(num_classes=num_classes, constraints=clauses_group.stratify(centrality))
+        return cls(num_classes=num_classes, requirements=clauses_group.stratify(centrality))
 
     def gradual_prefix(self, ratio):
         atoms = self.core

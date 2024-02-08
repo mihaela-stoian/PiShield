@@ -12,10 +12,10 @@ EPSILON = 1e-12
 
 
 class ShieldLayer(torch.nn.Module):
-    def __init__(self, num_variables: int, constraints_filepath: str, ordering_choice: str = 'given'):
+    def __init__(self, num_variables: int, requirements_filepath: str, ordering_choice: str = 'given'):
         super().__init__()
         self.num_variables = num_variables
-        ordering, constraints = parse_constraints_file(constraints_filepath)
+        ordering, constraints = parse_constraints_file(requirements_filepath)
         # clustered_constraints = split_constraints(ordering, constraints)
         self.ordering = set_ordering(ordering, ordering_choice)
         self.constraints = constraints

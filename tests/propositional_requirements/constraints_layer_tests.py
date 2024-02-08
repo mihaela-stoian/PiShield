@@ -17,7 +17,7 @@ def test_gradual_atoms():
         ConstraintsGroup([Constraint('n1 :- 0'), Constraint('1 :- n2')]),
         ConstraintsGroup([Constraint('4 :- n1'), Constraint('n3 :- 1')])
     ]
-    layer = ShieldLayer(num_classes=5, constraints=groups)
+    layer = ShieldLayer(num_classes=5, requirements=groups)
     assert layer.gradual_prefix(0) == ({0, 2}, 0)
     assert layer.gradual_prefix(0.33) == ({0, 2}, 0)
     assert layer.gradual_prefix(0.59) == ({0, 2}, 0)
@@ -41,7 +41,7 @@ def test_two_modules():
     ])
     group = group0 + group1
 
-    layer = ShieldLayer(num_classes=3, constraints=[group0, group1])
+    layer = ShieldLayer(num_classes=3, requirements=[group0, group1])
     preds = torch.rand((5000, 3))
     updated = run_layer(layer, preds)
     assert group.coherent_with(updated.numpy()).all()
