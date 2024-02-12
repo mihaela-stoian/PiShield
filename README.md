@@ -1,5 +1,9 @@
 # PiShield: Building Constraint Layers over Deep Neural Networks
 
+## :sparkles: Description
+
+
+
 ## :pushpin: Dependencies
 PiShield requires Python 3.8 or later and PyTorch.
 
@@ -12,7 +16,7 @@ conda install pytorch cpuonly -c pytorch
 pip install -r requirements.txt
 ```
 
-## Installation
+## :hammer_and_wrench: Installation
 From the root of this repository, containing `setup.py`, run:
 ```
 pip install .
@@ -23,7 +27,7 @@ Alternatively, install using pip: (TODO: add package to pip)
 pip install pishield
 ```
 
-## Usage
+## :bulb: Usage
 
 ### Simple Example 1: Tabular Data Generation
 Assume we have the following constraints and ordering of the variables in a file `example_constraints_tabular.txt`:
@@ -71,3 +75,5 @@ Assume a Deep Generative Model (DGM) is used to obtain synthetic tabular data.
 Using PiShield at training time is easy, as it requires two steps:
 1. Instantiating the ConstraintLayer class from PiShield in the DGM's constructor.
 2. Applying the ConstraintLayer on the generated data obtained from the DGM before updating the loss function of the DGM.
+
+## :fire: Performance
