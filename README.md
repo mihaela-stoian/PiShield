@@ -1,6 +1,6 @@
 # PiShield: Building Constraint Layers over Deep Neural Networks
 
-## Dependencies
+## :pushpin: Dependencies
 PiShield requires Python 3.8 or later and PyTorch.
 
 *Optional step*: conda environment setup, using cpu-only PyTorch here. Different PyTorch versions can be specified following the instructions [here](https://pytorch.org/get-started/locally/).
