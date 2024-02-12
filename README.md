@@ -1,4 +1,4 @@
-# PiShield: Building Constraint Layers over Deep Neural Networks
+# PiShield: a NeSy Framework for Learning with Requirements
 
 ## :sparkles: Description
 
