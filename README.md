@@ -2,6 +2,8 @@
 
 ## :sparkles: Description
 
+Update: PiShield's **website** is now available [here](https://sites.google.com/view/pishield).
+
 PiShield is the first framework ever allowing for the integration of the requirements into the neural networks' topology.
 
 :white_check_mark: The integration happens in a straightforward and efficient manner and allows for the creation of deep learning models that are guaranteed to be compliant with the given requirements, no matter the input.
