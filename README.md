@@ -119,15 +119,15 @@ As we can see, in 28/30 cases, the models incorporating background knowledge thr
 |--------------------------------------------------------|-----------|-----------|-----------|-----------|-----------|-----------|
 |                                                        | F1        | wF1       | AUC       | F1        | wF1       | AUC       |
 | WGAN                                                   | 0.463     | 0.488     | 0.730     | 0.945     | 0.943     | 0.954     |
-| <span style="color:darkgreen">Shielded-WGAN</span>     | **0.483** | **0.502** | **0.745** | **0.915** | **0.912** | **0.934** |
+| <span style="color:green">Shielded-WGAN</span>         | **0.483** | **0.502** | **0.745** | **0.915** | **0.912** | **0.934** |
 | TableGAN                                               | 0.330     | 0.400     | 0.704     | 0.908     | 0.907     | 0.926     |
-| <span style="color:darkgreen">Shielded-TableGAN</span> | **0.375** | **0.432** | **0.714** | **0.898** | **0.895** | **0.917** |
+| <span style="color:green">Shielded-TableGAN</span> | **0.375** | **0.432** | **0.714** | **0.898** | **0.895** | **0.917** |
 | CTGAN                                                  | **0.517** | 0.532     | 0.771     | 0.902     | 0.901     | 0.920     |
-| <span style="color:darkgreen">Shielded-CTGAN</span>    | 0.516     | **0.537** | **0.773** | **0.894** | **0.891** | **0.919** |
+| <span style="color:green">Shielded-CTGAN</span>    | 0.516     | **0.537** | **0.773** | **0.894** | **0.891** | **0.919** |
 | TVAE                                                   | 0.497     | 0.527     | 0.767     | 0.869     | 0.868     | **0.892** |
-| <span style="color:darkgreen">Shielded-TVAE</span>     | **0.507** | **0.537** | **0.773** | **0.868** | **0.867** | 0.898     |
+| <span style="color:green">Shielded-TVAE</span>     | **0.507** | **0.537** | **0.773** | **0.868** | **0.867** | 0.898     |
 | GOGGLE                                                 | 0.344     | 0.373     | 0.624     | 0.926     | 0.926     | 0.943     |
-| <span style="color:darkgreen">Shielded-GOGGLE</span>   | **0.409** | **0.427** | **0.667** | **0.925** | **0.916** | **0.937** |
+| <span style="color:green">Shielded-GOGGLE</span>   | **0.409** | **0.427** | **0.667** | **0.925** | **0.916** | **0.937** |
 
 
 ### Functional Genomics
