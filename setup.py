@@ -2,7 +2,7 @@ import os
 from setuptools import find_packages, setup
 
 # Package meta-data.
-NAME = 'CLOVERD'
+NAME = 'PiShield'
 REQUIRES_PYTHON = '>=3.8.0'
 VERSION = '0.0.1'
 DESCRIPTION = 'Building Constraint Layers over Deep Neural Networks'
@@ -36,7 +36,7 @@ setup(
                                     "data", "*.data", "*.data.*", "data.*",
                                     "build", "*.build", "*.build.*", "build.*"]),
     project_urls={
-        'CLOVERD github repo': ''
+        'PiShield github repo': ''
     },
     install_requires=REQUIRED,
     include_package_data=True,
