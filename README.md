@@ -138,27 +138,32 @@ As we can see, in 28/30 cases, the models incorporating background knowledge thr
 
 ### Functional Genomics
 
-Reproduction of Table TODO of our paper [2].
+Reproduction of Table 3 of our paper [3], where
 
+| Dataset    | Baseline* | PiShield  |
+|------------|-----------|-----------|
+| CELLCYCLE  | 0.220     | **0.232** |
+| DERISI     | 0.179     | **0.182** |
+| EISEN      | 0.262     | **0.285** |
+| EXPRE      | 0.246     | **0.270** |
+| GASCH1     | 0.239     | **0.261** |
+| GASCH2     | 0.221     | **0.235** |
+| SEQ        | 0.245     | **0.274** |
+| SPO        | 0.186     | **0.190** |
+| __________ |
+| AVERAGE    | 0.225     | **0.241** |
+
+*Note: All baselines here have a postprocessing step included, as functional genomics tasks always require that the constraints are satisfied.
 
 
 ## :memo: References
 
-```
-@inproceedings{stoian2024cdgm,
-title={How Realistic Is Your Synthetic Data? Constraining Deep Generative Models for Tabular Data},
-author={Mihaela Catalina Stoian and Salijona Dyrmishi and Maxime Cordy and Thomas Lukasiewicz and Eleonora Giunchiglia},
-booktitle={The Twelfth International Conference on Learning Representations},
-year={2024},
-url={https://openreview.net/forum?id=tBROYsEz9G}
-}
+[1] Mihaela Catalina Stoian, Salijona Dyrmishi, Maxime Cordy, Thomas Lukasiewicz, Eleonora Giunchiglia. How Realistic Is Your Synthetic Data? Constraining Deep Generative Models for Tabular Data. arXiv:2402.04823. Accepted at the International
+Conference on Learning Representations (ICLR), 2024.
 
-@article{giunchiglia2024ccn_plus,
-title = {CCN+: A neuro-symbolic framework for deep learning with requirements},
-journal = {International Journal of Approximate Reasoning},
-pages = {109124},
-year = {2024},
-url = {https://www.sciencedirect.com/science/article/pii/S0888613X24000112},
-author = {Eleonora Giunchiglia and Alex Tatomir and Mihaela Catalina Stoian and Thomas Lukasiewicz},
-}
-```
+[2] Eleonora Giunchiglia, Alex Tatomir, Mihaela Catalina Stoian, Thomas Lukasiewicz. CCN+: A neuro-symbolic framework for deep learning with requirements. International Journal of Approximate Reasoning, 2024.
+
+[3] Eleonora Giunchiglia and Thomas Lukasiewicz. Coherent Hierarchical Multi-Label Classification Networks. In Proceedings of Neural
+Information Processing Systems, 2020.
+
+
