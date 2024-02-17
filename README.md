@@ -91,19 +91,19 @@ Using PiShield at training time is easy, as it requires two steps:
 In [2], we considered standard 3D-RetinaNet models with different temporal learning architectures such as I3D, C2D, RCN, RCGRU, RCLSTM, and SlowFast, and compared each of these with their constrained versions.
 The constrained versions inject propositional background knowledge into the models via a constrained layer, as we call it in [2], which is equivalent to a Shield layer when using PiShield.
 
-Below we reproduce part of Table 2 of our paper [2] to show the results we obtained according to the f-mAP (framewise mean Average Precision) measure, at IOU (Intersection-over-Union) threshold of 0.5. 
-The best results are in bold.
+Below we report the aggregated performance from Table 2 of our paper [2] to show the results we obtained according to the f-mAP (framewise mean Average Precision) measure, at IOU (Intersection-over-Union) threshold of 0.5. 
+The best results are in **bold**.
 
 As we can see, the models incorporating background knowledge through **Shield layers** outperform their standard counterparts.
 
-|          	| Baseline 	| <span style="color:darkgreen">Shielded</span>  	  |
-|----------	|----------	|-------------|
-| I3D      	| 29.30    	| **30.37**     	 |
-| C2D      	| 26.34    	| **27.93**     	 |
-| RCN      	| 29.26    	| **30.02**     	 |
-| RCGRU    	| 29.24    	| **30.50**     	 |
-| RCLSTM   	| 28.93    	| **29.91**     	 |
-| SlowFast 	| 29.73    	| **31.88**     	 |
+|          	| Baseline 	| <span style="color:darkgreen">Shielded</span>  	 |
+|----------	|----------	|--------------------------------------------------|
+| I3D      	| 29.30    	| **30.98**     	                                  |
+| C2D      	| 26.34    	| **27.93**     	                                  |
+| RCN      	| 29.26    	| **30.02**     	                                  |
+| RCGRU    	| 29.24    	| **30.50**     	                                  |
+| RCLSTM   	| 28.93    	| **30.42**     	                                  |
+| SlowFast 	| 29.73    	| **31.88**     	                                  |
 
 
 ### Tabular Data Generation
