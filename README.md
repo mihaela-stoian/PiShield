@@ -158,7 +158,7 @@ As we can see, the models **Shield layers** outperform their standard counterpar
 | __________ |
 | AVERAGE    | 0.225     | **0.241** |
 
-*Note: All baselines here have a postprocessing step included, as functional genomics tasks always require that the constraints are satisfied.
+*Note: All baselines for the functional genomics scenario have a postprocessing step included, as functional genomics tasks always require that the constraints are satisfied.
 
 
 ## :memo: References
