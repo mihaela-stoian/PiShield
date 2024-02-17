@@ -96,14 +96,15 @@ The best results are in **bold**.
 
 As we can see, the models incorporating background knowledge through **Shield layers** outperform their standard counterparts.
 
-|          	| Baseline 	| <span style="color:darkgreen">Shielded</span>  	 |
-|----------	|----------	|--------------------------------------------------|
-| I3D      	| 29.30    	| **30.98**     	                                  |
-| C2D      	| 26.34    	| **27.93**     	                                  |
-| RCN      	| 29.26    	| **30.02**     	                                  |
-| RCGRU    	| 29.24    	| **30.50**     	                                  |
-| RCLSTM   	| 28.93    	| **30.42**     	                                  |
-| SlowFast 	| 29.73    	| **31.88**     	                                  |
+| 	          | Baseline 	 | <span style="color:darkgreen">Shielded</span>  	 |
+|------------|------------|--------------------------------------------------|
+| I3D      	 | 29.30    	 | **30.98**     	                                  |
+| C2D      	 | 26.34    	 | **27.93**     	                                  |
+| RCN      	 | 29.26    	 | **30.02**     	                                  |
+| RCGRU    	 | 29.24    	 | **30.50**     	                                  |
+| RCLSTM   	 | 28.93    	 | **30.42**     	                                  |
+| SlowFast 	 | 29.73    	 | **31.88**     	                                  |
+| AVERAGE    | 	28.80	    | **30.29**	                                       |																						
 
 
 ### Tabular Data Generation
