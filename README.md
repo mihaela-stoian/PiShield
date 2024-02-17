@@ -1,18 +1,17 @@
 # PiShield: a NeSy Framework for Learning with Requirements
 
 
-* [:sparkles: Description](#-sparkles--description)
-* [:pushpin: Dependencies](#-pushpin--dependencies)
-* [:hammer_and_wrench: Installation](#-hammer-and-wrench--installation)
-* [:bulb: Usage](#-bulb--usage)
-  + [Simple Example 1: Tabular Data Generation](#simple-example-1--tabular-data-generation)
+* :sparkles: [Description](#-sparkles--description)
+* :pushpin: [Dependencies](#-pushpin--dependencies)
+* :hammer_and_wrench: [Installation](#-hammer-and-wrench--installation)
+* :bulb: [Usage](#-bulb--usage)
     - [Inference time](#inference-time)
     - [Training time](#training-time)
-* [:fire: Performance](#-fire--performance)
+* :fire: [Performance](#-fire--performance)
   + [1. Autonomous Driving](#1-autonomous-driving)
   + [2. Tabular Data Generation](#2-tabular-data-generation)
   + [3. Functional Genomics](#3-functional-genomics)
-* [:memo: References](#-memo--references)
+* :memo: [References](#-memo--references)
 
 
 
