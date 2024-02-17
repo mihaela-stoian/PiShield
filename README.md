@@ -1,5 +1,21 @@
 # PiShield: a NeSy Framework for Learning with Requirements
 
+
+* [:sparkles: Description](#-sparkles--description)
+* [:pushpin: Dependencies](#-pushpin--dependencies)
+* [:hammer_and_wrench: Installation](#-hammer-and-wrench--installation)
+* [:bulb: Usage](#-bulb--usage)
+  + [Simple Example 1: Tabular Data Generation](#simple-example-1--tabular-data-generation)
+    - [Inference time](#inference-time)
+    - [Training time](#training-time)
+* [:fire: Performance](#-fire--performance)
+  + [1. Autonomous Driving](#1-autonomous-driving)
+  + [2. Tabular Data Generation](#2-tabular-data-generation)
+  + [3. Functional Genomics](#3-functional-genomics)
+* [:memo: References](#-memo--references)
+
+
+
 ## :sparkles: Description
 
 Update: PiShield's **website** is now available [here](https://sites.google.com/view/pishield).
@@ -86,7 +102,7 @@ Using PiShield at training time is easy, as it requires two steps:
 ## :fire: Performance
 
 
-### Autonomous Driving
+### 1. Autonomous Driving
 
 In [2], we considered standard 3D-RetinaNet models with different temporal learning architectures such as I3D, C2D, RCN, RCGRU, RCLSTM, and SlowFast, and compared each of these with their constrained versions.
 The constrained versions inject propositional background knowledge into the models via a constrained layer, as we call it in [2], which is equivalent to a Shield layer when using PiShield.
@@ -108,7 +124,7 @@ As we can see, the models incorporating background knowledge through **Shield la
 | AVERAGE    | 	28.80	    | **30.29**	                                       |																						
 
 
-### Tabular Data Generation
+### 2. Tabular Data Generation
 
 In [1], we compared standard deep generative models with their respective constrained versions, which use linear inequality constraints.
 The latter are the models to which we added a constraint layer, as we call it in [1], which is equivalent to a Shield layer when using PiShield.
@@ -136,12 +152,12 @@ As we can see, in 28/30 cases, the models incorporating background knowledge thr
 | AVERAGE Baseline	                                  | 0.430	     | 0.464               | 	0.719	     | 0.910	     | 0.909              | 	0.927    |
 | AVERAGE Shielded 	                                 | **0.458**	 | **0.487**           | 	**0.734**	 | **0.900**	 | **0.896**	         | **0.921** |
 
-### Functional Genomics
+### 3. Functional Genomics
 
-Reproduction of Table 3 of our paper [3], where we compared the performance of baseline models with their constrained counterparts.
+In our paper [3], we compared the performance of baseline models with their constrained counterparts.
 The latter are the models to which we added a constraint layer, as we call it in [3], which is equivalent to a Shield layer when using PiShield.
-The results are reported in terms of the area under the average precision and recall curve (AU(PRC)), which is a standard metric used in functional genomics.
 
+Below we aggregated the results from Table 3 of [3] and reported the performance in terms of the area under the average precision and recall curve (AU(PRC)), which is a standard metric used in functional genomics.
 As we can see, the models **Shield layers** outperform their standard counterparts.
 
 
