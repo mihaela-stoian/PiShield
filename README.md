@@ -51,7 +51,6 @@ pip install pishield
 
 ## :bulb: Usage
 
-### Simple Example 1: Tabular Data Generation
 Assume we have the following constraints and ordering of the variables in a file `example_constraints_tabular.txt`:
 ```
 ordering y_0 y_1 y_2
@@ -61,7 +60,7 @@ y_0 - y_1 >= 0
 -y_0 - y_2 >= 0
 ```
 
-#### Inference time
+### Inference time
 To correct predictions at inference time such that they satisfy the constraints, we can use PiShield as follows:
 ```
 import torch
@@ -92,7 +91,7 @@ def correct_predictions(predictions: torch.Tensor, constraints_path: str):
     return corrected_predictions
 ```
 
-#### Training time
+### Training time
 Assume a Deep Generative Model (DGM) is used to obtain synthetic tabular data.
 Using PiShield at training time is easy, as it requires two steps:
 1. Instantiating the ConstraintLayer class from PiShield in the DGM's constructor.
