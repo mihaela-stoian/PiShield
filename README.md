@@ -138,7 +138,12 @@ As we can see, in 28/30 cases, the models incorporating background knowledge thr
 
 ### Functional Genomics
 
-Reproduction of Table 3 of our paper [3], where
+Reproduction of Table 3 of our paper [3], where we compared the performance of baseline models with their constrained counterparts.
+The latter are the models to which we added a constraint layer, as we call it in [3], which is equivalent to a Shield layer when using PiShield.
+The results are reported in terms of the area under the average precision and recall curve (AU(PRC)), which is a standard metric used in functional genomics.
+
+As we can see, the models **Shield layers** outperform their standard counterparts.
+
 
 | Dataset    | Baseline* | PiShield  |
 |------------|-----------|-----------|
