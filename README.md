@@ -1,4 +1,4 @@
-# PiShield: a NeSy Framework for Learning with Requirements
+# PiShield: A NeSy Framework for Learning with Requirements
 
 
 * :sparkles: [Description](#-sparkles--description)
