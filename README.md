@@ -7,6 +7,7 @@
 * :bulb: [Usage](#-bulb--usage)
     - [Inference time](#inference-time)
     - [Training time](#training-time)
+* :arrow_forward: [Demo video](#-arrow-forward--demo-video)
 * :fire: [Performance](#-fire--performance)
   + [1. Autonomous Driving](#1-autonomous-driving)
   + [2. Tabular Data Generation](#2-tabular-data-generation)
@@ -98,11 +99,13 @@ Using PiShield at training time is easy, as it requires two steps:
 1. Instantiating the ConstraintLayer class from PiShield in the DGM's constructor.
 2. Applying the ConstraintLayer on the generated data obtained from the DGM before updating the loss function of the DGM.
 
-## :fire: Performance
 
 ## :arrow_forward: Demo video
 
 A demo video is available for download [here](https://github.com/mihaela-stoian/PiShield/blob/main/extra/video.mp4).
+
+
+## :fire: Performance
 
 ### 1. Autonomous Driving
 
