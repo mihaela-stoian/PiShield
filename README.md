@@ -25,6 +25,7 @@ PiShield is the first framework ever allowing for the integration of the require
 
 :pencil2: The requirements can be integrated both at inference and/or training time, depending on the practitioners' needs.
 
+<img height="240" src="./extra/overview.png" width="400"/>
 
 ## :pushpin: Dependencies
 PiShield requires Python 3.8 or later and PyTorch.
