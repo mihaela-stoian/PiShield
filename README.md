@@ -100,6 +100,9 @@ Using PiShield at training time is easy, as it requires two steps:
 
 ## :fire: Performance
 
+## :arrow_forward: Demo video
+
+A demo video is available for download [here](https://github.com/mihaela-stoian/PiShield/blob/main/extra/video.mp4).
 
 ### 1. Autonomous Driving
 
