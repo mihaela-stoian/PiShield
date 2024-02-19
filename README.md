@@ -3,11 +3,11 @@
 
 * :sparkles: [Description](#sparkles-description)
 * :pushpin: [Dependencies](#pushpin-dependencies)
-* :hammer_and_wrench: [Installation](#hammer-and-wrench-installation)
+* :hammer_and_wrench: [Installation](#hammer_and_wrench-installation)
 * :bulb: [Usage](#bulb-usage)
     - [Inference time](#inference-time)
     - [Training time](#training-time)
-* :arrow_forward: [Demo video](#arrow-forward-demo-video)
+* :arrow_forward: [Demo video](#arrow_forward-demo-video)
 * :fire: [Performance](#fire-performance)
   + [1. Autonomous Driving](#1-autonomous-driving)
   + [2. Tabular Data Generation](#2-tabular-data-generation)
