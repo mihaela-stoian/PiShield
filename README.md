@@ -46,11 +46,6 @@ From the root of this repository, containing `setup.py`, run:
 pip install .
 ```
 
-Alternatively, install using pip: (TODO: add package to pip)
-```
-pip install pishield
-```
-
 ## :bulb: Usage
 
 Assume we have the following constraints and ordering of the variables in a file `example_constraints_tabular.txt`:
