@@ -12,6 +12,7 @@
   + [1. Autonomous Driving](#1-autonomous-driving)
   + [2. Tabular Data Generation](#2-tabular-data-generation)
   + [3. Functional Genomics](#3-functional-genomics)
+* [Team](team)
 * :memo: [References](#memo-references)
 
 
@@ -176,6 +177,13 @@ As we can see, the models **Shield layers** outperform their standard counterpar
 
 *Note: All baselines for the functional genomics scenario have a postprocessing step included, as functional genomics tasks always require that the constraints are satisfied.
 
+
+## Team
+
+Mihaela Catalina Stoian [[GitHub]](https://github.com/mihaela-stoian)[[LinkedIn]](https://www.linkedin.com/in/mihaela-catalina-stoian-919b27bb/)[[Google Scholar]](https://scholar.google.com.co/citations?user=B_48apwAAAAJ&hl=en)\
+Alex Tatomir [[GitHub]](https://github.com/atatomir)[[LinkedIn]](https://www.linkedin.com/in/atatomir/)[[Google Scholar]](https://scholar.google.com/citations?user=DrGgfBwAAAAJ)\
+Thomas Lukasiewicz [[Google Scholar]](https://scholar.google.co.uk/citations?user=arjucpEAAAAJ&hl=en)\
+Eleonora Giunchiglia [[GitHub]](https://github.com/EGiunchiglia)[[LinkedIn]](https://www.linkedin.com/in/eleonora-giunchiglia-3063b5164/)[[Google Scholar]](https://scholar.google.com/citations?user=HAgGqScAAAAJ&hl=it)
 
 ## :memo: References
 
