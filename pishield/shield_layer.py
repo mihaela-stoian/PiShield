@@ -1,6 +1,7 @@
 from typing import List
 
 from pishield.linear_requirements.shield_layer import ShieldLayer as LinearConstraintLayer
+from pishield.qflra_requirements.shield_layer import ShieldLayer as QFLRAConstraintLayer
 from pishield.propositional_requirements.shield_layer import ShieldLayer as PropositionalConstraintLayer
 
 
@@ -24,6 +25,8 @@ def build_shield_layer(num_variables: int,
 
     if requirements_type == 'linear':
         return LinearConstraintLayer(num_variables, requirements_filepath, ordering_choice)
+    elif requirements_type == 'QFLRA':
+        return QFLRAConstraintLayer(num_variables, requirements_filepath, ordering_choice)
     elif requirements_type == 'propositional':
         return PropositionalConstraintLayer(num_variables, requirements_filepath, ordering_choice, custom_ordering=custom_ordering)
     elif requirements_type == 'auto':
@@ -37,18 +40,35 @@ def build_shield_layer(num_variables: int,
 def detect_requirements_type(requirements_filepath: str) -> str:
     f = open(requirements_filepath, 'r')
     linear_keywords = ['>', '>=', '<', '<=']
-    propositional_keywords = [':-', 'or', 'not']
+    propositional_keywords = ['or', 'not']
+    head_tail_keywords = [':-']
+
+    flag_linear = False
+    flag_head_tail = False
+    flag_propositional = False
     for line in f:
         line = line.strip()
         if 'ordering' in line:
             continue
         for keyword in linear_keywords:
             if keyword in line:
-                print('Using auto mode ::: Detected linear requirements!')
-                return 'linear'
+                flag_linear = True
         for keyword in propositional_keywords:
             if keyword in line:
-                print('Using auto mode ::: Detected propositional requirements!')
-                return 'propositional'
-    return None
+                flag_propositional = True
+        for keyword in head_tail_keywords:
+            if keyword in line:
+                flag_head_tail = True
+
+    if flag_head_tail:
+        print('Using auto mode ::: Detected propositional requirements!')
+        return 'propositional'
+    elif flag_linear:
+        if flag_propositional:
+            print('Using auto mode ::: Detected QFLRA requirements!')
+            return 'QFLRA'
+        print('Using auto mode ::: Detected linear requirements!')
+        return 'linear'
+    else:
+        return None
 
