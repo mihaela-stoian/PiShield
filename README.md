@@ -16,6 +16,7 @@
 * :memo: [References](#memo-references)
 
 
+**Update**: DRL [4] is now part of PiShield and is available on the `drl` branch of this repository!
 
 ## :sparkles: Description
 
@@ -187,7 +188,7 @@ Eleonora Giunchiglia [[GitHub]](https://github.com/EGiunchiglia)[[LinkedIn]](htt
 
 ## :memo: References
 
-[1] Mihaela Catalina Stoian, Salijona Dyrmishi, Maxime Cordy, Thomas Lukasiewicz, Eleonora Giunchiglia. How Realistic Is Your Synthetic Data? Constraining Deep Generative Models for Tabular Data. arXiv:2402.04823. Accepted at the International
+[1] Mihaela Catalina Stoian, Salijona Dyrmishi, Maxime Cordy, Thomas Lukasiewicz, Eleonora Giunchiglia. How Realistic Is Your Synthetic Data? Constraining Deep Generative Models for Tabular Data. arXiv:2402.04823. In Proc. of International
 Conference on Learning Representations (ICLR), 2024.
 
 [2] Eleonora Giunchiglia, Alex Tatomir, Mihaela Catalina Stoian, Thomas Lukasiewicz. CCN+: A neuro-symbolic framework for deep learning with requirements. International Journal of Approximate Reasoning, 2024.
@@ -195,4 +196,5 @@ Conference on Learning Representations (ICLR), 2024.
 [3] Eleonora Giunchiglia and Thomas Lukasiewicz. Coherent Hierarchical Multi-Label Classification Networks. In Proceedings of Neural
 Information Processing Systems, 2020.
 
+[4] Mihaela Catalina Stoian and Eleonora Giunchiglia. Beyond the Convexity Assumption: Realistic Tabular Data Generation under Quantifier-Free Real Linear Constraints. In Proc. of International Conference on Learning Representations (ICLR) 2025.
 
