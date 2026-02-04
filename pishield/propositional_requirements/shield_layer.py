@@ -3,6 +3,7 @@ from typing import Union, List
 
 import torch
 from torch import nn
+import numpy as np
 
 from pishield.propositional_requirements.clauses_group import ClausesGroup
 from pishield.propositional_requirements.constraints_group import ConstraintsGroup
@@ -21,6 +22,8 @@ class ShieldLayer(nn.Module):
 
         self.num_classes = num_classes
         self.ordering_choice = ordering_choice
+        if 'given' in ordering_choice and custom_ordering is None:
+            custom_ordering = ",".join([str(e) for e in np.arange(0,num_classes)])
         self.custom_ordering = custom_ordering
         self.constraints = requirements
 
