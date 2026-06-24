@@ -38,24 +38,29 @@ def build_shield_layer(num_variables: int,
 
 
 def detect_requirements_type(requirements_filepath: str) -> str:
-    f = open(requirements_filepath, 'r')
-    linear_keywords = ['>', '>=', '<', '<=']
-    qflra_keywords = ['neg', 'or']
-    propositional_keywords = [':-']
-    for line in f:
-        line = line.strip()
-        if 'ordering' in line:
-            continue
-        for keyword in linear_keywords:
-            if keyword in line:
-                print('Using auto mode ::: Detected linear requirements!')
-                return 'linear'
-        for keyword in qflra_keywords:
-            if keyword in line:
-                print('Using auto mode ::: Detected QFLRA requirements!')
-                return 'qflra'
-        for keyword in propositional_keywords:
-            if keyword in line:
+    # Propositional requirements can be written either as Horn rules ('head :- body') or as
+    # disjunctive clauses ('y_0 or not y_1'); both are accepted by the propositional parser.
+    # The detection order matters: a ':-' token unambiguously marks a propositional Horn rule.
+    # Otherwise, QFLRA and linear requirements both contain inequality signs, so we distinguish
+    # them by the boolean operators ('or'/'neg') that only QFLRA uses. A clause-style
+    # propositional requirement also uses 'or' but, unlike QFLRA, has no inequality sign.
+    inequality_signs = ['>=', '>', '<=', '<']
+    with open(requirements_filepath, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if not line or 'ordering' in line:
+                continue
+            tokens = line.split()
+            if ':-' in tokens:
+                print('Using auto mode ::: Detected propositional requirements!')
+                return 'propositional'
+            has_inequality = any(sign in line for sign in inequality_signs)
+            has_boolean_op = 'or' in tokens or 'neg' in tokens
+            if has_inequality:
+                detected = 'qflra' if has_boolean_op else 'linear'
+                print(f'Using auto mode ::: Detected {detected.upper() if detected == "qflra" else detected} requirements!')
+                return detected
+            if has_boolean_op:
                 print('Using auto mode ::: Detected propositional requirements!')
                 return 'propositional'
     return None

@@ -112,7 +112,7 @@ def parse_constraints_file(file: str) -> (List[Variable], List[Constraint]):
 
 
 def split_constraints(ordering: List[Variable], constraints: List[Constraint]):
-    """
+    r"""
     Splits a list of constraints into groups Gi of lists of constraints,
     such that Vars(Gi) \intersect Vars(Gj) = null.
     """

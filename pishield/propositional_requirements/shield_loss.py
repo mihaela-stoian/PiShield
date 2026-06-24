@@ -1,18 +1,21 @@
-from typing import List, Union
-import torch
 import numpy as np
-
-from pishield.linear_requirements.classes import Variable, Constraint, Atom
-from pishield.linear_requirements.compute_sets_of_constraints import get_pos_neg_x_constr, compute_sets_of_constraints
-from pishield.linear_requirements.correct_predictions import get_constr_at_level_x, get_final_x_correction
-from pishield.linear_requirements.feature_orderings import set_ordering
-from pishield.linear_requirements.parser import parse_constraints_file, split_constraints
-
-INFINITY = torch.inf
-EPSILON = 1e-12
+import torch
 
 
 class ShieldLoss(torch.nn.Module):
+    """
+    A t-norm based loss term that encourages the satisfaction of propositional requirements.
+
+    Unlike the Shield Layer, the Shield Loss does not correct the predictions; it returns a
+    scalar penalty (in [0, 1]) which is minimised when the requirements are satisfied. The
+    penalty is computed using one of three t-norms: 'godel', 'product' or 'lukasiewicz'.
+
+    The requirements are read from a file whose lines have the form ``head :- body``, where
+    ``head`` is a single literal and ``body`` is a (possibly empty) list of literals. A literal
+    is the index of a variable (e.g. ``3``) for a positive literal, or that index prefixed with
+    ``n`` (e.g. ``n3``) for a negative literal.
+    """
+
     def __init__(self, num_variables: int, requirements_filepath: str, tnorm_choice: str = 'godel'):
         super().__init__()
         self.num_variables = num_variables
@@ -20,10 +23,9 @@ class ShieldLoss(torch.nn.Module):
         self.tnorm_choice = tnorm_choice
         self.create_matrices()
 
-
     def create_matrices(self):
-        Iplus_np, Iminus_np = self.createIs(self.requirements_filepath, self.num_variables)
-        Mplus_np, Mminus_np = self.createMs(self.requirements_filepath, self.num_variables)
+        Iplus_np, Iminus_np = self.createIs()
+        Mplus_np, Mminus_np = self.createMs()
 
         Iplus, Iminus = torch.from_numpy(Iplus_np).float(), torch.from_numpy(Iminus_np).float()
         Mplus, Mminus = torch.from_numpy(Mplus_np).float(), torch.from_numpy(Mminus_np).float()
@@ -44,7 +46,6 @@ class ShieldLoss(torch.nn.Module):
         self.Cplus = Cplus
         self.Cminus = Cminus
         self.NUM_REQ = Iplus.shape[0]
-
 
     def createIs(self):
         # Matrix with indices for positive literals
@@ -69,7 +70,6 @@ class ShieldLoss(torch.nn.Module):
         Iplus = np.array(Iplus)
         Iminus = np.array(Iminus)
         return Iplus, Iminus
-
 
     # createMs returns two matrices: Mplus: shape [num_labels, num_constraints] --> each column corresponds to a
     # constraint and it has a one if the constraint has positive head at the column number of the label of the head
@@ -100,7 +100,6 @@ class ShieldLoss(torch.nn.Module):
     def get_sparse_representation(self, req_matrix):
         req_matrix = req_matrix.to_sparse()
         return req_matrix.indices(), req_matrix.values()
-
 
     def godel_disjunctions_sparse(self, preds, weighted_literals=False):
         constr_values = torch.zeros(preds.shape[0], self.NUM_REQ).to(preds.device)
@@ -138,8 +137,6 @@ class ShieldLoss(torch.nn.Module):
     def lukasiewicz_disjunctions_sparse(self, preds, weighted_literals=False):
         constr_values_unbounded = torch.zeros(preds.shape[0], self.NUM_REQ).to(preds.device)
 
-        # pred = sH.clone()  # grads propagated through the cloned pred tensor are propagated through the
-        # original sH tensor as well (so grads are updated through sH, which is what we want)
         indices_nnz_plus, values_nnz_plus = self.get_sparse_representation(self.Cplus)
         indices_nnz_minus, values_nnz_minus = self.get_sparse_representation(self.Cminus)
 
@@ -158,30 +155,26 @@ class ShieldLoss(torch.nn.Module):
             # positively in the conjunction
             # ind[1] == k creates a mask of dim [460] which is equal to 1 if the ith element in the matrix of the
             # indexes is equal to k
-            constr_values_unbounded[:, indices_nnz_plus[0, indices_nnz_plus[1] == k]] += predictions_at_nnz_values_plus[
-                                                                                         :,
-                                                                                         indices_nnz_plus[1] == k]
-            constr_values_unbounded[:,
-            indices_nnz_minus[0, indices_nnz_minus[1] == k]] += predictions_at_nnz_values_minus[
-                                                                :,
-                                                                indices_nnz_minus[1] == k]
+            constr_values_unbounded[:, indices_nnz_plus[0, indices_nnz_plus[1] == k]] += \
+                predictions_at_nnz_values_plus[:, indices_nnz_plus[1] == k]
+            constr_values_unbounded[:, indices_nnz_minus[0, indices_nnz_minus[1] == k]] += \
+                predictions_at_nnz_values_minus[:, indices_nnz_minus[1] == k]
 
         constr_values = torch.min(torch.ones_like(constr_values_unbounded), constr_values_unbounded)
         req_loss = torch.mean(constr_values)
 
-        # We need to do 1-req_loss because we want to maximise the probability p of satisfying our requirements, and hence we want to minimize the 1-p
+        # We need to do 1-req_loss because we want to maximise the probability p of satisfying our requirements,
+        # and hence we want to minimize the 1-p
         return 1 - req_loss
 
     def product_disjunctions_sparse(self, preds, weighted_literals=False):
-        # The disjunction is more complex to implement thant the conjunction
+        # The disjunction is more complex to implement than the conjunction
         # e.g., A and B --> A*B while A or B --> A + B - A*B
         # Thus we see the disjunction as the negation of the conjunction of the negations of all its
         # literals (i.e., A or B = neg (neg A and neg B))
 
         constr_values = torch.ones(preds.shape[0], self.NUM_REQ).to(preds.device)
 
-        # pred = sH.clone()  # grads propagated through the cloned pred tensor are propagated through the
-        # original sH tensor as well (so grads are updated through sH, which is what we want)
         indices_nnz_plus, values_nnz_plus = self.get_sparse_representation(self.Cplus)
         indices_nnz_minus, values_nnz_minus = self.get_sparse_representation(self.Cminus)
 
@@ -200,10 +193,10 @@ class ShieldLoss(torch.nn.Module):
             # positively in the conjunction
             # ind[1] == k creates a mask of dim [460] which is equal to 1 if the ith element in the matrix of the
             # indexes is equal to k
-            constr_values[:, indices_nnz_plus[0, indices_nnz_plus[1] == k]] *= predictions_at_nnz_values_plus[:,
-                                                                               indices_nnz_plus[1] == k]
-            constr_values[:, indices_nnz_minus[0, indices_nnz_minus[1] == k]] *= predictions_at_nnz_values_minus[:,
-                                                                                 indices_nnz_minus[1] == k]
+            constr_values[:, indices_nnz_plus[0, indices_nnz_plus[1] == k]] *= \
+                predictions_at_nnz_values_plus[:, indices_nnz_plus[1] == k]
+            constr_values[:, indices_nnz_minus[0, indices_nnz_minus[1] == k]] *= \
+                predictions_at_nnz_values_minus[:, indices_nnz_minus[1] == k]
 
         # Negate the value of the conjunction
         req_loss = torch.mean(1. - constr_values)
@@ -212,27 +205,18 @@ class ShieldLoss(torch.nn.Module):
         # and hence we want to minimize the 1-p
         return 1 - req_loss
 
-
     def __call__(self, preds: torch.Tensor):
         # Discard all the labels that should not be affecting the tnorm based loss before this call!
-        # e.g., preds = original_preds[:, 1:self.num_variables + 1]  # e.g.,
+        # e.g., preds = original_preds[:, 1:self.num_variables + 1]
 
         if len(preds) == 0:
-            tnorm_loss = torch.zeros(1).cuda().squeeze()
-            return tnorm_loss
-
-        Cplus, Cminus = self.Cplus.squeeze(), self.Cminus.squeeze()
-        tnorm_loss = torch.zeros([1]).cuda()
+            return torch.zeros(1, device=preds.device).squeeze()
 
         if self.tnorm_choice == "godel":
-            tnorm_loss = self.godel_disjunctions_sparse(preds, Cplus, Cminus)
+            return self.godel_disjunctions_sparse(preds)
         elif self.tnorm_choice == "lukasiewicz":
-            tnorm_loss = self.lukasiewicz_disjunctions_sparse(preds, Cplus, Cminus)
+            return self.lukasiewicz_disjunctions_sparse(preds)
         elif self.tnorm_choice == "product":
-            tnorm_loss = self.product_disjunctions_sparse(preds, Cplus, Cminus)
+            return self.product_disjunctions_sparse(preds)
         else:
-            print("tnorm {:} not defined".format(self.tnorm_choice))
-            exit(1)
-
-        return tnorm_loss
-
+            raise ValueError("tnorm {:} not defined".format(self.tnorm_choice))

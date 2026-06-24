@@ -11,8 +11,9 @@ from pishield.qflra_requirements.feature_orderings import set_random_ordering
 import numpy as np
 
 INFINITY = torch.inf
-INFINITY_NP = torch.tensor(np.int32(1e16))
-# INFINITY_NP = torch.tensor(np.int64(1e16))
+# A large finite value used to replace +/-inf in the corrected predictions (see get_final_x_correction).
+# 1e16 does not fit in int32, so we use a float sentinel matching the magnitude of the predictions.
+INFINITY_NP = torch.tensor(1e16)
 
 
 def get_constr_at_level_x(x, sets_of_constr):

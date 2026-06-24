@@ -1,6 +1,4 @@
 import torch
-import pytest
-import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -30,7 +28,6 @@ def train(dataloader, model, clayer, loss_fn, optimizer, device, ratio=1.):
             print(f"loss: {loss:>7f} [{current:>5d}/{size:>5d}]")
 
 
-@pytest.mark.skip(reason="this is not a test")
 def test(dataloader, model, clayer, loss_fn, device):
     size = len(dataloader.dataset)
     model, clayer = model.to(device), clayer.to(device)
@@ -59,6 +56,7 @@ def test(dataloader, model, clayer, loss_fn, device):
 
 
 def draw_classes(model, draw=None, path=None, device='cpu', show=False):
+    import matplotlib.pyplot as plt  # imported lazily: plotting is optional and pulls in a heavy dependency
     dots = np.arange(0., 1., 0.001, dtype="float32")
     grid = torch.tensor([(x, y) for y in dots for x in dots]).to(device)
     model = model.to(device)
