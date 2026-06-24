@@ -5,8 +5,10 @@
 * :pushpin: [Dependencies](#pushpin-dependencies)
 * :hammer_and_wrench: [Installation](#hammer_and_wrench-installation)
 * :bulb: [Usage](#bulb-usage)
-    - [Inference time](#inference-time)
-    - [Training time](#training-time)
+    - [Supported requirement types](#supported-requirement-types)
+    - [Inference time: Shield Layer](#inference-time-shield-layer)
+    - [Training time: Shield Layer](#training-time-shield-layer)
+    - [Training time: Shield Loss](#training-time-shield-loss)
 * :arrow_forward: [Demo video](#arrow_forward-demo-video)
 * :fire: [Performance](#fire-performance)
   + [1. Autonomous Driving](#1-autonomous-driving)
@@ -16,7 +18,7 @@
 * :memo: [References](#memo-references)
 
 
-**Update**: DRL [4] is now part of PiShield and is available on the `drl` branch of this repository!
+**Update**: DRL [4] is now part of PiShield's main branch! PiShield now natively supports **QFLRA** (quantifier-free linear real arithmetic) requirements, in addition to the **linear** and **propositional** requirements previously supported. The framework also ships with a **Shield Loss** to encourage requirement satisfaction at training time via t-norms.
 
 ## :sparkles: Description
 
@@ -50,7 +52,25 @@ pip install .
 
 ## :bulb: Usage
 
-Assume we have the following constraints and ordering of the variables in a file `example_constraints_tabular.txt`:
+PiShield exposes two main entry points:
+- `build_shield_layer` (from `pishield.shield_layer`) builds a **Shield Layer**, a differentiable layer that corrects a model's outputs so that they are *guaranteed* to satisfy the given requirements. It can be used both at inference time and at training time.
+- `build_shield_loss` (from `pishield.shield_loss`) builds a **Shield Loss**, an additional loss term that *encourages* (but does not guarantee) requirement satisfaction at training time, using t-norms.
+
+### Supported requirement types
+
+The Shield Layer supports three types of requirements, specified as `requirements_type`:
+
+| `requirements_type` | Description | Example line |
+|---------------------|-------------|--------------|
+| `linear`            | Linear inequality constraints over real variables. | `y_0 - y_1 >= 0` |
+| `qflra`             | Quantifier-free linear real arithmetic: disjunctions (`or`) and negations (`neg`) of linear inequalities [4]. | `y1 - 2y2 > 0 or neg y3 >= 0` |
+| `propositional`     | Propositional (Boolean) constraints, written either as Horn rules (`head :- body`) or as disjunctive clauses. | `0 :- 1 n2` or `y_0 or not y_1 or y_2` |
+
+In the propositional Horn format, literals are variable indices, with an `n` prefix denoting negation (e.g. `n2` is the negation of variable `2`); in the clause format, literals are written as `y_<index>` and negated with `not`.
+
+By default `requirements_type='auto'`, in which case PiShield inspects the requirements file and selects the appropriate layer automatically. When in doubt — in particular for propositional clauses, whose `or` keyword overlaps with the QFLRA syntax — pass `requirements_type` explicitly.
+
+Each requirements file must start with an `ordering` line listing the variables. For example, a file `example_constraints_tabular.txt` with linear requirements:
 ```
 ordering y_0 y_1 y_2
 -y_0 >= -3
@@ -59,42 +79,76 @@ y_0 - y_1 >= 0
 -y_0 - y_2 >= 0
 ```
 
-### Inference time
-To correct predictions at inference time such that they satisfy the constraints, we can use PiShield as follows:
+The signature of `build_shield_layer` is:
+```
+build_shield_layer(
+    num_variables: int,            # number of variables, matching the last dimension of the tensors to correct
+    requirements_filepath: str,    # path to a txt file containing the requirements
+    ordering_choice: str = 'given',# 'given', 'random', or a custom ordering
+    custom_ordering: List = None,  # optional custom ordering (propositional only)
+    requirements_type='auto',      # 'auto', 'linear', 'qflra' or 'propositional'
+)
+```
+
+### Inference time: Shield Layer
+To correct predictions at inference time such that they satisfy the requirements, we can use PiShield as follows:
 ```
 import torch
-from pishield.constraint_layer import build_pishield_layer
+from pishield.shield_layer import build_shield_layer
 
 predictions = torch.tensor([[-5., -2., -1.]])
 constraints_path = 'example_constraints_tabular.txt'
 
 num_variables = predictions.shape[-1]
-CL = build_pishield_layer(num_variables, constraints_path)
+shield_layer = build_shield_layer(num_variables, constraints_path)
 
-# apply CL from PiShield to get the corrected predictions
-corrected_predictions = CL(predictions.clone())  # returns tensor([[ 3., -2., -3.]], which satisfies the constraints
+# apply the Shield Layer from PiShield to get the corrected predictions
+corrected_predictions = shield_layer(predictions.clone())  # returns tensor([[ 3., -2., -3.]]), which satisfies the constraints
 ```
 
 ```
 import torch
-from pishield.constraint_layer import build_pishield_layer
+from pishield.shield_layer import build_shield_layer
 
 def correct_predictions(predictions: torch.Tensor, constraints_path: str):
     num_variables = predictions.shape[-1]
-    
-    # build a constraint layer CL using PiShield
-    CL = build_pishield_layer(num_variables, constraints_path)
-    
+
+    # build a Shield Layer using PiShield
+    shield_layer = build_shield_layer(num_variables, constraints_path)
+
     # apply PiShield to get corrected predictions, which satisfy the constraints
-    corrected_predictions = CL(predictions)
+    corrected_predictions = shield_layer(predictions)
     return corrected_predictions
 ```
 
-### Training time
+### Training time: Shield Layer
 Assume a Deep Generative Model (DGM) is used to obtain synthetic tabular data.
-Using PiShield at training time is easy, as it requires two steps:
-1. Instantiating the ConstraintLayer class from PiShield in the DGM's constructor.
-2. Applying the ConstraintLayer on the generated data obtained from the DGM before updating the loss function of the DGM.
+Using the Shield Layer at training time is easy, as it requires two steps:
+1. Building a Shield Layer with `build_shield_layer` in the DGM's constructor.
+2. Applying the Shield Layer on the generated data obtained from the DGM before computing the loss function of the DGM.
+
+Because the Shield Layer is differentiable, gradients flow back through the correction, so the model learns to produce outputs that satisfy the requirements.
+
+### Training time: Shield Loss
+As an alternative (or complement) to the Shield Layer, PiShield provides a **Shield Loss** for **propositional** requirements. Instead of correcting the outputs, it adds a penalty term computed via a t-norm (`godel`, `product` or `lukasiewicz`) that pushes the model towards satisfying the requirements.
+
+The Shield Loss expects requirements in the Horn-rule format `<id> <head> :- <body>`, where `<id>` is a constraint identifier, and the head and body literals are variable indices (with an `n` prefix denoting negation). For example, a file `example_requirements.txt`:
+```
+c0 0 :- 1 n2
+c1 1 :- 0
+```
+It is then used as follows:
+```
+import torch
+from pishield.shield_loss import build_shield_loss
+
+num_variables = predictions.shape[-1]
+shield_loss = build_shield_loss(num_variables, 'example_requirements.txt', tnorm_choice='godel')
+
+# preds are probabilities in [0, 1]; the returned scalar can be added to the task loss
+requirement_loss = shield_loss(preds)
+total_loss = task_loss + requirement_loss
+```
 
 
 ## :arrow_forward: Demo video
