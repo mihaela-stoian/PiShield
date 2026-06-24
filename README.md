@@ -57,7 +57,10 @@ PiShield exposes two main entry points:
 - `build_shield_layer` (from `pishield.shield_layer`) builds a **Shield Layer**, a differentiable layer that corrects a model's outputs so that they are *guaranteed* to satisfy the given requirements. It can be used both at inference time and at training time.
 - `build_shield_loss` (from `pishield.shield_loss`) builds a **Shield Loss**, an additional loss term that *encourages* (but does not guarantee) requirement satisfaction at training time, using t-norms.
 
-> :rocket: **Runnable examples.** The [`examples/general_usage`](examples/general_usage) folder contains three self-contained notebooks that run end-to-end with no external downloads:
+> :rocket: **Runnable examples.** Try all three examples in one click, with no local setup:
+> [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mihaela-stoian/PiShield/blob/main/examples/general_usage/PiShield_quickstart.ipynb)
+>
+> The [`PiShield_quickstart.ipynb`](examples/general_usage/PiShield_quickstart.ipynb) notebook bundles the three examples below and installs PiShield automatically on Colab. The [`examples/general_usage`](examples/general_usage) folder also contains them as standalone notebooks that run end-to-end with no external downloads:
 > - [`shield_layer_inference.ipynb`](examples/general_usage/shield_layer_inference.ipynb) — correct a network's predictions with a Shield Layer.
 > - [`shield_layer_training.ipynb`](examples/general_usage/shield_layer_training.ipynb) — train a model with a Shield Layer (and compare against an unconstrained baseline).
 > - [`shield_loss.ipynb`](examples/general_usage/shield_loss.ipynb) — encourage requirement satisfaction with a Shield Loss.
