@@ -12,13 +12,24 @@ def get_constr_at_level_x(x, sets_of_constr):
 
 def get_final_x_correction(initial_x_val: torch.Tensor, pos_x_corrected: torch.Tensor,
                            neg_x_corrected: torch.Tensor) -> torch.Tensor:
+    """
+    Clip a variable's value into the interval allowed by its constraints.
 
+    `initial_x_val` is the model's (per-sample) prediction for x; `pos_x_corrected` is the tightest
+    lower bound implied by x's positive constraints, and `neg_x_corrected` the tightest upper bound
+    from its negative ones. The corrected value is therefore min(max(x, lower bound), upper bound),
+    i.e. x is only moved if it falls outside the feasible interval. A non-tensor bound (or an inf
+    entry) means "unbounded on that side", in which case the initial value is kept.
+    """
+
+    # Enforce the lower bound: result_1 = max(initial value, lower bound).
     if type(pos_x_corrected) is not torch.Tensor:
         result_1 = initial_x_val
     else:
         pos_x_corrected = pos_x_corrected.where(~(pos_x_corrected.isinf()), initial_x_val)
         result_1 = torch.cat([initial_x_val.unsqueeze(1), pos_x_corrected.unsqueeze(1)], dim=1).amax(dim=1)
 
+    # Enforce the upper bound: result_2 = min(result_1, upper bound).
     if type(neg_x_corrected) is not torch.Tensor:
         result_2 = result_1
     else:
