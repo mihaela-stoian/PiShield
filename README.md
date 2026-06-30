@@ -23,7 +23,7 @@
 
 ## :sparkles: Description
 
-Update: PiShield's **website** is now available [here](https://sites.google.com/view/pishield).
+PiShield's **website** is now available [here](https://sites.google.com/view/pishield).
 
 PiShield is the first framework ever allowing for the integration of the requirements into the neural networks' topology.
 
