@@ -1,3 +1,9 @@
+"""The QFLRA Shield Layer, the main public entry point of this subpackage.
+
+Defines :class:`ShieldLayer`, a differentiable PyTorch module that corrects neural
+network predictions so they satisfy a set of QFLRA requirements.
+"""
+
 from typing import List, Union
 import torch
 
@@ -23,9 +29,28 @@ class ShieldLayer(torch.nn.Module):
     that feasible region a union of intervals rather than a single interval, so the per-variable
     correction (delegated to `correct_preds`) is more involved than in the purely conjunctive
     linear case.
+
+    Attributes:
+        num_variables: The number of variables (prediction dimensions).
+        ordering: The ordering of variables used to drive the correction.
+        constraints: The parsed list of QFLRA :class:`Constraint` objects.
+        sets_of_constr: Mapping from each :class:`Variable` to its constraint set.
+
+    Example:
+        >>> layer = ShieldLayer(num_variables=2, requirements_filepath='constraints.txt')
+        >>> corrected = layer(preds)  # preds is a (B, 2) tensor
     """
 
     def __init__(self, num_variables: int, requirements_filepath: str, ordering_choice: str = 'given'):
+        """Build the Shield Layer from a requirements file.
+
+        Args:
+            num_variables: The number of variables (prediction dimensions).
+            requirements_filepath: Path to the file holding the variable ordering and
+                the QFLRA constraints.
+            ordering_choice: How to order variables for correction; ``'given'`` keeps
+                the file ordering, ``'random'`` shuffles it.
+        """
         super().__init__()
         self.num_variables = num_variables
         # Read the variable ordering and the QFLRA constraints from the requirements file.
@@ -37,5 +62,17 @@ class ShieldLayer(torch.nn.Module):
         self.sets_of_constr = compute_sets_of_constraints(ordering, constraints, verbose=True)
 
     def __call__(self, preds: torch.Tensor):
+        """Correct a batch of predictions so they satisfy the requirements.
+
+        Args:
+            preds: Predictions tensor of shape ``(B, num_variables)``.
+
+        Returns:
+            A tensor of the same shape with predictions corrected to satisfy the
+            QFLRA constraints.
+
+        Example:
+            >>> corrected = layer(preds)
+        """
         # Run the per-variable correction pass over the ordering and return the corrected predictions.
         return correct_preds(preds, self.ordering, self.sets_of_constr)

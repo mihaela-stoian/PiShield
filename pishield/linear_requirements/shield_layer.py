@@ -1,3 +1,11 @@
+"""The Shield Layer for linear requirements.
+
+Defines :class:`ShieldLayer`, a differentiable PyTorch module that corrects a
+batch of predictions so they satisfy a set of linear inequality requirements,
+by clipping each variable into the feasible interval implied by its requirements
+following a fixed variable ordering.
+"""
+
 from typing import List, Union
 import torch
 
@@ -23,9 +31,31 @@ class ShieldLayer(torch.nn.Module):
     requirements, using the already-corrected values of the variables that precede it. Because every
     variable is only ever clipped using values that are already feasible, correcting one variable can
     never break a requirement that was already satisfied, so all requirements hold after the pass.
+
+    Attributes:
+        num_variables: Number of variables (labels or features) in a prediction.
+        ordering: The ordering of variables used to correct predictions.
+        constraints: The full list of parsed linear requirements.
+        sets_of_constr: Mapping from each variable to the requirements bounding it.
+        pos_matrices: Per-variable coefficient matrices encoding lower bounds.
+        neg_matrices: Per-variable coefficient matrices encoding upper bounds.
+        dense_ordering: The ordering restricted to variables that appear in some
+            requirement.
+
+    Args:
+        num_variables: Number of variables in each prediction vector.
+        requirements_filepath: Path to the requirements file (containing the
+            variable ordering and the linear requirements).
+        ordering_choice: How to pick the correction ordering: ``'given'`` to use
+            the ordering in the file, or ``'random'`` for a random permutation.
+
+    Example:
+        >>> layer = ShieldLayer(num_variables=4, requirements_filepath='reqs.txt')
+        >>> corrected = layer(predictions)  # corrected satisfies all requirements
     """
 
     def __init__(self, num_variables: int, requirements_filepath: str, ordering_choice: str = 'given'):
+        """Build the layer: parse requirements and precompute per-variable bounds."""
         super().__init__()
         self.num_variables = num_variables
         # Read the variable ordering and the list of linear constraints from the requirements file.
@@ -42,6 +72,17 @@ class ShieldLayer(torch.nn.Module):
         self.dense_ordering = self.get_dense_ordering()  # requires self.sets_of_constraints
 
     def create_matrices(self):
+        """Precompute the lower- and upper-bound matrices for every variable.
+
+        For each variable ``x``, builds a matrix ``C+`` encoding the requirements
+        that lower-bound ``x`` and a matrix ``C-`` encoding those that upper-bound
+        it.
+
+        Returns:
+            A tuple ``(pos_matrices, neg_matrices)`` of dicts mapping each
+            :class:`Variable` to its lower-bound and upper-bound representation
+            (a tensor, or ``+/-inf`` when ``x`` is unbounded on that side).
+        """
         # This function creates matrices C+ and C- for each variable x_i.
         # C+ (pos) holds the constraints that lower-bound x_i; C- (neg) those that upper-bound it.
         # Note that the column corresponding to x_i in the matrices will be 0s.
@@ -60,6 +101,12 @@ class ShieldLayer(torch.nn.Module):
         return pos_matrices, neg_matrices
 
     def get_dense_ordering(self) -> List[Variable]:
+        """Restrict the ordering to variables that have requirements.
+
+        Returns:
+            The variables of ``self.ordering`` that appear in at least one
+            requirement, in order. Requires ``self.sets_of_constr`` to be set.
+        """
         dense_ordering = []
         for x in self.ordering:
             x_constr = get_constr_at_level_x(x, self.sets_of_constr)
@@ -70,6 +117,24 @@ class ShieldLayer(torch.nn.Module):
         return dense_ordering
 
     def create_matrix(self, x: Variable, x_constr: List[Constraint], positive_x: bool) -> Union[torch.Tensor, float]:
+        """Build the coefficient matrix encoding one side of ``x``'s bounds.
+
+        Each requirement contributes a row that expresses the bound it places on
+        ``x`` as a linear function of the other variables, plus a bias column for
+        the requirement's constant. Evaluating a row against a prediction vector
+        yields the value ``x`` must be ``>=`` (when ``positive_x``) or ``<=``
+        (when not ``positive_x``).
+
+        Args:
+            x: The variable whose bound matrix is built.
+            x_constr: The requirements that bound ``x`` on the relevant side.
+            positive_x: ``True`` to build the lower-bound matrix (positive
+                occurrences of ``x``), ``False`` for the upper-bound matrix.
+
+        Returns:
+            A tensor of shape ``(num_constraints, num_variables + 1)``, or
+            ``-inf`` / ``+inf`` when ``x`` is unbounded on that side.
+        """
         # Build one row per constraint, expressing the bound it places on x as a linear function of
         # the other variables (plus a bias term for the constraint's constant). Evaluating a row
         # against a prediction vector yields the value x must be >= (positive_x) or <= (negative_x).
@@ -114,6 +179,23 @@ class ShieldLayer(torch.nn.Module):
 
     # def __call__(self, preds, *args, **kwargs):
     def __call__(self, preds: torch.Tensor):
+        """Correct a batch of predictions so they satisfy all requirements.
+
+        Variables are corrected one at a time following ``self.dense_ordering``;
+        each variable is clipped into the ``[lower bound, upper bound]`` interval
+        implied by its requirements, evaluated against the already-corrected
+        values of the earlier variables.
+
+        Args:
+            preds: Prediction tensor of shape ``(batch_size, num_variables)``.
+
+        Returns:
+            A tensor of the same shape as ``preds`` whose entries satisfy all
+            linear requirements.
+
+        Example:
+            >>> corrected = layer(predictions)
+        """
         device = preds.device
         N = preds.shape[-1]
         # Append a constant column of 1s so the bias term in each matrix is picked up by the dot product.
@@ -140,6 +222,24 @@ class ShieldLayer(torch.nn.Module):
         return corrected_preds[:, :N]
 
     def apply_matrix(self, preds: torch.Tensor, matrix: Union[torch.Tensor, float], reduction='none') -> torch.Tensor:
+        """Evaluate a bound matrix against predictions and reduce over requirements.
+
+        Computes, for every requirement row, the bound value as a dot product
+        with the prediction vector, then optionally reduces across rows to obtain
+        the tightest bound.
+
+        Args:
+            preds: Prediction tensor of shape ``(batch_size, num_variables + 1)``
+                (the trailing column is the bias constant).
+            matrix: The bound matrix for the variable, or a float when the
+                variable is unbounded on that side (returned unchanged).
+            reduction: ``'amax'`` for the tightest lower bound, ``'amin'`` for the
+                tightest upper bound, or ``'none'`` for no reduction.
+
+        Returns:
+            The per-sample bound value(s); shape ``(batch_size,)`` when reduced,
+            or the float ``matrix`` when it is not a tensor.
+        """
         if type(matrix) != torch.Tensor:
             return matrix
         else:

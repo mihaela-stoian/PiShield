@@ -1,3 +1,9 @@
+"""Evaluation and statistics helpers for QFLRA constraints.
+
+Functions here evaluate inequality atoms on batched predictions, detect missing
+values and disjunctions, and report constraint-satisfaction statistics.
+"""
+
 from typing import List
 
 import pandas as pd
@@ -12,6 +18,24 @@ TOLERANCE=1e-2
 
 
 def eval_atoms_list(atoms_list: List['Atom'], preds: torch.Tensor, reduction='sum'):
+    """Evaluate a list of atoms on batched predictions and reduce them.
+
+    Each atom is evaluated at the predicted value of its variable, then the
+    per-atom results are combined according to ``reduction``.
+
+    Args:
+        atoms_list: The :class:`Atom` objects forming an inequality body.
+        preds: Predictions tensor of shape ``(B, D)``; column ``id`` holds the value
+            of the variable with that id.
+        reduction: How to combine atoms across the body. Only ``'sum'`` is supported.
+
+    Returns:
+        A tensor of shape ``(B,)`` with the reduced body value per sample; an
+        all-zero tensor if ``atoms_list`` is empty.
+
+    Raises:
+        Exception: If ``reduction`` is not ``'sum'``.
+    """
     evaluated_atoms = []
     for atom in atoms_list:
         atom_value = preds[:, atom.variable.id]
@@ -30,6 +54,15 @@ def eval_atoms_list(atoms_list: List['Atom'], preds: torch.Tensor, reduction='su
 
 
 def any_disjunctions_in_constraint_set(constraints: List['Constraint']):
+    """Report whether any constraint is a disjunction of inequalities.
+
+    Args:
+        constraints: The constraints to inspect.
+
+    Returns:
+        ``True`` if at least one constraint has more than one inequality (i.e. an
+        'or'), ``False`` otherwise.
+    """
     for constraint in constraints:
         if len(constraint.list_inequalities) > 1:
             return True
@@ -37,6 +70,20 @@ def any_disjunctions_in_constraint_set(constraints: List['Constraint']):
 
 
 def get_missing_mask(ineq_atoms: List['Atom'], preds: torch.Tensor):
+    """Identify samples whose involved variable values indicate missing data.
+
+    A sample is flagged as missing when the product of the raw values of the
+    relevant variables falls below ``-TOLERANCE`` (the convention used to encode
+    missing values in this codebase).
+
+    Args:
+        ineq_atoms: Atoms (or list of atom lists) whose variables are checked.
+        preds: Predictions tensor of shape ``(B, D)``.
+
+    Returns:
+        A boolean tensor of shape ``(B,)`` that is ``True`` for samples with missing
+        values.
+    """
     raw_variable_values = []
     if type(ineq_atoms[0]) != list:
         ineq_atoms = [ineq_atoms]
@@ -50,6 +97,17 @@ def get_missing_mask(ineq_atoms: List['Atom'], preds: torch.Tensor):
 
 
 def split_constr_atoms(y: 'Variable', constr: 'Constraint'):
+    """Separate the atom of a variable from the rest of a constraint body.
+
+    Args:
+        y: The variable to extract.
+        constr: The constraint whose body atoms are split.
+
+    Returns:
+        A tuple ``(red_coefficient, complementary_atoms)`` where ``red_coefficient``
+        is the (positive) coefficient of ``y`` and ``complementary_atoms`` are the
+        remaining body atoms.
+    """
     complementary_atoms = []
     for atom in constr.get_body_atoms():
         if atom.variable.id == y.id:
@@ -59,6 +117,16 @@ def split_constr_atoms(y: 'Variable', constr: 'Constraint'):
     return red_coefficient, complementary_atoms
 
 def get_samples_violating_constraints(constraints, preds):
+    """Flag samples that violate at least one constraint.
+
+    Args:
+        constraints: The constraints to check.
+        preds: Predictions tensor of shape ``(B, D)``.
+
+    Returns:
+        A boolean tensor of shape ``(B,)`` that is ``True`` for samples violating any
+        constraint.
+    """
     samples_violating_req = []
     for constr in constraints:
         samples_sat_req = constr.disjunctive_inequality.check_satisfaction(preds)  # shape Bx1
@@ -70,6 +138,17 @@ def get_samples_violating_constraints(constraints, preds):
 
 
 def check_all_constraints_are_sat(constraints, preds, corrected_preds):
+    """Print which constraints are violated before and after correction.
+
+    Args:
+        constraints: The constraints to check.
+        preds: The original predictions tensor.
+        corrected_preds: The predictions after correction.
+
+    Returns:
+        ``True`` if all constraints are satisfied by ``corrected_preds``, ``False``
+        otherwise.
+    """
     # print('sat req?:')
     for constr in constraints:
         sat = constr.check_satisfaction(preds)
@@ -91,6 +170,19 @@ def check_all_constraints_are_sat(constraints, preds, corrected_preds):
 
 
 def compute_sat_stats(real_data, constraints, mask_out_missing_values=False):
+    """Compute per-constraint and overall constraint-satisfaction statistics.
+
+    Args:
+        real_data: Tensor of data/predictions of shape ``(B, D)``.
+        constraints: The constraints to evaluate.
+        mask_out_missing_values: If ``True``, samples flagged as missing (see
+            :func:`get_missing_mask`) are excluded from the satisfaction rates.
+
+    Returns:
+        A tuple ``(sat_rate_per_constr, percentage_of_samples_violating_constraints)``
+        of pandas DataFrames: per-constraint satisfaction rates (as percentages) and
+        the overall percentage of samples violating constraints.
+    """
     real_data = pd.DataFrame(real_data.detach().numpy())
     sat_rate_per_constr = {i: [] for i in range(len(constraints))}
     percentage_of_samples_sat_constraints = []

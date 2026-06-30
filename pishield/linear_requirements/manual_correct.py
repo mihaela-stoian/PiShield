@@ -1,3 +1,11 @@
+"""Reference (loop-based) implementation of the prediction correction.
+
+Provides an explicit, per-variable implementation of the correction that the
+:class:`~pishield.linear_requirements.shield_layer.ShieldLayer` performs with
+precomputed matrices. It clips each variable into the interval implied by its
+linear requirements, following the variable ordering.
+"""
+
 import time
 from typing import List
 
@@ -15,6 +23,27 @@ INFINITY = torch.inf
 
 def get_partial_x_correction(x: Variable, x_positive: bool, x_constraints: List[Constraint],
                              preds: torch.Tensor, epsilon=1e-12) -> torch.Tensor:
+    """Compute one side of the corrected value for a variable from its requirements.
+
+    For each requirement bounding ``x``, eliminates ``x`` from the body, weights
+    the evaluated remainder by ``-1/coeff`` (positive ``x``) or ``1/coeff``
+    (negative ``x``), adds the weighted constant and an ``epsilon`` margin for
+    strict inequalities, then reduces across requirements: the tightest lower
+    bound (max) when ``x_positive``, the tightest upper bound (min) otherwise.
+
+    Args:
+        x: The variable being corrected.
+        x_positive: ``True`` to compute the lower bound from ``x``'s positive
+            occurrences, ``False`` to compute the upper bound from its negative
+            occurrences.
+        x_constraints: The requirements bounding ``x`` on the relevant side.
+        preds: Prediction tensor of shape ``(batch_size, num_variables)``.
+        epsilon: Margin added for strict (``'>'``) inequalities.
+
+    Returns:
+        A per-sample tensor with the partial bound on ``x``, or ``-inf`` /
+        ``+inf`` when there is no applicable requirement.
+    """
     # if x.id == 25:
     #     print('DEBUG!!!')
     if len(x_constraints) == 0:
@@ -109,6 +138,22 @@ def get_partial_x_correction(x: Variable, x_positive: bool, x_constraints: List[
 
 
 def correct_preds(preds: torch.Tensor, ordering: List[Variable], sets_of_constr: {Variable: List[Constraint]}):
+    """Correct predictions variable by variable so they satisfy all requirements.
+
+    Iterates over the variables in ``ordering`` and, for each, clips its
+    predicted value into the ``[lower bound, upper bound]`` interval implied by
+    its requirements, using the already-corrected values of earlier variables.
+
+    Args:
+        preds: Prediction tensor of shape ``(batch_size, num_variables)``.
+        ordering: The order in which variables are corrected.
+        sets_of_constr: Mapping from each variable to the requirements bounding
+            it, as produced by :func:`compute_sets_of_constraints`.
+
+    Returns:
+        A tensor of the same shape as ``preds`` whose entries satisfy all linear
+        requirements.
+    """
     t1=time.time()
     # num_variables = preds.shape[-1]
     # from constraints_code.constraint_layer import ConstraintLayer

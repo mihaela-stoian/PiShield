@@ -1,3 +1,10 @@
+"""Parser for linear requirements files.
+
+Reads a requirements file into the constraint data model: the variable ordering
+and a list of :class:`Constraint` objects built from the textual linear
+inequalities (with support for ``or`` disjunctions and ``neg`` negation).
+"""
+
 from typing import List
 
 from pishield.linear_requirements.classes import Variable, Atom, Inequality, Constraint
@@ -8,6 +15,17 @@ ALLOWED_INEQ_SIGNS = ['>=', '>']
 
 
 def neg_postprocess_ineq(ineq: Inequality) -> Inequality:
+    """Negate an inequality (logical negation of the linear constraint).
+
+    Negates every atom and flips the inequality sign between ``'>'`` and
+    ``'>='``, e.g. ``neg (x1 + x2 - x3 >= 0)`` becomes ``-x1 - x2 + x3 > 0``.
+
+    Args:
+        ineq: The inequality to negate.
+
+    Returns:
+        A new :class:`Inequality` representing the negation.
+    """
     # equivalent to negating the sign of the inequality and the multiplying by -1
     # e.g. neg x1+x2-x3 >=0 becomes -x1-x2+x3 > 0
     atoms_list, ineq_sign, constant = ineq.get_ineq_attributes()
@@ -26,7 +44,16 @@ def neg_postprocess_ineq(ineq: Inequality) -> Inequality:
 
 
 def parse_atom(x):
-    """Example: y1, -2y2, -y23, 6y3."""
+    """Parse a single textual atom into an :class:`Atom`.
+
+    Args:
+        x: The atom string, e.g. ``'y1'``, ``'-2y2'``, ``'-y23'`` or ``'6y3'``.
+            A missing coefficient defaults to 1; a leading ``'-'`` sets a negative
+            sign.
+
+    Returns:
+        The parsed :class:`Atom`, or ``None`` if the string is empty.
+    """
     x = x.strip().replace(" ", "")
     if x == '':
         return None
@@ -44,7 +71,16 @@ def parse_atom(x):
 
 
 def parse_inequality(inequality):
-    """Example: y1-2y2>0, y1+y2>=0."""
+    """Parse a textual linear inequality into an :class:`Inequality`.
+
+    Args:
+        inequality: The inequality string, e.g. ``'y1-2y2>0'`` or ``'y1+y2>=0'``.
+            The body atoms are split on the ``+``, ``-``, ``*`` and ``/``
+            operators and the right-hand side is read as a constant.
+
+    Returns:
+        The parsed :class:`Inequality`.
+    """
     ineq_sign = None
     inequality = inequality.strip()
     for sign in ALLOWED_INEQ_SIGNS:
@@ -76,6 +112,17 @@ def parse_inequality(inequality):
 
 
 def parse_constraint(constr) -> Constraint:
+    """Parse one textual requirement line into a :class:`Constraint`.
+
+    Splits the line on ``or`` into disjunct inequalities, applying ``neg``
+    negation where present, and wraps the resulting inequalities in a constraint.
+
+    Args:
+        constr: The requirement line, e.g. ``'y1>0 or neg y2>=0'``.
+
+    Returns:
+        The parsed :class:`Constraint`.
+    """
     ineqs = []
     neg_postprocess = False
 
@@ -95,6 +142,21 @@ def parse_constraint(constr) -> Constraint:
 
 
 def parse_constraints_file(file: str) -> (List[Variable], List[Constraint]):
+    """Parse a requirements file into a variable ordering and requirements.
+
+    The file must contain an ``ordering`` line listing the variables, followed by
+    one requirement per line.
+
+    Args:
+        file: Path to the requirements file.
+
+    Returns:
+        A tuple ``(ordering, constraints)`` of the parsed variable ordering and
+        the list of :class:`Constraint` objects.
+
+    Raises:
+        Exception: If the file does not provide a variable ordering.
+    """
     f = open(file, 'r')
     constraints = []
     ordering = []
@@ -112,9 +174,20 @@ def parse_constraints_file(file: str) -> (List[Variable], List[Constraint]):
 
 
 def split_constraints(ordering: List[Variable], constraints: List[Constraint]):
-    r"""
-    Splits a list of constraints into groups Gi of lists of constraints,
-    such that Vars(Gi) \intersect Vars(Gj) = null.
+    r"""Cluster requirements into variable-disjoint groups.
+
+    Splits a list of requirements into groups ``Gi`` of requirements such that
+    ``Vars(Gi) \intersect Vars(Gj) = null`` for distinct groups, i.e. requirements
+    are grouped together whenever they share any variable (transitively).
+
+    Args:
+        ordering: The variable ordering, used to order each group's variables.
+        constraints: The requirements to cluster.
+
+    Returns:
+        A tuple ``(clustered_orderings, clustered_constraints)`` of lists, where
+        each entry is, respectively, the variable ordering and the requirement
+        list of one variable-disjoint cluster.
     """
     constr_vars = {}
     for i,constr in enumerate(constraints):

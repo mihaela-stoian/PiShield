@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.docs-venv/
+venv/
+.venv/
+
+# MkDocs build output
+site/
+_site/
+
+# IDE
+.idea/
+.pytest_cache/

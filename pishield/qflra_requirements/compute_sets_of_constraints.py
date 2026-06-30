@@ -1,3 +1,10 @@
+"""Computation of per-variable constraint sets via variable elimination.
+
+Following a variable ordering, this module derives, for each variable, the set of
+constraints that bound it once the higher-ranked variables have been eliminated by
+algebraic reduction (a resolution-style procedure over linear inequalities).
+"""
+
 from typing import List, Tuple
 
 from pishield.qflra_requirements.classes import Variable, Constraint, Inequality
@@ -8,6 +15,23 @@ from pishield.qflra_requirements.utils_atoms import collapse_atoms, multiply_coe
 
 
 def get_pos_pos_x_constr(y: Variable, pos_constr: List[Constraint], pos_neg_constr: List[Constraint]):
+    """Derive constraints by reducing positive-y against mixed-sign-y constraints.
+
+    For each constraint where ``y`` appears only positively and each constraint where
+    ``y`` appears both positively and negatively, the positive inequality of the
+    former is reduced against the negative inequality of the latter to eliminate
+    ``y``, building new constraints that retain the remaining inequalities.
+
+    Args:
+        y: The variable being eliminated.
+        pos_constr: Constraints in which ``y`` appears only positively.
+        pos_neg_constr: Constraints in which ``y`` appears both positively and
+            negatively.
+
+    Returns:
+        A list of derived :class:`Constraint` objects, extended with the original
+        ``pos_constr`` list.
+    """
     pos_pos_constr: List[Constraint] = []
 
     for p in pos_constr:
@@ -37,6 +61,19 @@ def get_pos_pos_x_constr(y: Variable, pos_constr: List[Constraint], pos_neg_cons
 
 
 def create_constr_by_reduction(y: Variable, constraints_with_y: List[Constraint]):
+    """Eliminate a variable by reducing pairs of constraints over it.
+
+    The constraints containing ``y`` are split by the sign of ``y``; pairs of
+    positive-y and negative-y constraints are then reduced to produce new
+    constraints that no longer contain ``y``.
+
+    Args:
+        y: The variable being eliminated.
+        constraints_with_y: Constraints that contain ``y``.
+
+    Returns:
+        A list of derived :class:`Constraint` objects with ``y`` removed.
+    """
     red_constr = []
     # separate the constraints in two sets by the sign of y (pos or neg)
     pos_constr, neg_constr, pos_neg_constr = get_pos_neg_pn_x_constr(y, constraints_with_y)
@@ -69,6 +106,25 @@ def create_constr_by_reduction(y: Variable, constraints_with_y: List[Constraint]
 
 
 def reduce_two_ineqs(y, ineq_with_pos_y, ineq_with_neg_y):
+    """Combine two inequalities to eliminate a shared variable.
+
+    Scales and adds the two inequalities (one with ``y`` positive, one with ``y``
+    negative) so that ``y`` cancels, yielding a new inequality on the remaining
+    atoms. When all atoms cancel, the result is the boolean truth value of the
+    resulting trivial inequality.
+
+    Args:
+        y: The variable to eliminate.
+        ineq_with_pos_y: An :class:`Inequality` where ``y`` appears positively.
+        ineq_with_neg_y: An :class:`Inequality` where ``y`` appears negatively.
+
+    Returns:
+        A new :class:`Inequality` over the remaining atoms, or a ``bool`` giving the
+        satisfaction value when the reduced body is empty.
+
+    Raises:
+        NotImplementedError: If the resulting inequality sign is unsupported.
+    """
     p_coeff, p_complementary_body = split_constr_atoms(y, ineq_with_pos_y)
     q_coeff, q_complementary_body = split_constr_atoms(y, ineq_with_neg_y)
     # if p_complementary_body == []:
@@ -103,6 +159,17 @@ def reduce_two_ineqs(y, ineq_with_pos_y, ineq_with_neg_y):
 
 
 def get_pos_neg_pn_x_constr(y: Variable, constraints: List[Constraint]):
+    """Group constraints by how a variable occurs in them.
+
+    Args:
+        y: The variable to inspect.
+        constraints: Constraints to classify.
+
+    Returns:
+        A tuple ``(pos_constr, neg_constr, pos_neg_constr)`` of lists holding the
+        constraints where ``y`` appears only positively, only negatively, and both
+        positively and negatively, respectively.
+    """
     pos_constr, neg_constr, pos_neg_constr = [], [], []
     for constr in constraints:
         # determine if y appears: (i) only pos, (ii) only neg, (iii) both pos and neg in the constr
@@ -117,6 +184,18 @@ def get_pos_neg_pn_x_constr(y: Variable, constraints: List[Constraint]):
 
 
 def get_pos_neg_x_constr(y: Variable, constraints_with_y: List[Constraint]):
+    """Split constraints by the sign of a variable, discarding mixed-sign ones.
+
+    Constraints where ``y`` appears both positively and negatively are ignored.
+
+    Args:
+        y: The variable to inspect.
+        constraints_with_y: Constraints that contain ``y``.
+
+    Returns:
+        A tuple ``(pos_constr, neg_constr)`` of lists holding constraints where ``y``
+        appears only positively and only negatively, respectively.
+    """
     pos_constr, neg_constr = [], []
     for constr in constraints_with_y:
         # first determine if y appears: (i) only pos, (ii) only neg, (iii) both pos and neg in the constr
@@ -133,6 +212,23 @@ def get_pos_neg_x_constr(y: Variable, constraints_with_y: List[Constraint]):
 
 
 def compute_set_of_constraints_for_variable(x: Variable, prev_x: Variable, normalised_constraints_at_previous_level: List[Constraint], verbose):
+    """Compute the constraint set for the next variable in the ordering.
+
+    Constraints from the previous level that mention ``prev_x`` are reduced to
+    eliminate ``prev_x``; the result is unioned with the constraints that did not
+    mention ``prev_x``.
+
+    Args:
+        x: The variable for the current level (used for logging/context).
+        prev_x: The previously processed variable to be eliminated.
+        normalised_constraints_at_previous_level: Normalised constraints produced for
+            ``prev_x``.
+        verbose: Whether to print verbose progress information.
+
+    Returns:
+        The list of (still unnormalised) :class:`Constraint` objects that no longer
+        contain ``prev_x``.
+    """
     # create two sets starting from constraints_at_previous_level:
     # one containing only the constraints which variable prev_x appears in
     # and its complement
@@ -162,6 +258,22 @@ def compute_set_of_constraints_for_variable(x: Variable, prev_x: Variable, norma
 
 
 def compute_sets_of_constraints(ordering: List[Variable], constraints: List[Constraint], verbose) -> {Variable: List[Constraint]}:
+    """Compute the normalised constraint set bounding each variable.
+
+    Processes the variables in reverse order, eliminating each higher-ranked
+    variable in turn so that the constraints associated with a variable only involve
+    that variable and lower-ranked ones. This is the precomputation consumed by the
+    prediction-correction pass.
+
+    Args:
+        ordering: The variable ordering (ascending); processed in reverse.
+        constraints: The full list of parsed :class:`Constraint` objects.
+        verbose: Whether to print verbose progress information.
+
+    Returns:
+        A dict mapping each :class:`Variable` to the list of normalised
+        :class:`Constraint` objects that bound it at its level.
+    """
     print(f' *** ALL CONSTRAINTS ***')
     for constr in constraints:
         print(constr.readable())
@@ -202,6 +314,7 @@ def compute_sets_of_constraints(ordering: List[Variable], constraints: List[Cons
 
 
 def main():
+    """Run a small demo: parse a constraints file and compute its constraint sets."""
     # ordering, constraints = parser.parse_constraints_file('../data/tiny_constraints.txt')
     ordering, constraints = parse_constraints_file('../data/heloc/heloc_constraints.txt')
     # for constr in constraints:

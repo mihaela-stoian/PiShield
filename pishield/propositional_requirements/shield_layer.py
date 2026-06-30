@@ -1,3 +1,11 @@
+"""The propositional Shield Layer.
+
+Defines :class:`ShieldLayer`, a differentiable PyTorch layer that corrects a model's
+predictions so they provably satisfy a set of propositional requirements. The
+requirements are normalised into clauses, stratified into ordered layers, and applied
+in order by per-stratum :class:`ConstraintsModule` modules.
+"""
+
 import math
 from typing import Union, List
 
@@ -30,6 +38,26 @@ class ShieldLayer(nn.Module):
                  requirements: Union[str, List[ConstraintsGroup]] = None,
                  ordering_choice: str = None,
                  custom_ordering: str = None):
+        """Build the layer by stratifying the requirements into correction modules.
+
+        Args:
+            num_classes: The number of output variables (labels) the layer operates on.
+            requirements: Either a path to a constraints file or a precomputed list of
+                strata (:class:`ConstraintsGroup` objects).
+            ordering_choice: The variable-ordering / centrality strategy used to decide
+                which variable plays the head during stratification.
+            custom_ordering: An optional explicit comma-separated variable order; with a
+                ``'given'`` ordering choice and no value, defaults to ``0,1,...,n-1``.
+
+        Raises:
+            Exception: If ``requirements`` is neither a str nor a list.
+
+        Example:
+            >>> layer = ShieldLayer(num_classes=5,
+            ...                     requirements='constraints.txt',
+            ...                     ordering_choice='given')
+            >>> corrected = layer(predictions)  # predictions: (batch, 5)
+        """
         super(ShieldLayer, self).__init__()
 
         self.num_classes = num_classes
@@ -86,10 +114,32 @@ class ShieldLayer(nn.Module):
 
     @classmethod
     def from_clauses_group(cls, num_classes, clauses_group, centrality):
+        """Build a Shield Layer from a clauses group and centrality ordering.
+
+        Args:
+            num_classes: The number of output variables.
+            clauses_group: The :class:`ClausesGroup` of requirements to stratify.
+            centrality: The centrality / ordering used to stratify the clauses.
+
+        Returns:
+            A configured ShieldLayer.
+        """
         cls.centrality = centrality
         return cls(num_classes=num_classes, requirements=clauses_group.stratify(centrality))
 
     def gradual_prefix(self, ratio):
+        """Select the atoms and number of strata covered by a fraction of variables.
+
+        Grows the never-corrected core with whole strata until roughly ``ratio`` of all
+        variables are covered; used to gradually enable the requirements in training.
+
+        Args:
+            ratio: The target fraction of variables to cover, in [0, 1].
+
+        Returns:
+            A tuple ``(atoms, num_modules)`` of the covered atom set and the number of
+            leading strata included.
+        """
         atoms = self.core
         remaining = math.floor(ratio * self.num_classes) - len(atoms)
         if (remaining <= 0): return atoms, 0
@@ -102,16 +152,61 @@ class ShieldLayer(nn.Module):
         return atoms, len(self.strata)
 
     def slicer(self, ratio):
+        """Build a :class:`Slicer` covering a fraction of the requirements.
+
+        Args:
+            ratio: The target fraction of variables to cover, in [0, 1].
+
+        Returns:
+            A Slicer over the corresponding atoms and leading modules.
+        """
         atoms, modules = self.gradual_prefix(ratio)
         return Slicer(atoms, modules)
 
     def to_minimal(self, tensor):
+        """Restrict a tensor to the layer's atom columns.
+
+        Args:
+            tensor: A tensor of shape (batch, num_classes).
+
+        Returns:
+            The tensor restricted to the layer's atoms.
+        """
         return tensor[:, self.atoms].reshape(tensor.shape[0], len(self.atoms))
 
     def from_minimal(self, tensor, init):
+        """Scatter a minimal-atom tensor back into a full tensor.
+
+        Args:
+            tensor: The minimal tensor over the layer's atoms.
+            init: The full tensor to write into.
+
+        Returns:
+            ``init`` with the atom columns overwritten by ``tensor``.
+        """
         return init.index_copy(1, self.atoms, tensor)
 
     def forward(self, preds, goal=None, iterative=True, slicer=None):
+        """Correct predictions so they satisfy all requirements.
+
+        Restricts the predictions to the constrained atoms, applies each stratum's
+        correction module in order, and scatters the corrected values back into the
+        full prediction tensor.
+
+        Args:
+            preds: The model predictions, shape (batch, num_classes).
+            goal: Optional goal (ground-truth) assignment to keep corrections
+                consistent with during training.
+            iterative: If True use the iterative correction implementation.
+            slicer: Optional :class:`Slicer` restricting how many strata are applied.
+
+        Returns:
+            The corrected predictions, same shape as ``preds``.
+
+        Example:
+            >>> corrected = layer(predictions)
+            >>> # every requirement now holds on `corrected`
+        """
         # Restrict to the atoms involved in the constraints, apply each stratum's correction in order,
         # then scatter the corrected values back into the full prediction tensor.
         updated = self.to_minimal(preds)
@@ -125,6 +220,23 @@ class ShieldLayer(nn.Module):
 
 
 def run_layer(layer, preds, backward=False):
+    """Run a Shield Layer both ways and assert the results agree.
+
+    Runs the layer with the iterative and tensor implementations, checks they are
+    numerically close, and optionally exercises a backward pass; mainly a
+    testing/debugging helper.
+
+    Args:
+        layer: The :class:`ShieldLayer` to run.
+        preds: The prediction tensor.
+        backward: If True, add a random differentiable perturbation and backpropagate.
+
+    Returns:
+        The corrected predictions (from the iterative implementation), detached.
+
+    Raises:
+        AssertionError: If the two implementations disagree.
+    """
     if backward:
         extra = torch.rand_like(preds, requires_grad=True)
         preds = preds + extra

@@ -1,3 +1,11 @@
+"""Helpers for clipping predictions into the interval allowed by requirements.
+
+Provides utilities to look up the requirement set bounding a given variable, to
+clip a variable's predicted value into the feasible interval implied by its
+lower and upper bounds, and to check that corrected predictions satisfy all
+requirements.
+"""
+
 import pickle as pkl
 import torch
 
@@ -5,6 +13,17 @@ INFINITY = torch.inf
 
 
 def get_constr_at_level_x(x, sets_of_constr):
+    """Look up the requirement set associated with a given variable.
+
+    Args:
+        x: The :class:`Variable` whose requirement set is requested.
+        sets_of_constr: Mapping from variables to their requirement sets, as
+            produced by :func:`compute_sets_of_constraints`.
+
+    Returns:
+        The list of requirements bounding ``x`` (matched by variable id), or
+        ``None`` if ``x`` is not present in the mapping.
+    """
     for var in sets_of_constr:
         if var.id == x.id:
             return sets_of_constr[var]
@@ -43,6 +62,11 @@ def get_final_x_correction(initial_x_val: torch.Tensor, pos_x_corrected: torch.T
 
 
 def example_predictions_heloc():
+    """Load a pickled tensor of example HELOC predictions for debugging.
+
+    Returns:
+        The unpickled predictions object loaded from a hard-coded local path.
+    """
     # data = pd.read_csv(f"../data/heloc/test_data.csv")
     # data = data.to_numpy().astype(float)
     # return torch.tensor(data)
@@ -52,6 +76,18 @@ def example_predictions_heloc():
 
 
 def check_all_constraints_are_sat(constraints, preds, corrected_preds, verbose=False):
+    """Check whether corrected predictions satisfy all requirements (batch-wise).
+
+    Args:
+        constraints: The requirements to check.
+        preds: The original (uncorrected) predictions.
+        corrected_preds: The predictions after correction.
+        verbose: Whether to print which requirements are violated/satisfied.
+
+    Returns:
+        ``True`` if every requirement is satisfied across the whole batch after
+        correction, ``False`` otherwise.
+    """
     # print('sat req?:')
     for constr in constraints:
         sat = constr.check_satisfaction(preds)
@@ -77,6 +113,20 @@ def check_all_constraints_are_sat(constraints, preds, corrected_preds, verbose=F
 
 
 def check_all_constraints_sat(corrected_preds, constraints, error_raise=True):
+    """Assert that corrected predictions satisfy all requirements per sample.
+
+    Args:
+        corrected_preds: The predictions after correction.
+        constraints: The requirements to check.
+        error_raise: Retained for backward compatibility; the function raises on
+            violation regardless of this flag.
+
+    Returns:
+        ``True`` if no violation is found.
+
+    Raises:
+        Exception: If any requirement is violated by any sample.
+    """
     all_sat_after_correction = True
     for constr in constraints:
         sat = constr.check_satisfaction_per_sample(corrected_preds)

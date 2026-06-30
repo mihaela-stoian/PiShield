@@ -1,3 +1,9 @@
+"""Selection of the variable ordering used to correct predictions.
+
+The ordering determines the sequence in which variables are corrected by the Shield
+Layer; it can be taken as given or randomised.
+"""
+
 import json
 import random
 from typing import List
@@ -7,10 +13,28 @@ random.seed(0)
 
 
 def set_random_ordering(ordering: List[Variable]):
+    """Shuffle a variable ordering in place.
+
+    Args:
+        ordering: List of :class:`Variable` objects to shuffle.
+
+    Returns:
+        The same list, shuffled in place.
+    """
     random.shuffle(ordering) # in-place shuffling
     return ordering
 
 def set_ordering(ordering: List[Variable], label_ordering_choice: str):
+    """Select a variable ordering according to a choice string.
+
+    Args:
+        ordering: The base list of :class:`Variable` objects.
+        label_ordering_choice: Either ``'random'`` (shuffle the ordering) or
+            ``'given'`` (keep the provided ordering).
+
+    Returns:
+        The chosen ordering as a list of :class:`Variable` objects.
+    """
     if label_ordering_choice == 'random':
         ordering = set_random_ordering(ordering)
         return ordering

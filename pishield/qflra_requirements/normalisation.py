@@ -1,3 +1,10 @@
+"""Normalisation of QFLRA constraints with respect to a variable.
+
+A constraint (a disjunction of linear inequalities) is put into a normal form in
+which a given variable occurs at most once positively and at most once negatively,
+by combining the inequalities where the variable appears with opposite signs.
+"""
+
 import random
 from typing import List
 import torch
@@ -9,6 +16,31 @@ TOLERANCE=1e-2
 
 
 def normalise_constraint_wrt_selected_ineq(x: Variable, partially_normalised_inequality_list: List[Inequality], ineq_i: Inequality, signed_ineqs: list[Inequality], sign) -> List[Inequality]:
+    """Rewrite a set of inequalities relative to one selected inequality.
+
+    Given a selected inequality ``ineq_i`` in which variable ``x`` appears with the
+    given ``sign``, every other inequality in ``signed_ineqs`` (where ``x`` appears
+    with the same sign) is rewritten by eliminating ``x`` against ``ineq_i``. The
+    selected inequality is kept as-is and the rewritten inequalities are appended to
+    a copy of ``partially_normalised_inequality_list``.
+
+    Args:
+        x: The variable being normalised away.
+        partially_normalised_inequality_list: Inequalities already accumulated for
+            the new normalised constraint; copied, not mutated.
+        ineq_i: The selected reference inequality containing ``x``.
+        signed_ineqs: Inequalities in which ``x`` appears with the same ``sign`` as
+            in ``ineq_i`` (including ``ineq_i`` itself, which is skipped).
+        sign: Either ``'positive'`` or ``'negative'``, the sign of ``x`` in the
+            selected inequality.
+
+    Returns:
+        The extended list of inequalities forming (part of) the normalised
+        constraint.
+
+    Raises:
+        NotImplementedError: If ``sign`` is neither ``'positive'`` nor ``'negative'``.
+    """
 
     new_partially_normalised_inequality_list = []
     new_partially_normalised_inequality_list.extend(partially_normalised_inequality_list)
@@ -72,6 +104,21 @@ def normalise_constraint_wrt_selected_ineq(x: Variable, partially_normalised_ine
 
 
 def normalise_one_constraint(x: Variable, constraint: Constraint) -> Constraint | list[Constraint]:
+    """Normalise a single constraint with respect to a variable.
+
+    If ``x`` already occurs at most once positively and at most once negatively (or
+    not at all), the constraint needs no normalisation and is returned unchanged.
+    Otherwise the inequalities where ``x`` appears positively are paired against
+    those where it appears negatively, producing one or more normalised constraints.
+
+    Args:
+        x: The variable to normalise with respect to.
+        constraint: The constraint (disjunction of inequalities) to normalise.
+
+    Returns:
+        Either the original :class:`Constraint` (when no normalisation is needed) or
+        a list of normalised :class:`Constraint` objects.
+    """
     # FIRST STEP:
     # check if we need to normalise the constraint
     if len(constraint.list_inequalities) <= 1:
@@ -150,6 +197,16 @@ def normalise_one_constraint(x: Variable, constraint: Constraint) -> Constraint 
 
 
 def normalise(x: Variable, constraints: list[Constraint]) -> list[Constraint]:
+    """Normalise every constraint in a list with respect to a variable.
+
+    Args:
+        x: The variable to normalise with respect to.
+        constraints: List of :class:`Constraint` objects to normalise.
+
+    Returns:
+        A flat list of normalised :class:`Constraint` objects (a single constraint
+        may expand into several after normalisation).
+    """
     normalised_constraints: list[Constraint] = []
 
     for constraint in constraints:

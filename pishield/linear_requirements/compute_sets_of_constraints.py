@@ -1,3 +1,12 @@
+"""Derive, per variable, the set of linear requirements that bound it.
+
+This module performs Fourier-Motzkin-style variable elimination over the linear
+requirements: following the (reversed) variable ordering, it repeatedly
+eliminates the highest-ranking remaining variable by combining the requirements
+that contain it, producing for each variable the set of requirements that bound
+it in terms of lower-ranked variables only.
+"""
+
 import numpy as np
 from typing import List
 
@@ -5,6 +14,19 @@ from pishield.linear_requirements.classes import Variable, Constraint, Atom, Ine
 
 
 def collapse_atoms(atom_list):
+    """Merge atoms that refer to the same variable into a single atom.
+
+    Atoms over the same variable are combined by summing their signed
+    coefficients; any atom whose resulting coefficient is zero is dropped.
+
+    Args:
+        atom_list: List of :class:`Atom` objects, possibly with duplicate
+            variables.
+
+    Returns:
+        A list of :class:`Atom` objects with at most one atom per variable and
+        no zero-coefficient atoms.
+    """
     # merge any duplicated atoms in an atom list
     merged_atoms = {}
     merged_atoms: {int: Atom}
@@ -24,6 +46,17 @@ def collapse_atoms(atom_list):
 
 
 def split_constr_atoms(y: Variable, constr: Constraint):
+    """Separate the coefficient of ``y`` from the rest of a constraint's body.
+
+    Args:
+        y: The variable to extract.
+        constr: The constraint whose body is split.
+
+    Returns:
+        A tuple ``(red_coefficient, complementary_atoms)`` where
+        ``red_coefficient`` is the (positive) coefficient of ``y`` and
+        ``complementary_atoms`` is the list of the remaining body atoms.
+    """
     complementary_atoms = []
     for atom in constr.get_body_atoms():
         if atom.variable.id == y.id:
@@ -34,6 +67,16 @@ def split_constr_atoms(y: Variable, constr: Constraint):
 
 
 def multiply_coefficients_of_atoms(atoms: List[Atom], coeff: float):
+    """Scale every atom's coefficient by a constant factor.
+
+    Args:
+        atoms: The atoms to scale.
+        coeff: The multiplicative factor applied to each coefficient.
+
+    Returns:
+        A new list of :class:`Atom` objects with scaled coefficients; the
+        variables and signs are preserved.
+    """
     new_atoms = []
     for atom in atoms:
         variable, coefficient, positive_sign = atom.get_atom_attributes()
@@ -43,6 +86,19 @@ def multiply_coefficients_of_atoms(atoms: List[Atom], coeff: float):
 
 
 def create_constr_by_reduction(y: Variable, constraints_with_y: List[Constraint]):
+    """Eliminate a variable by pairwise combination of its requirements.
+
+    Splits the requirements containing ``y`` by the sign of ``y`` and, for every
+    pair of a positive and a negative occurrence, derives a new requirement in
+    which ``y`` has been cancelled out (a Fourier-Motzkin elimination step).
+
+    Args:
+        y: The variable to eliminate.
+        constraints_with_y: The requirements that contain ``y``.
+
+    Returns:
+        A list of new :class:`Constraint` objects that no longer mention ``y``.
+    """
     red_constr = []
     # separate the constraints in two sets by the sign of y (pos or neg)
     pos_constr, neg_constr = get_pos_neg_x_constr(y, constraints_with_y)
@@ -80,6 +136,16 @@ def create_constr_by_reduction(y: Variable, constraints_with_y: List[Constraint]
 
 
 def get_pos_neg_x_constr(y, constraints_with_y):
+    """Partition requirements by the sign of a variable's occurrence.
+
+    Args:
+        y: The variable whose sign is inspected.
+        constraints_with_y: Requirements that contain ``y``.
+
+    Returns:
+        A tuple ``(pos_constr, neg_constr)`` of the requirements in which ``y``
+        occurs with a positive and a negative coefficient, respectively.
+    """
     pos_constr, neg_constr = [], []
     for constr in constraints_with_y:
         for atom in constr.get_body_atoms():
@@ -93,6 +159,23 @@ def get_pos_neg_x_constr(y, constraints_with_y):
 
 
 def compute_set_of_constraints_for_variable(x: Variable, prev_x: Variable, constraints_at_previous_level: List[Constraint], verbose):
+    """Derive the requirement set for one variable by eliminating the previous one.
+
+    Takes the requirements available at the previous level (those that bound
+    ``prev_x``), eliminates ``prev_x`` from the requirements that contain it, and
+    returns the union of the requirements that did not contain ``prev_x`` with
+    the newly reduced requirements.
+
+    Args:
+        x: The variable whose level is being computed.
+        prev_x: The previously processed (higher-ranked) variable to eliminate.
+        constraints_at_previous_level: Requirements available at ``prev_x``'s level.
+        verbose: Whether to print diagnostic information.
+
+    Returns:
+        The list of :class:`Constraint` objects forming the requirement set at
+        ``x``'s level (none of which mention ``prev_x``).
+    """
     # create two sets starting from constraints_at_previous_level:
     # one containing only the constraints which variable prev_x appears in
     # and its complement
@@ -122,6 +205,22 @@ def compute_set_of_constraints_for_variable(x: Variable, prev_x: Variable, const
 
 
 def compute_sets_of_constraints(ordering: List[Variable], constraints: List[Constraint], verbose) -> {Variable: List[Constraint]}:
+    """Compute the requirement set bounding each variable along the ordering.
+
+    Processes the variables from the highest-ranked to the lowest-ranked (the
+    reversed ordering), at each step eliminating the previously processed
+    variable, so that each variable is associated with the requirements that
+    bound it in terms of lower-ranked variables only.
+
+    Args:
+        ordering: The ordering of the variables.
+        constraints: All linear requirements.
+        verbose: Whether to print diagnostic information.
+
+    Returns:
+        A dict mapping each :class:`Variable` to the list of :class:`Constraint`
+        objects that bound it at its level.
+    """
     # reverse the ordering:
     ordering = list(reversed(ordering))
     prev_x = ordering[0]

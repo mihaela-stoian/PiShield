@@ -1,3 +1,12 @@
+"""The propositional Shield Loss.
+
+Defines :class:`ShieldLoss`, a t-norm based penalty term that encourages (but does not
+enforce) the satisfaction of propositional requirements. Each requirement is read as a
+disjunction (clause) and its degree of satisfaction is computed under one of three
+t-norms - Goedel, Lukasiewicz or product - using sparse matrix representations of the
+requirements.
+"""
+
 import numpy as np
 import torch
 
@@ -17,6 +26,21 @@ class ShieldLoss(torch.nn.Module):
     """
 
     def __init__(self, num_variables: int, requirements_filepath: str, tnorm_choice: str = 'godel'):
+        """Load the requirements and precompute the t-norm matrices.
+
+        Args:
+            num_variables: The number of variables (labels) the predictions cover.
+            requirements_filepath: Path to the requirements file (one ``head :- body``
+                rule per line).
+            tnorm_choice: The t-norm to use: ``'godel'``, ``'lukasiewicz'`` or
+                ``'product'``.
+
+        Example:
+            >>> loss_fn = ShieldLoss(num_variables=10,
+            ...                      requirements_filepath='constraints.txt',
+            ...                      tnorm_choice='product')
+            >>> penalty = loss_fn(predictions)  # predictions: (batch, 10)
+        """
         super().__init__()
         self.num_variables = num_variables
         self.requirements_filepath = requirements_filepath
@@ -24,6 +48,13 @@ class ShieldLoss(torch.nn.Module):
         self.create_matrices()
 
     def create_matrices(self):
+        """Build the positive/negative literal matrices used by the t-norm losses.
+
+        Combines the body (``I``) and head (``M``) encodings into ``Cplus`` and
+        ``Cminus`` matrices marking the positive and negative literal appearances in
+        each requirement's disjunction (the exact combination depends on the chosen
+        t-norm), and records the number of requirements.
+        """
         Iplus_np, Iminus_np = self.createIs()
         Mplus_np, Mminus_np = self.createMs()
 
@@ -48,6 +79,15 @@ class ShieldLoss(torch.nn.Module):
         self.NUM_REQ = Iplus.shape[0]
 
     def createIs(self):
+        """Encode the body literals of each requirement into indicator matrices.
+
+        Reads the requirements file and, for each rule's body, marks which variables
+        appear as positive (``Iplus``) and negative (``Iminus``) literals.
+
+        Returns:
+            A tuple ``(Iplus, Iminus)`` of arrays of shape (num_requirements,
+            num_variables).
+        """
         # Matrix with indices for positive literals
         Iplus = []
         # Matrix with indeces for negative literals
@@ -76,6 +116,16 @@ class ShieldLoss(torch.nn.Module):
     # Mminus: shape[num_labels, num_constraints] --> each column corresponds to a constraint and it has a one if the
     # constraint has negative head at the column number of the label of the head
     def createMs(self):
+        """Encode the head literal of each requirement into indicator matrices.
+
+        Reads the requirements file and marks, per requirement, whether its head is a
+        positive (``Mplus``) or negative (``Mminus``) literal at the head's variable.
+
+        Returns:
+            A tuple ``(Mplus, Mminus)`` of arrays of shape (num_variables,
+            num_requirements); each column corresponds to a requirement and carries a 1
+            at the head variable's row for the matching polarity.
+        """
         Mplus, Mminus = [], []
         with open(self.requirements_filepath, 'r') as f:
             for line in f:
@@ -98,10 +148,31 @@ class ShieldLoss(torch.nn.Module):
         return Mplus, Mminus
 
     def get_sparse_representation(self, req_matrix):
+        """Return the sparse indices and values of a requirement matrix.
+
+        Args:
+            req_matrix: A dense requirement matrix.
+
+        Returns:
+            A tuple ``(indices, values)`` of the matrix's non-zero coordinates and
+            their values.
+        """
         req_matrix = req_matrix.to_sparse()
         return req_matrix.indices(), req_matrix.values()
 
     def godel_disjunctions_sparse(self, preds, weighted_literals=False):
+        """Compute the Goedel-t-norm requirement penalty.
+
+        Each requirement's satisfaction degree is the maximum over its literals' truth
+        values; the penalty is one minus the mean satisfaction degree.
+
+        Args:
+            preds: The predicted probabilities, shape (batch, num_variables).
+            weighted_literals: If True, weight each literal by its matrix value.
+
+        Returns:
+            A scalar penalty in [0, 1], minimised when the requirements are satisfied.
+        """
         constr_values = torch.zeros(preds.shape[0], self.NUM_REQ).to(preds.device)
 
         indices_nnz_plus, values_nnz_plus = self.get_sparse_representation(self.Cplus)
@@ -135,6 +206,18 @@ class ShieldLoss(torch.nn.Module):
         return 1 - req_loss
 
     def lukasiewicz_disjunctions_sparse(self, preds, weighted_literals=False):
+        """Compute the Lukasiewicz-t-norm requirement penalty.
+
+        Each requirement's satisfaction degree is the sum of its literals' truth
+        values clamped to 1; the penalty is one minus the mean satisfaction degree.
+
+        Args:
+            preds: The predicted probabilities, shape (batch, num_variables).
+            weighted_literals: If True, weight each literal by its matrix value.
+
+        Returns:
+            A scalar penalty in [0, 1], minimised when the requirements are satisfied.
+        """
         constr_values_unbounded = torch.zeros(preds.shape[0], self.NUM_REQ).to(preds.device)
 
         indices_nnz_plus, values_nnz_plus = self.get_sparse_representation(self.Cplus)
@@ -168,6 +251,18 @@ class ShieldLoss(torch.nn.Module):
         return 1 - req_loss
 
     def product_disjunctions_sparse(self, preds, weighted_literals=False):
+        """Compute the product-t-norm requirement penalty.
+
+        The disjunction is computed as the negation of the product of the negated
+        literals; the penalty is one minus the mean satisfaction degree.
+
+        Args:
+            preds: The predicted probabilities, shape (batch, num_variables).
+            weighted_literals: If True, weight each literal by its matrix value.
+
+        Returns:
+            A scalar penalty in [0, 1], minimised when the requirements are satisfied.
+        """
         # The disjunction is more complex to implement than the conjunction
         # e.g., A and B --> A*B while A or B --> A + B - A*B
         # Thus we see the disjunction as the negation of the conjunction of the negations of all its
@@ -206,6 +301,25 @@ class ShieldLoss(torch.nn.Module):
         return 1 - req_loss
 
     def __call__(self, preds: torch.Tensor):
+        """Compute the requirement-satisfaction penalty for a batch of predictions.
+
+        Dispatches to the configured t-norm. Note that the caller must first slice
+        ``preds`` down to exactly the ``num_variables`` columns the requirements refer
+        to. Returns a zero scalar for an empty batch.
+
+        Args:
+            preds: The predicted probabilities, shape (batch, num_variables).
+
+        Returns:
+            A scalar penalty in [0, 1], minimised when the requirements are satisfied.
+
+        Raises:
+            ValueError: If the configured t-norm is not recognised.
+
+        Example:
+            >>> penalty = loss_fn(predictions[:, 1:num_variables + 1])
+            >>> total_loss = task_loss + penalty
+        """
         # Discard all the labels that should not be affecting the tnorm based loss before this call!
         # e.g., preds = original_preds[:, 1:self.num_variables + 1]
 
