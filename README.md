@@ -292,5 +292,5 @@ Information Processing Systems, 2020.
 
 [5] Mihaela Catalina Stoian, Eleonora Giunchiglia, Thomas Lukasiewicz. Exploiting T-norms for Deep Learning in Autonomous Driving. arXiv:2402.11362. In Proc. of the International Workshop on Neural-Symbolic Learning and Reasoning (NeSy), 2023.
 
-[6] Samy Badreddine, Artur d'Avila Garcez, Luciano Serafini, Michael Spranger. Logic Tensor Networks. arXiv:2012.13635. Artificial Intelligence, 303:103649, 2022.
+[6] Samy Badreddine, Artur d'Avila Garcez, Luciano Serafini, Michael Spranger. Logic Tensor Networks. arXiv:2012.13635. Artificial Intelligence, 303, 2022.
 
