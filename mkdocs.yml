@@ -65,7 +65,7 @@ nav:
   - "← PiShield site": https://mihaela-stoian.github.io/PiShield/
   - API Reference:
       - Overview: api/index.md
-      - Shield Layer & Shield Loss: api/core.md
+      - Shield Layer & Memory-efficient Loss: api/core.md
       - Linear requirements: api/linear.md
       - QFLRA requirements: api/qflra.md
       - Propositional requirements: api/propositional.md

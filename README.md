@@ -9,7 +9,7 @@
     - [Supported requirement types](#supported-requirement-types)
     - [Inference time: Shield Layer](#inference-time-shield-layer)
     - [Training time: Shield Layer](#training-time-shield-layer)
-    - [Training time: Shield Loss](#training-time-shield-loss)
+    - [Training time: Memory-efficient Loss](#training-time-memory-efficient-loss)
 * :arrow_forward: [Demo video](#arrow_forward-demo-video)
 * :fire: [Performance](#fire-performance)
   + [1. Autonomous Driving](#1-autonomous-driving)
@@ -19,7 +19,7 @@
 * :memo: [References](#memo-references)
 
 
-**Update**: DRL [4] is now part of PiShield's main branch! PiShield now natively supports **QFLRA** (quantifier-free linear real arithmetic) requirements, in addition to the **linear** and **propositional** requirements previously supported. The framework also ships with a **Shield Loss** to encourage requirement satisfaction at training time via t-norms.
+**Update**: DRL [4] is now part of PiShield's main branch! PiShield now natively supports **QFLRA** (quantifier-free linear real arithmetic) requirements, in addition to the **linear** and **propositional** requirements previously supported. The framework also ships with a **Memory-efficient Loss** (a memory-efficient reimplementation of Logic Tensor Networks, LTN) to encourage requirement satisfaction at training time via t-norms.
 
 ## :sparkles: Description
 
@@ -55,7 +55,7 @@ pip install .
 
 PiShield exposes two main entry points:
 - `build_shield_layer` (from `pishield.shield_layer`) builds a **Shield Layer**, a differentiable layer that corrects a model's outputs so that they are *guaranteed* to satisfy the given requirements. It can be used both at inference time and at training time.
-- `build_shield_loss` (from `pishield.shield_loss`) builds a **Shield Loss**, an additional loss term that *encourages* (but does not guarantee) requirement satisfaction at training time, using t-norms.
+- `build_shield_loss` (from `pishield.shield_loss`) builds the **Memory-efficient Loss**, an additional loss term that *encourages* (but does not guarantee) requirement satisfaction at training time, using t-norms. It is a memory-efficient reimplementation of Logic Tensor Networks (LTN).
 
 > :rocket: **Runnable examples.** Try all three examples in one click, with no local setup:
 > [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mihaela-stoian/PiShield/blob/main/examples/general_usage/PiShield_quickstart.ipynb)
@@ -63,7 +63,7 @@ PiShield exposes two main entry points:
 > The [`PiShield_quickstart.ipynb`](examples/general_usage/PiShield_quickstart.ipynb) notebook bundles the three examples below and installs PiShield automatically on Colab. The [`examples/general_usage`](examples/general_usage) folder also contains them as standalone notebooks that run end-to-end with no external downloads:
 > - [`shield_layer_inference.ipynb`](examples/general_usage/shield_layer_inference.ipynb) — correct a network's predictions with a Shield Layer.
 > - [`shield_layer_training.ipynb`](examples/general_usage/shield_layer_training.ipynb) — train a model with a Shield Layer (and compare against an unconstrained baseline).
-> - [`shield_loss.ipynb`](examples/general_usage/shield_loss.ipynb) — encourage requirement satisfaction with a Shield Loss.
+> - [`shield_loss.ipynb`](examples/general_usage/shield_loss.ipynb) — encourage requirement satisfaction with the Memory-efficient Loss.
 
 ### Supported requirement types
 
@@ -138,10 +138,10 @@ Using the Shield Layer at training time is easy, as it requires two steps:
 
 Because the Shield Layer is differentiable, gradients flow back through the correction, so the model learns to produce outputs that satisfy the requirements.
 
-### Training time: Shield Loss
-As an alternative (or complement) to the Shield Layer, PiShield provides a **Shield Loss** for **propositional** requirements. Instead of correcting the outputs, it adds a penalty term computed via a t-norm (`godel`, `product` or `lukasiewicz`) that pushes the model towards satisfying the requirements.
+### Training time: Memory-efficient Loss
+As an alternative (or complement) to the Shield Layer, PiShield provides a **Memory-efficient Loss** for **propositional** requirements — a memory-efficient reimplementation of Logic Tensor Networks (LTN). Instead of correcting the outputs, it adds a penalty term computed via a t-norm (`godel`, `product` or `lukasiewicz`) that pushes the model towards satisfying the requirements.
 
-The Shield Loss expects requirements in the Horn-rule format `<id> <head> :- <body>`, where `<id>` is a constraint identifier, and the head and body literals are variable indices (with an `n` prefix denoting negation). For example, a file `example_requirements.txt`:
+The Memory-efficient Loss expects requirements in the Horn-rule format `<id> <head> :- <body>`, where `<id>` is a constraint identifier, and the head and body literals are variable indices (with an `n` prefix denoting negation). For example, a file `example_requirements.txt`:
 ```
 c0 0 :- 1 n2
 c1 1 :- 0
@@ -253,7 +253,7 @@ Eleonora Giunchiglia [[GitHub]](https://github.com/EGiunchiglia)[[LinkedIn]](htt
 
 ## Authorship and maintenance
 
-PiShield was originally designed and built by Mihaela Cătălina Stoian during her DPhil at the University of Oxford, and she maintains the package. Alex Tatomir contributed to the Shield Layer for propositional constraints. The other team members are co-authors of the papers that PiShield builds on.
+PiShield was originally designed and built by Mihaela Cătălina Stoian during her DPhil at the University of Oxford, and she maintains the package. Alex Tatomir contributed to the Shield Layer for propositional constraints. The other team members are co-authors of the papers that PiShield builds on, and this package would not have been possible without them.
 
 ## Citing PiShield
 
@@ -276,7 +276,7 @@ If you use PiShield, please cite:
 }
 ```
 
-Depending on which feature you use, please additionally cite: the Shield Layer with linear requirements [1], with QFLRA requirements [4], or with propositional requirements [2]; and the memory-efficient Shield Loss with propositional requirements [5], in addition to LTN [6].
+Depending on which feature you use, please additionally cite: the Shield Layer with linear requirements [1], with QFLRA requirements [4], or with propositional requirements [2]; and the Memory-efficient Loss with propositional requirements [5], in addition to LTN [6].
 
 ## :memo: References
 
