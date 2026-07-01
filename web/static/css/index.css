@@ -196,6 +196,22 @@ body .container {
   font-weight: 600;
 }
 
+/* Authorship & maintenance — compact inline icon links after each name */
+.inline-links {
+  white-space: nowrap;
+}
+.inline-links a {
+  margin: 0 0.12rem;
+  color: #7a7a7a;
+  font-size: 0.9rem;
+}
+.inline-links a:hover {
+  color: #1f9e8f;
+}
+.authorship ul > li {
+  margin-bottom: 0.5rem;
+}
+
 /* Team */
 .team-links a {
   font-size: 1.25rem;

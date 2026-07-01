@@ -19,7 +19,7 @@
   + [1. Autonomous Driving](#1-autonomous-driving)
   + [2. Tabular Data Generation](#2-tabular-data-generation)
   + [3. Functional Genomics](#3-functional-genomics)
-* [Team](#team)
+* [Authorship and maintenance](#authorship-and-maintenance)
 * :memo: [References](#memo-references)
 
 
@@ -246,18 +246,17 @@ As we can see, the models **Shield layers** outperform their standard counterpar
 *Note: All baselines for the functional genomics scenario have a postprocessing step included, as functional genomics tasks always require that the constraints are satisfied.
 
 
-## Team
-
-Mihaela Catalina Stoian [[GitHub]](https://github.com/mihaela-stoian)[[LinkedIn]](https://www.linkedin.com/in/mihaela-catalina-stoian-919b27bb/)[[Google Scholar]](https://scholar.google.com.co/citations?user=B_48apwAAAAJ&hl=en)\
-Alex Tatomir [[GitHub]](https://github.com/atatomir)[[LinkedIn]](https://www.linkedin.com/in/atatomir/)[[Google Scholar]](https://scholar.google.com/citations?user=DrGgfBwAAAAJ)\
-Salijona Dyrmishi [[Website]](https://salijona.github.io/)[[LinkedIn]](https://www.linkedin.com/in/salijona-dyrmishi-09089385)[[Google Scholar]](https://scholar.google.com/citations?user=nHDj8SIAAAAJ)\
-Maxime Cordy [[Website]](https://maxcordy.github.io/)[[GitHub]](https://github.com/serval-uni-lu)[[LinkedIn]](https://www.linkedin.com/in/maxime-cordy-7a523569/)[[Google Scholar]](https://scholar.google.com/citations?user=sRXHjkIAAAAJ&hl=en)\
-Thomas Lukasiewicz [[Google Scholar]](https://scholar.google.co.uk/citations?user=arjucpEAAAAJ&hl=en)\
-Eleonora Giunchiglia [[GitHub]](https://github.com/EGiunchiglia)[[LinkedIn]](https://www.linkedin.com/in/eleonora-giunchiglia-3063b5164/)[[Google Scholar]](https://scholar.google.com/citations?user=HAgGqScAAAAJ&hl=it)
-
 ## Authorship and maintenance
 
-PiShield was originally designed and built by Mihaela Cătălina Stoian during her DPhil at the University of Oxford, and she maintains the package. Alex Tatomir contributed to the Shield Layer for propositional constraints. The other team members are co-authors of the papers that PiShield builds on, and this package would not have been possible without them.
+- Created by **Mihaela Cătălina Stoian** [[Homepage]](https://mihaela-stoian.github.io/)[[GitHub]](https://github.com/mihaela-stoian)[[LinkedIn]](https://www.linkedin.com/in/mihaela-catalina-stoian-919b27bb/)[[Google Scholar]](https://scholar.google.com.co/citations?user=B_48apwAAAAJ&hl=en) in 2024, during her DPhil at the University of Oxford.
+- Maintained solely by **Mihaela C. Stoian** since its creation and, since October 2025, as a Research Associate in the [Data, Uncertainty, Constraints and Knowledge (DUCK) Lab](https://the-duck-lab.github.io/) at Imperial College London.
+- The Shield Layer for propositional constraints was developed by **Mihaela C. Stoian** and **Alex Tatomir**.
+- Based on papers written with the following collaborators, without whom this package would not have been possible:
+  - Eleonora Giunchiglia [[Homepage]](https://the-duck-lab.github.io/members/Eleonora_Giunchiglia.html)[[GitHub]](https://github.com/EGiunchiglia)[[LinkedIn]](https://www.linkedin.com/in/eleonora-giunchiglia-3063b5164/)[[Google Scholar]](https://scholar.google.com/citations?user=HAgGqScAAAAJ&hl=it)
+  - Alex Tatomir [[GitHub]](https://github.com/atatomir)[[LinkedIn]](https://www.linkedin.com/in/atatomir/)[[Google Scholar]](https://scholar.google.com/citations?user=DrGgfBwAAAAJ)
+  - Salijona Dyrmishi [[Homepage]](https://salijona.github.io/)[[LinkedIn]](https://www.linkedin.com/in/salijona-dyrmishi-09089385)[[Google Scholar]](https://scholar.google.com/citations?user=nHDj8SIAAAAJ)
+  - Maxime Cordy [[Homepage]](https://maxcordy.github.io/)[[GitHub]](https://github.com/serval-uni-lu)[[LinkedIn]](https://www.linkedin.com/in/maxime-cordy-7a523569/)[[Google Scholar]](https://scholar.google.com/citations?user=sRXHjkIAAAAJ&hl=en)
+  - Thomas Lukasiewicz [[Google Scholar]](https://scholar.google.co.uk/citations?user=arjucpEAAAAJ&hl=en)
 
 ## Citing PiShield
 
