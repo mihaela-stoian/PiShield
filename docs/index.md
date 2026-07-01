@@ -18,8 +18,9 @@ PiShield exposes two main building blocks:
   outputs so they are *guaranteed* to satisfy the requirements. Use it at
   inference and/or training time.
 - **[`build_shield_loss`](api/core.md#pishield.shield_loss.build_shield_loss)**
-  builds a **Shield Loss**: an additional loss term that *encourages* (but does
-  not guarantee) requirement satisfaction at training time, using t-norms.
+  builds the **Memory-efficient Loss**: an additional loss term that *encourages*
+  (but does not guarantee) requirement satisfaction at training time, using
+  t-norms. It is a memory-efficient reimplementation of Logic Tensor Networks (LTN).
 
 ## Supported requirement types
 

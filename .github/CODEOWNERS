@@ -1,0 +1,6 @@
+# Code owners for PiShield.
+#
+# The owner listed here is automatically requested for review on pull requests.
+
+# Everything in the repo is owned by the maintainer.
+*  @mihaela-stoian

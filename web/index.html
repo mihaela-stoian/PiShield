@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PiShield — A NeSy Framework for Learning with Requirements</title>
+  <meta name="description" content="PiShield is a neuro-symbolic framework that integrates logical requirements directly into a neural network's topology, producing models guaranteed to satisfy the requirements.">
+
+  <!-- Bulma + icon fonts (Nerfies-style academic page) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+</head>
+<body>
+
+<!-- ===================== NAVBAR (clickable tabs) ===================== -->
+<nav class="navbar is-fixed-top is-spaced" role="navigation" aria-label="main navigation">
+  <div class="container">
+    <div class="navbar-brand">
+      <a class="navbar-item brand-logo" href="#home">
+        <img src="static/images/logo.png" alt="PiShield">
+      </a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="mainNavbar">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div id="mainNavbar" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item is-tab" href="#home">Home</a>
+        <a class="navbar-item is-tab" href="#papers">Papers</a>
+        <a class="navbar-item is-tab" href="#features">Features</a>
+        <a class="navbar-item is-tab" href="#examples">Examples</a>
+        <a class="navbar-item is-tab" href="#performance">Performance</a>
+        <a class="navbar-item is-tab" href="docs/">Documentation</a>
+        <a class="navbar-item is-tab" href="#authorship">Authorship</a>
+        <a class="navbar-item" href="https://github.com/mihaela-stoian/PiShield" target="_blank" rel="noopener">
+          <span class="icon"><i class="fab fa-github"></i></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===================== HERO / HOME ===================== -->
+<section id="home" class="hero is-medium hero-light">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <figure class="image hero-logo">
+        <img src="static/images/logo.png" alt="PiShield">
+      </figure>
+      <h2 class="subtitle is-4 has-text-grey-dark mt-4">
+        A PyTorch Package for Learning with Requirements
+      </h2>
+
+      <!-- Action buttons -->
+      <div class="buttons is-centered mt-5">
+        <a class="button is-rounded is-dark" href="https://github.com/mihaela-stoian/PiShield" target="_blank" rel="noopener">
+          <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+        </a>
+        <a class="button is-rounded is-dark" href="docs/">
+          <span class="icon"><i class="fas fa-book"></i></span><span>Documentation</span>
+        </a>
+        <a class="button is-rounded is-dark" href="https://colab.research.google.com/github/mihaela-stoian/PiShield/blob/main/examples/general_usage/PiShield_quickstart.ipynb" target="_blank" rel="noopener">
+          <span class="icon"><i class="fas fa-rocket"></i></span><span>Run on Colab</span>
+        </a>
+        <a class="button is-rounded is-dark" href="https://arxiv.org/abs/2402.18285" target="_blank" rel="noopener">
+          <span class="icon"><i class="ai ai-arxiv"></i></span><span>Paper</span>
+        </a>
+      </div>
+
+      <p class="is-size-7 mt-2">
+        <code class="install-snippet">pip install pishield</code>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== OVERVIEW ===================== -->
+<section class="section">
+  <div class="container">
+    <div class="columns is-vcentered">
+      <div class="column is-6">
+        <h2 class="title is-3">What is PiShield?</h2>
+        <p class="content is-medium">
+          PiShield is the <strong>first framework</strong> ever allowing for the integration of
+          requirements directly into a neural network's <strong>topology</strong>.
+        </p>
+        <p class="content">
+          <span class="icon has-text-success"><i class="fas fa-check"></i></span>
+          The integration happens in a straightforward and efficient manner, producing deep learning
+          models that are <strong>guaranteed to be compliant</strong> with the given requirements —
+          no matter the input.
+        </p>
+        <p class="content">
+          <span class="icon has-text-success"><i class="fas fa-pencil"></i></span>
+          Requirements can be integrated at <strong>inference</strong> and/or <strong>training</strong>
+          time, depending on the practitioners' needs.
+        </p>
+      </div>
+      <div class="column is-6 has-text-centered">
+        <img class="overview-img" src="static/images/overview.png" alt="Overview of PiShield">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAPERS ===================== -->
+<section id="papers" class="section">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Built on our research</h2>
+    <p class="subtitle is-6 has-text-centered has-text-grey">
+      PiShield brings together the methods we proposed across several papers — each one contributing
+      to the codebase. <span class="has-text-grey-light">(Hover a card to see how it contributes.)</span>
+    </p>
+
+    <div class="columns is-multiline mt-4">
+
+      <!-- [4] ICLR 2025 -->
+      <div class="column is-6">
+        <div class="flip-card">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <span class="tag is-primary is-light paper-venue">ICLR 2025</span>
+              <p class="paper-title">Beyond the Convexity Assumption: Realistic Tabular Data Generation under Quantifier-Free Real Linear Constraints</p>
+            </div>
+            <div class="flip-card-back">
+              <p class="paper-authors">M. C. Stoian, E. Giunchiglia</p>
+              <p class="paper-contrib">Allows for integrating <strong>QFLRA</strong> requirements (quantifier-free linear real arithmetic) via a Shield Layer, capturing nonconvex and even disconnected spaces.</p>
+              <a class="button is-small is-rounded is-dark mt-2" href="https://arxiv.org/abs/2502.18237" target="_blank" rel="noopener">
+                <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- [1] ICLR 2024 -->
+      <div class="column is-6">
+        <div class="flip-card">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <span class="tag is-primary is-light paper-venue">ICLR 2024</span>
+              <p class="paper-title">How Realistic Is Your Synthetic Data? Constraining Deep Generative Models for Tabular Data</p>
+            </div>
+            <div class="flip-card-back">
+              <p class="paper-authors">M. C. Stoian, S. Dyrmishi, M. Cordy, T. Lukasiewicz, E. Giunchiglia</p>
+              <p class="paper-contrib">Introduces <strong>linear</strong> inequality requirements and the Shield Layer for tabular data generation.</p>
+              <a class="button is-small is-rounded is-dark mt-2" href="https://arxiv.org/abs/2402.04823" target="_blank" rel="noopener">
+                <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- [2] IJAR 2024 -->
+      <div class="column is-6">
+        <div class="flip-card">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <span class="tag is-primary is-light paper-venue">IJAR 2024</span>
+              <p class="paper-title">CCN+: A Neuro-Symbolic Framework for Deep Learning with Requirements</p>
+            </div>
+            <div class="flip-card-back">
+              <p class="paper-authors">E. Giunchiglia, A. Tatomir, M. C. Stoian, T. Lukasiewicz</p>
+              <p class="paper-contrib">Allows for integrating <strong>propositional</strong> requirements via a Shield Layer.</p>
+              <a class="button is-small is-rounded is-dark mt-2" href="https://doi.org/10.1016/j.ijar.2024.109124" target="_blank" rel="noopener">
+                <span class="icon"><i class="fas fa-file-lines"></i></span><span>Paper</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- [3] NeurIPS 2020 -->
+      <div class="column is-6">
+        <div class="flip-card">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <span class="tag is-primary is-light paper-venue">NeurIPS 2020</span>
+              <p class="paper-title">Coherent Hierarchical Multi-Label Classification Networks</p>
+            </div>
+            <div class="flip-card-back">
+              <p class="paper-authors">E. Giunchiglia, T. Lukasiewicz</p>
+              <p class="paper-contrib">The original constraint layer for <strong>hierarchical</strong> multi-label classification.</p>
+              <a class="button is-small is-rounded is-dark mt-2" href="https://arxiv.org/abs/2010.10151" target="_blank" rel="noopener">
+                <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FEATURES ===================== -->
+<section id="features" class="section has-background-light">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="box feature-box has-text-centered">
+          <span class="icon is-large has-text-primary"><i class="fas fa-shield-halved fa-2x"></i></span>
+          <h3 class="title is-4 mt-3 mb-5">Shield Layer</h3>
+          <p class="subtitle is-5 has-text-grey mb-6">One layer, three requirement types</p>
+          <p class="content">
+            A differentiable layer that <strong>corrects</strong> a model's outputs so they are
+            <em>guaranteed</em> to satisfy the requirements. Usable at both inference and training time.
+          </p>
+          <pre class="mt-3 has-text-left"><code>from pishield.shield_layer import build_shield_layer
+layer = build_shield_layer(num_variables, "reqs.txt")
+corrected = layer(predictions)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="elbow-connector is-hidden-mobile">
+      <span class="trunk"></span>
+      <span class="bus"></span>
+      <span class="drop drop-1"></span>
+      <span class="drop drop-2"></span>
+      <span class="drop drop-3"></span>
+      <span class="head head-1"></span>
+      <span class="head head-2"></span>
+      <span class="head head-3"></span>
+    </div>
+
+    <div class="columns mt-4">
+      <div class="column">
+        <div class="box req-box has-text-centered">
+          <h3 class="title is-6">Linear</h3>
+          <p class="is-size-7">Linear inequality constraints over real variables.</p>
+          <code class="is-size-7">y_0 - y_1 &gt;= 0</code>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box req-box has-text-centered">
+          <h3 class="title is-6">QFLRA</h3>
+          <p class="is-size-7">Quantifier-free linear real arithmetic: disjunctions and negations of inequalities.</p>
+          <code class="is-size-7">y1 - 2y2 &gt; 0 or neg y3 &gt;= 0</code>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box req-box has-text-centered">
+          <h3 class="title is-6">Propositional</h3>
+          <p class="is-size-7">Boolean constraints as Horn rules or disjunctive clauses.</p>
+          <code class="is-size-7">y_0 or not y_1 or y_2</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered mt-5">
+      <div class="column is-8">
+        <div class="box loss-box has-text-centered">
+          <span class="icon is-large has-text-primary"><i class="fas fa-microchip fa-2x"></i></span>
+          <h3 class="title is-4 mt-3 mb-5">Memory-efficient Loss</h3>
+          <p class="subtitle is-5 has-text-grey mb-6">One loss, three t-norms</p>
+          <p class="content">
+            A <strong>memory-efficient reimplementation of LTN</strong> (Logic Tensor Networks) that
+            <strong>encourages</strong> requirement satisfaction at training time. Pick whichever of the
+            three t-norms — <strong>Godel</strong>, <strong>Product</strong>, or <strong>Lukasiewicz</strong> —
+            best fits your task.
+          </p>
+          <pre class="mt-3 has-text-left"><code>from pishield.shield_loss import build_shield_loss
+loss_fn = build_shield_loss(num_variables, "reqs.txt", tnorm_choice="godel")
+penalty = loss_fn(preds)</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXAMPLES ===================== -->
+<section id="examples" class="section">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Examples</h2>
+    <p class="subtitle is-6 has-text-centered has-text-grey">
+      Try all three examples in one click — no local setup required.
+    </p>
+
+    <div class="has-text-centered mb-5">
+      <a href="https://colab.research.google.com/github/mihaela-stoian/PiShield/blob/main/examples/general_usage/PiShield_quickstart.ipynb" target="_blank" rel="noopener">
+        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" style="height: 28px;">
+      </a>
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        <div class="box example-box">
+          <h3 class="title is-6"><span class="icon has-text-primary"><i class="fas fa-bolt"></i></span> Shield Layer — Inference</h3>
+          <p class="is-size-7">Correct a network's predictions so they satisfy the requirements.</p>
+          <a class="is-size-7" href="https://github.com/mihaela-stoian/PiShield/blob/main/examples/general_usage/shield_layer_inference.ipynb" target="_blank" rel="noopener">shield_layer_inference.ipynb →</a>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box example-box">
+          <h3 class="title is-6"><span class="icon has-text-primary"><i class="fas fa-dumbbell"></i></span> Shield Layer — Training</h3>
+          <p class="is-size-7">Train a model with a Shield Layer and compare against an unconstrained baseline.</p>
+          <a class="is-size-7" href="https://github.com/mihaela-stoian/PiShield/blob/main/examples/general_usage/shield_layer_training.ipynb" target="_blank" rel="noopener">shield_layer_training.ipynb →</a>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box example-box">
+          <h3 class="title is-6"><span class="icon has-text-primary"><i class="fas fa-arrow-trend-down"></i></span> Memory-efficient Loss</h3>
+          <p class="is-size-7">Encourage requirement satisfaction at training time with a t-norm penalty.</p>
+          <a class="is-size-7" href="https://github.com/mihaela-stoian/PiShield/blob/main/examples/general_usage/shield_loss.ipynb" target="_blank" rel="noopener">shield_loss.ipynb →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="has-text-centered mt-5">
+      <a class="button is-rounded read-docs-btn" href="docs/">
+        <span class="icon"><i class="fas fa-book"></i></span><span>Read the full documentation</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PERFORMANCE ===================== -->
+<section id="performance" class="section has-background-light">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered mb-6">Performance</h2>
+    <p class="subtitle is-6 has-text-centered has-text-grey">
+      Across three domains, models with <strong>Shield Layers</strong> outperform their standard counterparts.
+    </p>
+
+    <div class="columns">
+      <!-- Autonomous Driving -->
+      <div class="column is-6">
+        <div class="box perf-box">
+        <h3 class="title is-5 has-text-centered">Autonomous Driving</h3>
+        <p class="is-size-7 has-text-grey has-text-centered mb-3">f-mAP @ IoU 0.5 [2]</p>
+        <table class="table is-fullwidth is-narrow is-striped is-size-7">
+          <thead><tr><th>Model</th><th>Baseline</th><th>Shielded</th></tr></thead>
+          <tbody>
+            <tr><td>I3D</td><td>29.30</td><td class="win">30.98</td></tr>
+            <tr><td>C2D</td><td>26.34</td><td class="win">27.93</td></tr>
+            <tr><td>RCN</td><td>29.26</td><td class="win">30.02</td></tr>
+            <tr><td>RCGRU</td><td>29.24</td><td class="win">30.50</td></tr>
+            <tr><td>RCLSTM</td><td>28.93</td><td class="win">30.42</td></tr>
+            <tr><td>SlowFast</td><td>29.73</td><td class="win">31.88</td></tr>
+            <tr class="avg-row"><td>Average</td><td>28.80</td><td class="win">30.29</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <!-- Tabular -->
+      <div class="column is-6">
+        <div class="box perf-box">
+        <h3 class="title is-5 has-text-centered">Tabular Data Generation</h3>
+        <p class="is-size-7 has-text-grey has-text-centered mb-3">Averages over 5 models [1]</p>
+        <table class="table is-fullwidth is-narrow is-striped is-size-7">
+          <thead><tr><th></th><th>Utility ↑</th><th>Detection ↓</th></tr></thead>
+          <tbody>
+            <tr><td>Baseline (F1)</td><td>0.430</td><td>0.910</td></tr>
+            <tr class="avg-row"><td>Shielded (F1)</td><td class="win">0.458</td><td class="win">0.900</td></tr>
+            <tr><td>Baseline (wF1)</td><td>0.464</td><td>0.909</td></tr>
+            <tr class="avg-row"><td>Shielded (wF1)</td><td class="win">0.487</td><td class="win">0.896</td></tr>
+            <tr><td>Baseline (AUC)</td><td>0.719</td><td>0.927</td></tr>
+            <tr class="avg-row"><td>Shielded (AUC)</td><td class="win">0.734</td><td class="win">0.921</td></tr>
+          </tbody>
+        </table>
+        <p class="is-size-7 has-text-grey has-text-centered">Wins in 28/30 cases.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <!-- Genomics -->
+      <div class="column is-5">
+        <div class="box perf-box">
+        <h3 class="title is-5 has-text-centered">Functional Genomics</h3>
+        <p class="is-size-7 has-text-grey has-text-centered mb-3">AU(PRC) [3]</p>
+        <table class="table is-fullwidth is-narrow is-striped is-size-7">
+          <thead><tr><th>Dataset</th><th>Baseline</th><th>PiShield</th></tr></thead>
+          <tbody>
+            <tr><td>CELLCYCLE</td><td>0.220</td><td class="win">0.232</td></tr>
+            <tr><td>DERISI</td><td>0.179</td><td class="win">0.182</td></tr>
+            <tr><td>EISEN</td><td>0.262</td><td class="win">0.285</td></tr>
+            <tr><td>EXPRE</td><td>0.246</td><td class="win">0.270</td></tr>
+            <tr><td>GASCH1</td><td>0.239</td><td class="win">0.261</td></tr>
+            <tr><td>GASCH2</td><td>0.221</td><td class="win">0.235</td></tr>
+            <tr><td>SEQ</td><td>0.245</td><td class="win">0.274</td></tr>
+            <tr><td>SPO</td><td>0.186</td><td class="win">0.190</td></tr>
+            <tr class="avg-row"><td>Average</td><td>0.225</td><td class="win">0.241</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TEAM ===================== -->
+<section id="authorship" class="section">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered mb-6">Authorship &amp; maintenance</h2>
+    <div class="columns is-centered">
+      <div class="column is-10">
+        <div class="content is-medium authorship">
+          <ul>
+            <li>
+              Created by <strong>Mihaela Cătălina Stoian</strong>
+              <span class="inline-links">
+                <a href="https://mihaela-stoian.github.io/" target="_blank" rel="noopener" title="Website"><i class="fas fa-globe"></i></a>
+                <a href="https://github.com/mihaela-stoian" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/mihaela-catalina-stoian-919b27bb/" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+                <a href="https://scholar.google.com.co/citations?user=B_48apwAAAAJ&hl=en" target="_blank" rel="noopener"><i class="ai ai-google-scholar"></i></a>
+              </span>
+              in 2024, during her DPhil at the University of Oxford.
+            </li>
+            <li>
+              Maintained solely by <strong>Mihaela C. Stoian</strong> since its creation and, since
+              October 2025, as a Research Associate in the
+              <a href="https://the-duck-lab.github.io/" target="_blank" rel="noopener">Data, Uncertainty, Constraints and Knowledge (DUCK) Lab</a>
+              at Imperial College London.
+            </li>
+            <li>
+              The Shield Layer for propositional constraints was developed by
+              <strong>Mihaela C. Stoian</strong> and <strong>Alex Tatomir</strong>.
+            </li>
+            <li>
+              Based on papers co-authored with the following collaborators, without whom this package
+              would not have been possible:
+              <ul>
+                <li>Eleonora Giunchiglia
+                  <span class="inline-links">
+                    <a href="https://the-duck-lab.github.io/members/Eleonora_Giunchiglia.html" target="_blank" rel="noopener" title="Website"><i class="fas fa-globe"></i></a>
+                    <a href="https://github.com/EGiunchiglia" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/eleonora-giunchiglia-3063b5164/" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://scholar.google.com/citations?user=HAgGqScAAAAJ&hl=it" target="_blank" rel="noopener"><i class="ai ai-google-scholar"></i></a>
+                  </span>
+                </li>
+                <li>Alex Tatomir
+                  <span class="inline-links">
+                    <a href="https://github.com/atatomir" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/atatomir/" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://scholar.google.com/citations?user=DrGgfBwAAAAJ" target="_blank" rel="noopener"><i class="ai ai-google-scholar"></i></a>
+                  </span>
+                </li>
+                <li>Salijona Dyrmishi
+                  <span class="inline-links">
+                    <a href="https://salijona.github.io/" target="_blank" rel="noopener" title="Website"><i class="fas fa-globe"></i></a>
+                    <a href="https://www.linkedin.com/in/salijona-dyrmishi-09089385" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://scholar.google.com/citations?user=nHDj8SIAAAAJ" target="_blank" rel="noopener"><i class="ai ai-google-scholar"></i></a>
+                  </span>
+                </li>
+                <li>Maxime Cordy
+                  <span class="inline-links">
+                    <a href="https://maxcordy.github.io/" target="_blank" rel="noopener" title="Website"><i class="fas fa-globe"></i></a>
+                    <a href="https://github.com/serval-uni-lu" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/maxime-cordy-7a523569/" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://scholar.google.com/citations?user=sRXHjkIAAAAJ&hl=en" target="_blank" rel="noopener"><i class="ai ai-google-scholar"></i></a>
+                  </span>
+                </li>
+                <li>Thomas Lukasiewicz
+                  <span class="inline-links">
+                    <a href="https://scholar.google.co.uk/citations?user=arjucpEAAAAJ&hl=en" target="_blank" rel="noopener"><i class="ai ai-google-scholar"></i></a>
+                  </span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== REFERENCES ===================== -->
+<section id="references" class="section has-background-light">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered mb-6">Citing PiShield</h2>
+
+    <p class="content">If you use PiShield, please cite:</p>
+    <div class="box cite-box">
+      <pre class="has-text-left is-size-7"><code>@inproceedings{ijcai2024p1037,
+  title     = {PiShield: A PyTorch Package for Learning with Requirements},
+  author    = {Stoian, Mihaela C. and Tatomir, Alex and Lukasiewicz, Thomas and Giunchiglia, Eleonora},
+  booktitle = {Proceedings of the Thirty-Third International Joint Conference on
+               Artificial Intelligence, {IJCAI-24}},
+  publisher = {International Joint Conferences on Artificial Intelligence Organization},
+  editor    = {Kate Larson},
+  pages     = {8805--8809},
+  year      = {2024},
+  month     = {8},
+  note      = {Demo Track},
+  doi       = {10.24963/ijcai.2024/1037},
+  url       = {https://doi.org/10.24963/ijcai.2024/1037},
+}</code></pre>
+    </div>
+
+    <p class="content mt-5">
+      Depending on which feature you use, please <strong>additionally</strong> cite:
+    </p>
+    <ul class="content feature-cites">
+      <li>Shield Layer with <strong>linear</strong> requirements — [1]</li>
+      <li>Shield Layer with <strong>QFLRA</strong> requirements — [4]</li>
+      <li>Shield Layer with <strong>propositional</strong> requirements — [2]</li>
+      <li>Memory-efficient Loss with <strong>propositional</strong> requirements — [5], in addition to LTN [6]</li>
+    </ul>
+
+    <h3 class="title is-5 mt-6">References</h3>
+    <div class="content references">
+      <p>[1] M. C. Stoian, S. Dyrmishi, M. Cordy, T. Lukasiewicz, E. Giunchiglia.
+        <a href="https://arxiv.org/abs/2402.04823" target="_blank" rel="noopener"><em>How Realistic Is Your Synthetic Data? Constraining Deep Generative Models for Tabular Data.</em></a>
+        ICLR, 2024.</p>
+      <p>[2] E. Giunchiglia, A. Tatomir, M. C. Stoian, T. Lukasiewicz.
+        <a href="https://doi.org/10.1016/j.ijar.2024.109124" target="_blank" rel="noopener"><em>CCN+: A neuro-symbolic framework for deep learning with requirements.</em></a>
+        International Journal of Approximate Reasoning, 2024.</p>
+      <p>[3] E. Giunchiglia, T. Lukasiewicz.
+        <a href="https://arxiv.org/abs/2010.10151" target="_blank" rel="noopener"><em>Coherent Hierarchical Multi-Label Classification Networks.</em></a>
+        NeurIPS, 2020.</p>
+      <p>[4] M. C. Stoian, E. Giunchiglia.
+        <a href="https://arxiv.org/abs/2502.18237" target="_blank" rel="noopener"><em>Beyond the Convexity Assumption: Realistic Tabular Data Generation under Quantifier-Free Real Linear Constraints.</em></a>
+        ICLR, 2025.</p>
+      <p>[5] M. C. Stoian, E. Giunchiglia, T. Lukasiewicz.
+        <a href="https://arxiv.org/abs/2402.11362" target="_blank" rel="noopener"><em>Exploiting T-norms for Deep Learning in Autonomous Driving.</em></a>
+        NeSy, 2023.</p>
+      <p>[6] S. Badreddine, A. d'Avila Garcez, L. Serafini, M. Spranger.
+        <a href="https://arxiv.org/abs/2012.13635" target="_blank" rel="noopener"><em>Logic Tensor Networks.</em></a>
+        Artificial Intelligence, 303, 2022.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="content has-text-centered">
+    <p>
+      <a href="https://github.com/mihaela-stoian/PiShield" target="_blank" rel="noopener">PiShield on GitHub</a> ·
+      <a href="docs/">Documentation</a>
+    </p>
+    <p class="is-size-7 has-text-grey">
+      Website template adapted from the
+      <a href="https://github.com/nerfies/nerfies.github.io" target="_blank" rel="noopener">Nerfies</a>
+      academic project page, licensed under
+      <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.
+    </p>
+  </div>
+</footer>
+
+<!-- Navbar burger toggle for mobile -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const burger = document.querySelector('.navbar-burger');
+    const menu = document.getElementById(burger.dataset.target);
+    burger.addEventListener('click', () => {
+      burger.classList.toggle('is-active');
+      menu.classList.toggle('is-active');
+    });
+    // Close mobile menu after clicking a tab
+    menu.querySelectorAll('a.navbar-item').forEach(item => {
+      item.addEventListener('click', () => {
+        burger.classList.remove('is-active');
+        menu.classList.remove('is-active');
+      });
+    });
+
+    // Tap-to-flip the paper cards on touch devices (no hover available)
+    if (window.matchMedia('(hover: none)').matches) {
+      document.querySelectorAll('.flip-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('a')) return; // let links on the back work normally
+          card.classList.toggle('is-flipped');
+        });
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

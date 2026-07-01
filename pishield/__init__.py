@@ -9,9 +9,10 @@ The two main entry points are:
 - :func:`pishield.shield_layer.build_shield_layer` -- builds a **Shield Layer**,
   a differentiable layer that *corrects* a model's outputs so that they are
   guaranteed to satisfy the requirements. Usable at inference and training time.
-- :func:`pishield.shield_loss.build_shield_loss` -- builds a **Shield Loss**, an
-  additional loss term that *encourages* requirement satisfaction at training
-  time via t-norms.
+- :func:`pishield.shield_loss.build_shield_loss` -- builds the **Memory-efficient
+  Loss**, an additional loss term that *encourages* requirement satisfaction at
+  training time via t-norms. It is a memory-efficient reimplementation of Logic
+  Tensor Networks (LTN).
 
 Three requirement types are supported: ``linear`` (linear arithmetic
 inequalities), ``qflra`` (quantifier-free linear real arithmetic), and

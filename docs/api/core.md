@@ -1,4 +1,4 @@
-# Shield Layer & Shield Loss
+# Shield Layer & Memory-efficient Loss
 
 The two top-level entry points of PiShield.
 

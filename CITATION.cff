@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use PiShield, please cite the following paper."
+title: "PiShield: A PyTorch Package for Learning with Requirements"
+authors:
+  - family-names: Stoian
+    given-names: "Mihaela Cătălina"
+  - family-names: Tatomir
+    given-names: Alex
+  - family-names: Lukasiewicz
+    given-names: Thomas
+  - family-names: Giunchiglia
+    given-names: Eleonora
+repository-code: "https://github.com/mihaela-stoian/PiShield"
+license: Apache-2.0
+preferred-citation:
+  type: conference-paper
+  title: "PiShield: A PyTorch Package for Learning with Requirements"
+  authors:
+    - family-names: Stoian
+      given-names: "Mihaela Cătălina"
+    - family-names: Tatomir
+      given-names: Alex
+    - family-names: Lukasiewicz
+      given-names: Thomas
+    - family-names: Giunchiglia
+      given-names: Eleonora
+  collection-title: "Proceedings of the Thirty-Third International Joint Conference on Artificial Intelligence, IJCAI-24"
+  publisher:
+    name: "International Joint Conferences on Artificial Intelligence Organization"
+  editors:
+    - family-names: Larson
+      given-names: Kate
+  year: 2024
+  month: 8
+  start: 8805
+  end: 8809
+  doi: "10.24963/ijcai.2024/1037"
+  url: "https://doi.org/10.24963/ijcai.2024/1037"
+  notes: "Demo Track"

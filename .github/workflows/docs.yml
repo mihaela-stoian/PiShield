@@ -31,18 +31,27 @@ jobs:
           # Install the package so mkdocstrings can import it for the API reference.
           pip install -e .
       - name: Build site
-        # We do not use `--strict` because this codebase is intentionally not
-        # fully type-annotated, which makes griffe emit hundreds of benign
-        # "No type or annotation for parameter/return" warnings. Instead we fail
-        # the build on any *other* warning or error (broken links, bad
-        # cross-references, import failures).
+        # The published site has two parts:
+        #   * the static landing page (web/) served at the root
+        #   * the MkDocs API documentation served under /docs/
+        #
+        # We do not use `mkdocs build --strict` because this codebase is
+        # intentionally not fully type-annotated, which makes griffe emit
+        # hundreds of benign "No type or annotation for parameter/return"
+        # warnings. Instead we fail the build on any *other* warning or error
+        # (broken links, bad cross-references, import failures).
         run: |
           set -o pipefail
-          mkdocs build --site-dir _site 2>&1 | tee build.log
+          # 1. Landing page at the root of the published site.
+          mkdir -p _site
+          cp -r web/. _site/
+          # 2. MkDocs API docs under /docs/.
+          mkdocs build --site-dir _site/docs 2>&1 | tee build.log
           if grep -E "WARNING|ERROR" build.log | grep -vE "No type or annotation" | grep -q .; then
             echo "::error::Unexpected documentation warnings (see above)"
             exit 1
           fi
+          rm -f build.log
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

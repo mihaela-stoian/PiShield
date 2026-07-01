@@ -1,6 +1,6 @@
 site_name: PiShield
 site_description: A NeSy Framework for Learning with Requirements
-site_url: https://mihaela-stoian.github.io/PiShield/
+site_url: https://mihaela-stoian.github.io/PiShield/docs/
 repo_url: https://github.com/mihaela-stoian/PiShield
 repo_name: mihaela-stoian/PiShield
 edit_uri: edit/main/docs/
@@ -62,9 +62,10 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - "← PiShield site": https://mihaela-stoian.github.io/PiShield/
   - API Reference:
       - Overview: api/index.md
-      - Shield Layer & Shield Loss: api/core.md
+      - Shield Layer & Memory-efficient Loss: api/core.md
       - Linear requirements: api/linear.md
       - QFLRA requirements: api/qflra.md
       - Propositional requirements: api/propositional.md

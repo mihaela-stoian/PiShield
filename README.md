@@ -1,4 +1,8 @@
-# PiShield: A NeSy Framework for Learning with Requirements
+<p align="center">
+  <img src="./extra/logo.png" alt="PiShield" width="440"/>
+  <br/>
+  <sub><i>A PyTorch Package for Learning with Requirements</i></sub>
+</p>
 
 
 * :sparkles: [Description](#sparkles-description)
@@ -9,17 +13,17 @@
     - [Supported requirement types](#supported-requirement-types)
     - [Inference time: Shield Layer](#inference-time-shield-layer)
     - [Training time: Shield Layer](#training-time-shield-layer)
-    - [Training time: Shield Loss](#training-time-shield-loss)
+    - [Training time: Memory-efficient Loss](#training-time-memory-efficient-loss)
 * :arrow_forward: [Demo video](#arrow_forward-demo-video)
 * :fire: [Performance](#fire-performance)
   + [1. Autonomous Driving](#1-autonomous-driving)
   + [2. Tabular Data Generation](#2-tabular-data-generation)
   + [3. Functional Genomics](#3-functional-genomics)
-* [Team](#team)
+* [Authorship and maintenance](#authorship-and-maintenance)
 * :memo: [References](#memo-references)
 
 
-**Update**: DRL [4] is now part of PiShield's main branch! PiShield now natively supports **QFLRA** (quantifier-free linear real arithmetic) requirements, in addition to the **linear** and **propositional** requirements previously supported. The framework also ships with a **Shield Loss** to encourage requirement satisfaction at training time via t-norms.
+**Update**: DRL [4] is now part of PiShield's main branch! PiShield now natively supports **QFLRA** (quantifier-free linear real arithmetic) requirements, in addition to the **linear** and **propositional** requirements previously supported. The framework also ships with a **Memory-efficient Loss** (a memory-efficient reimplementation of Logic Tensor Networks, LTN) to encourage requirement satisfaction at training time via t-norms.
 
 ## :sparkles: Description
 
@@ -55,7 +59,7 @@ pip install .
 
 PiShield exposes two main entry points:
 - `build_shield_layer` (from `pishield.shield_layer`) builds a **Shield Layer**, a differentiable layer that corrects a model's outputs so that they are *guaranteed* to satisfy the given requirements. It can be used both at inference time and at training time.
-- `build_shield_loss` (from `pishield.shield_loss`) builds a **Shield Loss**, an additional loss term that *encourages* (but does not guarantee) requirement satisfaction at training time, using t-norms.
+- `build_shield_loss` (from `pishield.shield_loss`) builds the **Memory-efficient Loss**, an additional loss term that *encourages* (but does not guarantee) requirement satisfaction at training time, using t-norms. It is a memory-efficient reimplementation of Logic Tensor Networks (LTN).
 
 > :rocket: **Runnable examples.** Try all three examples in one click, with no local setup:
 > [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mihaela-stoian/PiShield/blob/main/examples/general_usage/PiShield_quickstart.ipynb)
@@ -63,7 +67,7 @@ PiShield exposes two main entry points:
 > The [`PiShield_quickstart.ipynb`](examples/general_usage/PiShield_quickstart.ipynb) notebook bundles the three examples below and installs PiShield automatically on Colab. The [`examples/general_usage`](examples/general_usage) folder also contains them as standalone notebooks that run end-to-end with no external downloads:
 > - [`shield_layer_inference.ipynb`](examples/general_usage/shield_layer_inference.ipynb) — correct a network's predictions with a Shield Layer.
 > - [`shield_layer_training.ipynb`](examples/general_usage/shield_layer_training.ipynb) — train a model with a Shield Layer (and compare against an unconstrained baseline).
-> - [`shield_loss.ipynb`](examples/general_usage/shield_loss.ipynb) — encourage requirement satisfaction with a Shield Loss.
+> - [`shield_loss.ipynb`](examples/general_usage/shield_loss.ipynb) — encourage requirement satisfaction with the Memory-efficient Loss.
 
 ### Supported requirement types
 
@@ -138,10 +142,10 @@ Using the Shield Layer at training time is easy, as it requires two steps:
 
 Because the Shield Layer is differentiable, gradients flow back through the correction, so the model learns to produce outputs that satisfy the requirements.
 
-### Training time: Shield Loss
-As an alternative (or complement) to the Shield Layer, PiShield provides a **Shield Loss** for **propositional** requirements. Instead of correcting the outputs, it adds a penalty term computed via a t-norm (`godel`, `product` or `lukasiewicz`) that pushes the model towards satisfying the requirements.
+### Training time: Memory-efficient Loss
+As an alternative (or complement) to the Shield Layer, PiShield provides a **Memory-efficient Loss** for **propositional** requirements — a memory-efficient reimplementation of Logic Tensor Networks (LTN). Instead of correcting the outputs, it adds a penalty term computed via a t-norm (`godel`, `product` or `lukasiewicz`) that pushes the model towards satisfying the requirements.
 
-The Shield Loss expects requirements in the Horn-rule format `<id> <head> :- <body>`, where `<id>` is a constraint identifier, and the head and body literals are variable indices (with an `n` prefix denoting negation). For example, a file `example_requirements.txt`:
+The Memory-efficient Loss expects requirements in the Horn-rule format `<id> <head> :- <body>`, where `<id>` is a constraint identifier, and the head and body literals are variable indices (with an `n` prefix denoting negation). For example, a file `example_requirements.txt`:
 ```
 c0 0 :- 1 n2
 c1 1 :- 0
@@ -242,12 +246,40 @@ As we can see, the models **Shield layers** outperform their standard counterpar
 *Note: All baselines for the functional genomics scenario have a postprocessing step included, as functional genomics tasks always require that the constraints are satisfied.
 
 
-## Team
+## Authorship and maintenance
 
-Mihaela Catalina Stoian [[GitHub]](https://github.com/mihaela-stoian)[[LinkedIn]](https://www.linkedin.com/in/mihaela-catalina-stoian-919b27bb/)[[Google Scholar]](https://scholar.google.com.co/citations?user=B_48apwAAAAJ&hl=en)\
-Alex Tatomir [[GitHub]](https://github.com/atatomir)[[LinkedIn]](https://www.linkedin.com/in/atatomir/)[[Google Scholar]](https://scholar.google.com/citations?user=DrGgfBwAAAAJ)\
-Thomas Lukasiewicz [[Google Scholar]](https://scholar.google.co.uk/citations?user=arjucpEAAAAJ&hl=en)\
-Eleonora Giunchiglia [[GitHub]](https://github.com/EGiunchiglia)[[LinkedIn]](https://www.linkedin.com/in/eleonora-giunchiglia-3063b5164/)[[Google Scholar]](https://scholar.google.com/citations?user=HAgGqScAAAAJ&hl=it)
+- Created by **Mihaela Cătălina Stoian** [[Homepage]](https://mihaela-stoian.github.io/)[[GitHub]](https://github.com/mihaela-stoian)[[LinkedIn]](https://www.linkedin.com/in/mihaela-catalina-stoian-919b27bb/)[[Google Scholar]](https://scholar.google.com.co/citations?user=B_48apwAAAAJ&hl=en) in 2024, during her DPhil at the University of Oxford.
+- Maintained solely by **Mihaela C. Stoian** since its creation and, since October 2025, as a Research Associate in the [Data, Uncertainty, Constraints and Knowledge (DUCK) Lab](https://the-duck-lab.github.io/) at Imperial College London.
+- The Shield Layer for propositional constraints was developed by **Mihaela C. Stoian** and **Alex Tatomir**.
+- Based on papers written with the following collaborators, without whom this package would not have been possible:
+  - Eleonora Giunchiglia [[Homepage]](https://the-duck-lab.github.io/members/Eleonora_Giunchiglia.html)[[GitHub]](https://github.com/EGiunchiglia)[[LinkedIn]](https://www.linkedin.com/in/eleonora-giunchiglia-3063b5164/)[[Google Scholar]](https://scholar.google.com/citations?user=HAgGqScAAAAJ&hl=it)
+  - Alex Tatomir [[GitHub]](https://github.com/atatomir)[[LinkedIn]](https://www.linkedin.com/in/atatomir/)[[Google Scholar]](https://scholar.google.com/citations?user=DrGgfBwAAAAJ)
+  - Salijona Dyrmishi [[Homepage]](https://salijona.github.io/)[[LinkedIn]](https://www.linkedin.com/in/salijona-dyrmishi-09089385)[[Google Scholar]](https://scholar.google.com/citations?user=nHDj8SIAAAAJ)
+  - Maxime Cordy [[Homepage]](https://maxcordy.github.io/)[[GitHub]](https://github.com/serval-uni-lu)[[LinkedIn]](https://www.linkedin.com/in/maxime-cordy-7a523569/)[[Google Scholar]](https://scholar.google.com/citations?user=sRXHjkIAAAAJ&hl=en)
+  - Thomas Lukasiewicz [[Google Scholar]](https://scholar.google.co.uk/citations?user=arjucpEAAAAJ&hl=en)
+
+## Citing PiShield
+
+If you use PiShield, please cite:
+
+```bibtex
+@inproceedings{ijcai2024p1037,
+  title     = {PiShield: A PyTorch Package for Learning with Requirements},
+  author    = {Stoian, Mihaela C. and Tatomir, Alex and Lukasiewicz, Thomas and Giunchiglia, Eleonora},
+  booktitle = {Proceedings of the Thirty-Third International Joint Conference on
+               Artificial Intelligence, {IJCAI-24}},
+  publisher = {International Joint Conferences on Artificial Intelligence Organization},
+  editor    = {Kate Larson},
+  pages     = {8805--8809},
+  year      = {2024},
+  month     = {8},
+  note      = {Demo Track},
+  doi       = {10.24963/ijcai.2024/1037},
+  url       = {https://doi.org/10.24963/ijcai.2024/1037},
+}
+```
+
+Depending on which feature you use, please additionally cite: the Shield Layer with linear requirements [1], with QFLRA requirements [4], or with propositional requirements [2]; and the Memory-efficient Loss with propositional requirements [5] (in addition to LTN [6]).
 
 ## :memo: References
 
@@ -260,4 +292,8 @@ Conference on Learning Representations (ICLR), 2024.
 Information Processing Systems, 2020.
 
 [4] Mihaela Catalina Stoian and Eleonora Giunchiglia. Beyond the Convexity Assumption: Realistic Tabular Data Generation under Quantifier-Free Real Linear Constraints. In Proc. of International Conference on Learning Representations (ICLR) 2025.
+
+[5] Mihaela Catalina Stoian, Eleonora Giunchiglia, Thomas Lukasiewicz. Exploiting T-norms for Deep Learning in Autonomous Driving. arXiv:2402.11362. In Proc. of the International Workshop on Neural-Symbolic Learning and Reasoning (NeSy), 2023.
+
+[6] Samy Badreddine, Artur d'Avila Garcez, Luciano Serafini, Michael Spranger. Logic Tensor Networks. arXiv:2012.13635. Artificial Intelligence, 303, 2022.
 

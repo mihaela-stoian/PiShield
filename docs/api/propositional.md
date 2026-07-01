@@ -2,13 +2,14 @@
 
 The backend for `propositional` requirements — boolean logic, written as Horn
 rules (`head :- body`) or disjunctive clauses (`y_0 or not y_1`). This backend
-also provides the **Shield Loss**.
+also provides the **Memory-efficient Loss** (a memory-efficient reimplementation
+of Logic Tensor Networks, LTN).
 
 ## Shield Layer
 
 ::: pishield.propositional_requirements.shield_layer
 
-## Shield Loss
+## Memory-efficient Loss
 
 ::: pishield.propositional_requirements.shield_loss
 

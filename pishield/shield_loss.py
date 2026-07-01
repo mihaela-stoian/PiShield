@@ -1,8 +1,9 @@
-"""Top-level entry point for building Shield Losses.
+"""Top-level entry point for building the Memory-efficient Loss.
 
-A Shield Loss is an additional loss term that *encourages* (but, unlike a Shield
-Layer, does not guarantee) requirement satisfaction at training time, using
-t-norms. This module exposes :func:`build_shield_loss`.
+The Memory-efficient Loss is an additional loss term that *encourages* (but,
+unlike a Shield Layer, does not guarantee) requirement satisfaction at training
+time, using t-norms. It is a memory-efficient reimplementation of Logic Tensor
+Networks (LTN). This module exposes :func:`build_shield_loss`, which builds it.
 """
 
 from pishield.propositional_requirements.shield_loss import ShieldLoss
@@ -11,10 +12,11 @@ def build_shield_loss(num_variables: int,
                        requirements_filepath: str,
                        tnorm_choice: str = 'godel',
                        requirements_type='propositional'):
-    """Build a Shield Loss from the given requirements.
+    """Build a Memory-efficient Loss from the given requirements.
 
     Constructs a loss term that penalises violations of the requirements during
-    training, using the chosen t-norm to measure satisfaction.
+    training, using the chosen t-norm to measure satisfaction. The Memory-efficient
+    Loss is a memory-efficient reimplementation of Logic Tensor Networks (LTN).
 
     Args:
         num_variables: Total number of variables (e.g. labels or features,
@@ -27,7 +29,8 @@ def build_shield_loss(num_variables: int,
             currently supported.
 
     Returns:
-        A ``ShieldLoss`` instance that computes the requirement-satisfaction loss.
+        A ``ShieldLoss`` instance (the Memory-efficient Loss) that computes the
+        requirement-satisfaction loss.
 
     Raises:
         Exception: If ``requirements_type`` is not ``'propositional'``.

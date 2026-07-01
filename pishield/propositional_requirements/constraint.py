@@ -4,7 +4,7 @@ A constraint is a Horn rule of the form ``head :- body``, where ``head`` is a si
 literal and ``body`` is a conjunction of literals: the rule states that if every body
 literal holds then the head must hold. Constraints can be parsed from the ``head :- body``
 or disjunctive (``y_0 or not y_1``) textual forms and are the requirement representation
-that the Shield Layer and Shield Loss consume.
+that the Shield Layer and Memory-efficient Loss consume.
 """
 
 import numpy as np
