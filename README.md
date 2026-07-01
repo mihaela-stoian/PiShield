@@ -246,8 +246,37 @@ As we can see, the models **Shield layers** outperform their standard counterpar
 
 Mihaela Catalina Stoian [[GitHub]](https://github.com/mihaela-stoian)[[LinkedIn]](https://www.linkedin.com/in/mihaela-catalina-stoian-919b27bb/)[[Google Scholar]](https://scholar.google.com.co/citations?user=B_48apwAAAAJ&hl=en)\
 Alex Tatomir [[GitHub]](https://github.com/atatomir)[[LinkedIn]](https://www.linkedin.com/in/atatomir/)[[Google Scholar]](https://scholar.google.com/citations?user=DrGgfBwAAAAJ)\
+Salijona Dyrmishi [[Website]](https://salijona.github.io/)[[LinkedIn]](https://www.linkedin.com/in/salijona-dyrmishi-09089385)[[Google Scholar]](https://scholar.google.com/citations?user=nHDj8SIAAAAJ)\
+Maxime Cordy [[Website]](https://maxcordy.github.io/)[[GitHub]](https://github.com/serval-uni-lu)[[LinkedIn]](https://www.linkedin.com/in/maxime-cordy-7a523569/)[[Google Scholar]](https://scholar.google.com/citations?user=sRXHjkIAAAAJ&hl=en)\
 Thomas Lukasiewicz [[Google Scholar]](https://scholar.google.co.uk/citations?user=arjucpEAAAAJ&hl=en)\
 Eleonora Giunchiglia [[GitHub]](https://github.com/EGiunchiglia)[[LinkedIn]](https://www.linkedin.com/in/eleonora-giunchiglia-3063b5164/)[[Google Scholar]](https://scholar.google.com/citations?user=HAgGqScAAAAJ&hl=it)
+
+## Authorship and maintenance
+
+PiShield was originally designed and built by Mihaela Cătălina Stoian during her DPhil at the University of Oxford, and she maintains the package. Alex Tatomir contributed to the Shield Layer for propositional constraints. The other team members are co-authors of the papers that PiShield builds on.
+
+## Citing PiShield
+
+If you use PiShield, please cite:
+
+```bibtex
+@inproceedings{ijcai2024p1037,
+  title     = {PiShield: A PyTorch Package for Learning with Requirements},
+  author    = {Stoian, Mihaela C. and Tatomir, Alex and Lukasiewicz, Thomas and Giunchiglia, Eleonora},
+  booktitle = {Proceedings of the Thirty-Third International Joint Conference on
+               Artificial Intelligence, {IJCAI-24}},
+  publisher = {International Joint Conferences on Artificial Intelligence Organization},
+  editor    = {Kate Larson},
+  pages     = {8805--8809},
+  year      = {2024},
+  month     = {8},
+  note      = {Demo Track},
+  doi       = {10.24963/ijcai.2024/1037},
+  url       = {https://doi.org/10.24963/ijcai.2024/1037},
+}
+```
+
+Depending on which feature you use, please additionally cite: the Shield Layer with linear requirements [1], with QFLRA requirements [4], or with propositional requirements [2]; and the memory-efficient Shield Loss with propositional requirements [5], in addition to LTN [6].
 
 ## :memo: References
 
@@ -260,4 +289,8 @@ Conference on Learning Representations (ICLR), 2024.
 Information Processing Systems, 2020.
 
 [4] Mihaela Catalina Stoian and Eleonora Giunchiglia. Beyond the Convexity Assumption: Realistic Tabular Data Generation under Quantifier-Free Real Linear Constraints. In Proc. of International Conference on Learning Representations (ICLR) 2025.
+
+[5] Mihaela Catalina Stoian, Eleonora Giunchiglia, Thomas Lukasiewicz. Exploiting T-norms for Deep Learning in Autonomous Driving. arXiv:2402.11362. In Proc. of the International Workshop on Neural-Symbolic Learning and Reasoning (NeSy), 2023.
+
+[6] Samy Badreddine, Artur d'Avila Garcez, Luciano Serafini, Michael Spranger. Logic Tensor Networks. arXiv:2012.13635. Artificial Intelligence, 303:103649, 2022.
 
