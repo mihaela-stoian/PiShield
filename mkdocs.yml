@@ -1,12 +1,19 @@
 site_name: PiShield
-site_description: A NeSy Framework for Learning with Requirements
+site_description: A PyTorch Package for Learning with Requirements
 site_url: https://mihaela-stoian.github.io/PiShield/docs/
 repo_url: https://github.com/mihaela-stoian/PiShield
 repo_name: mihaela-stoian/PiShield
 edit_uri: edit/main/docs/
 
+# Clicking the logo / site title in the header returns to the PiShield landing
+# page (the docs live under /PiShield/docs/, the landing page at /PiShield/).
+extra:
+  homepage: https://mihaela-stoian.github.io/PiShield/
+
 theme:
   name: material
+  logo: assets/logo.png
+  favicon: assets/logo.png
   features:
     - navigation.sections
     - navigation.top
@@ -17,14 +24,14 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: teal
+      primary: white
       accent: teal
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: teal
+      primary: black
       accent: teal
       toggle:
         icon: material/weather-sunny
@@ -49,6 +56,9 @@ plugins:
             heading_level: 2
             merge_init_into_class: true
             filters: ["!^_"]
+
+extra_css:
+  - stylesheets/extra.css
 
 markdown_extensions:
   - admonition

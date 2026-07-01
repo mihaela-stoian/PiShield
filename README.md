@@ -1,8 +1,8 @@
 <p align="center">
   <img src="./extra/logo.png" alt="PiShield" width="440"/>
-  <br/>
-  <sub><i>A PyTorch Package for Learning with Requirements</i></sub>
 </p>
+
+<h3 align="center"><i>A PyTorch Package for Learning with Requirements</i></h3>
 
 
 * :sparkles: [Description](#sparkles-description)
@@ -27,7 +27,7 @@
 
 ## :sparkles: Description
 
-Update: PiShield's **website** is now available [here](https://sites.google.com/view/pishield).
+Update: PiShield's **website** is now available [here](https://mihaela-stoian.github.io/PiShield/).
 
 PiShield is the first framework ever allowing for the integration of the requirements into the neural networks' topology.
 
