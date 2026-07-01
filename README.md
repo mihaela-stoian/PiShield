@@ -279,7 +279,7 @@ If you use PiShield, please cite:
 }
 ```
 
-Depending on which feature you use, please additionally cite: the Shield Layer with linear requirements [1], with QFLRA requirements [4], or with propositional requirements [2]; and the Memory-efficient Loss with propositional requirements [5], in addition to LTN [6].
+Depending on which feature you use, please additionally cite: the Shield Layer with linear requirements [1], with QFLRA requirements [4], or with propositional requirements [2]; and the Memory-efficient Loss with propositional requirements [5] (in addition to LTN [6]).
 
 ## :memo: References
 
