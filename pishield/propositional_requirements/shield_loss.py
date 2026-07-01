@@ -2,7 +2,7 @@
 
 Defines :class:`ShieldLoss`, a t-norm based penalty term that encourages (but does not
 enforce) the satisfaction of propositional requirements. It is a memory-efficient
-reimplementation of Logic Tensor Networks (LTN). Each requirement is read as a
+t-norm loss inspired by Logic Tensor Networks (LTN). Each requirement is read as a
 disjunction (clause) and its degree of satisfaction is computed under one of three
 t-norms - Goedel, Lukasiewicz or product - using sparse matrix representations of the
 requirements.
@@ -15,7 +15,7 @@ import torch
 class ShieldLoss(torch.nn.Module):
     """
     The Memory-efficient Loss: a t-norm based loss term that encourages the satisfaction of
-    propositional requirements. It is a memory-efficient reimplementation of Logic Tensor
+    propositional requirements. It is a memory-efficient t-norm loss inspired by Logic Tensor
     Networks (LTN).
 
     Unlike the Shield Layer, the Memory-efficient Loss does not correct the predictions; it

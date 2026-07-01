@@ -23,7 +23,7 @@
 * :memo: [References](#memo-references)
 
 
-**Update**: DRL [4] is now part of PiShield's main branch! PiShield now natively supports **QFLRA** (quantifier-free linear real arithmetic) requirements, in addition to the **linear** and **propositional** requirements previously supported. The framework also ships with a **Memory-efficient Loss** (a memory-efficient reimplementation of Logic Tensor Networks, LTN) to encourage requirement satisfaction at training time via t-norms.
+**Update**: DRL [4] is now part of PiShield's main branch! PiShield now natively supports **QFLRA** (quantifier-free linear real arithmetic) requirements, in addition to the **linear** and **propositional** requirements previously supported. The framework also ships with a **Memory-efficient Loss** (a memory-efficient t-norm loss [5] inspired by Logic Tensor Networks, LTN [6]) to encourage requirement satisfaction at training time via t-norms.
 
 ## :sparkles: Description
 
@@ -59,7 +59,7 @@ pip install .
 
 PiShield exposes two main entry points:
 - `build_shield_layer` (from `pishield.shield_layer`) builds a **Shield Layer**, a differentiable layer that corrects a model's outputs so that they are *guaranteed* to satisfy the given requirements. It can be used both at inference time and at training time.
-- `build_shield_loss` (from `pishield.shield_loss`) builds the **Memory-efficient Loss**, an additional loss term that *encourages* (but does not guarantee) requirement satisfaction at training time, using t-norms. It is a memory-efficient reimplementation of Logic Tensor Networks (LTN).
+- `build_shield_loss` (from `pishield.shield_loss`) builds the **Memory-efficient Loss**, an additional loss term that *encourages* (but does not guarantee) requirement satisfaction at training time, using t-norms. It is a memory-efficient t-norm loss [5] inspired by Logic Tensor Networks (LTN) [6].
 
 > :rocket: **Runnable examples.** Try all three examples in one click, with no local setup:
 > [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mihaela-stoian/PiShield/blob/main/examples/general_usage/PiShield_quickstart.ipynb)
@@ -143,7 +143,7 @@ Using the Shield Layer at training time is easy, as it requires two steps:
 Because the Shield Layer is differentiable, gradients flow back through the correction, so the model learns to produce outputs that satisfy the requirements.
 
 ### Training time: Memory-efficient Loss
-As an alternative (or complement) to the Shield Layer, PiShield provides a **Memory-efficient Loss** for **propositional** requirements — a memory-efficient reimplementation of Logic Tensor Networks (LTN). Instead of correcting the outputs, it adds a penalty term computed via a t-norm (`godel`, `product` or `lukasiewicz`) that pushes the model towards satisfying the requirements.
+As an alternative (or complement) to the Shield Layer, PiShield provides a **Memory-efficient Loss** for **propositional** requirements — a memory-efficient t-norm loss [5] inspired by Logic Tensor Networks (LTN) [6]. Instead of correcting the outputs, it adds a penalty term computed via a t-norm (`godel`, `product` or `lukasiewicz`) that pushes the model towards satisfying the requirements.
 
 The Memory-efficient Loss expects requirements in the Horn-rule format `<id> <head> :- <body>`, where `<id>` is a constraint identifier, and the head and body literals are variable indices (with an `n` prefix denoting negation). For example, a file `example_requirements.txt`:
 ```

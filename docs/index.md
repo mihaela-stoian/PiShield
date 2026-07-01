@@ -22,8 +22,8 @@ PiShield exposes two main building blocks:
 - **[`build_shield_loss`](api/core.md#pishield.shield_loss.build_shield_loss)**
   builds the **Memory-efficient Loss**: an additional loss term that *encourages*
   (but does not guarantee) requirement satisfaction at training time, using
-  t-norms. It is a memory-efficient reimplementation of
-  [Logic Tensor Networks (LTN)](https://arxiv.org/abs/2012.13635).
+  t-norms. It is a memory-efficient t-norm loss [5] inspired by
+  Logic Tensor Networks (LTN) [6].
 
 ## Supported requirement types
 

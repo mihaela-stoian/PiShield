@@ -13,7 +13,7 @@ extra:
 theme:
   name: material
   logo: assets/logo.png
-  favicon: assets/logo.png
+  favicon: assets/favicon.png
   features:
     - navigation.sections
     - navigation.top
