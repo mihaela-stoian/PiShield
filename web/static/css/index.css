@@ -13,7 +13,7 @@ body {
    with generous side margins. `body .container` raises specificity above Bulma's
    own responsive `.container` max-width rules so this always wins. */
 body .container {
-  max-width: 720px;
+  max-width: 540px;
 }
 
 /* Navbar */

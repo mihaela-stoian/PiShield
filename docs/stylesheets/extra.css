@@ -1,0 +1,23 @@
+/* PiShield docs — header tweaks for the wordmark logo.
+   The logo already reads "PiShield", so hide the redundant site-title text and
+   give the logo a bit more room in the (now white) header. */
+
+.md-header__title {
+  display: none;
+}
+
+.md-header__button.md-logo {
+  padding: 0.2rem 0.4rem;
+}
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 1.9rem;
+  width: auto;
+}
+
+/* The mobile navigation drawer also shows the logo at its top. */
+.md-nav__button.md-logo img,
+.md-nav__button.md-logo svg {
+  height: 2.2rem;
+  width: auto;
+}
