@@ -1,4 +1,8 @@
-# PiShield: A NeSy Framework for Learning with Requirements
+<p align="center">
+  <img src="./extra/logo.png" alt="PiShield" width="440"/>
+  <br/>
+  <sub><i>A PyTorch Package for Learning with Requirements</i></sub>
+</p>
 
 
 * :sparkles: [Description](#sparkles-description)
