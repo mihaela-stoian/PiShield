@@ -1,8 +1,8 @@
-<p align="center">
+<h3 align="center">
   <img src="./extra/logo.png" alt="PiShield" width="440"/>
-</p>
-
-<h3 align="center"><i>A PyTorch Package for Learning with Requirements</i></h3>
+  <br>
+  A PyTorch Package for Learning with Requirements
+</h3>
 
 
 * :sparkles: [Description](#sparkles-description)
