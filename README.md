@@ -248,7 +248,7 @@ As we can see, the models **Shield layers** outperform their standard counterpar
 
 ## Authorship and maintenance
 
-- Created by **Mihaela Cătălina Stoian** [[Homepage]](https://mihaela-stoian.github.io/)[[GitHub]](https://github.com/mihaela-stoian)[[LinkedIn]](https://www.linkedin.com/in/mihaela-catalina-stoian-919b27bb/)[[Google Scholar]](https://scholar.google.com.co/citations?user=B_48apwAAAAJ&hl=en) in 2024, during her DPhil at the University of Oxford.
+- Created by [**Mihaela Cătălina Stoian**](https://mihaela-stoian.github.io/) [[Homepage]](https://mihaela-stoian.github.io/)[[GitHub]](https://github.com/mihaela-stoian)[[LinkedIn]](https://www.linkedin.com/in/mihaela-catalina-stoian-919b27bb/)[[Google Scholar]](https://scholar.google.com.co/citations?user=B_48apwAAAAJ&hl=en) in 2024, during her DPhil at the University of Oxford.
 - Maintained solely by **Mihaela C. Stoian** since its creation and, since October 2025, as a Research Associate in the [Data, Uncertainty, Constraints and Knowledge (DUCK) Lab](https://the-duck-lab.github.io/) at Imperial College London.
 - The Shield Layer for propositional constraints was developed by **Mihaela C. Stoian** and **Alex Tatomir**.
 - Based on papers written with the following collaborators, without whom this package would not have been possible:
