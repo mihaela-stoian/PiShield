@@ -152,9 +152,19 @@ body .container {
   border-top: 4px solid #1f9e8f;
   transform: rotateY(180deg);
 }
-.paper-venue {
+.paper-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
   align-self: flex-start;
   margin-bottom: 0.6rem;
+}
+.paper-venue {
+  margin-bottom: 0;
+}
+.paper-constraint {
+  margin-bottom: 0;
 }
 /* Card front with a figure on the right: text on the left, image on the right */
 .flip-card-front.has-figure {
