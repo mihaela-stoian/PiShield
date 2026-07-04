@@ -13,7 +13,7 @@
     - [Supported requirement types](#supported-requirement-types)
     - [Training time: Shield Layer](#training-time-shield-layer)
     - [Inference only: Shield Layer](#inference-only-shield-layer)
-    - [Bonus: Memory-efficient Loss](#training-time-memory-efficient-loss)
+    - [Bonus: Memory-efficient Loss](#bonus-memory-efficient-loss)
 * :arrow_forward: [Demo video](#arrow_forward-demo-video)
 * :fire: [Performance](#fire-performance)
   + [1. Autonomous Driving](#1-autonomous-driving)
@@ -64,18 +64,15 @@ pip install .
 
 ## :bulb: Usage
 
-PiShield exposes two main entry points:
-- `build_shield_layer` (from `pishield.shield_layer`) builds a **Shield Layer**, a differentiable layer that corrects a model's outputs so that they are *guaranteed* to satisfy the given requirements. It can be used both at inference time and at training time.
-- `build_shield_loss` (from `pishield.shield_loss`) builds the **Memory-efficient Loss**, an additional loss term that *encourages* (but does not guarantee) requirement satisfaction at training time, using t-norms. It is a memory-efficient t-norm loss [5] inspired by Logic Tensor Networks (LTN) [6].
+PiShield's main entry point is `build_shield_layer` (from `pishield.shield_layer`), which builds a **Shield Layer**: a differentiable layer that corrects a model's outputs so that they are *guaranteed* to satisfy the given requirements, at inference time and at training time.
 
-> :rocket: **Runnable examples.** Try all three examples in one click, with no local setup:
+> :rocket: **Runnable examples.** Try them in one click on Colab, with no local setup:
 > [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mihaela-stoian/PiShield/blob/main/examples/general_usage/PiShield_quickstart.ipynb)
 >
-> The [`PiShield_quickstart.ipynb`](examples/general_usage/PiShield_quickstart.ipynb) notebook bundles the three examples below and installs PiShield automatically on Colab. The [`examples/general_usage`](examples/general_usage) folder also contains them as standalone notebooks that run end-to-end with no external downloads:
+> The [`PiShield_quickstart.ipynb`](examples/general_usage/PiShield_quickstart.ipynb) notebook installs PiShield automatically on Colab. The following standalone notebooks run end-to-end with no external downloads:
 > - [`shield_layer_inference.ipynb`](examples/general_usage/shield_layer_inference.ipynb) — correct a network's predictions with a Shield Layer.
 > - [`shield_layer_training.ipynb`](examples/general_usage/shield_layer_training.ipynb) — train a model with a Shield Layer (and compare against an unconstrained baseline).
-> - [`shield_loss.ipynb`](examples/general_usage/shield_loss.ipynb) — encourage requirement satisfaction with the Memory-efficient Loss.
-> - [`examples/shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb) trains and tests a hierarchical multi-label classifier on the real cellcycle dataset, reproducing C-HMCNN [3] (also one-click on Colab).
+> - [`shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb) — train and test a hierarchical multi-label classifier on the cellcycle dataset, reproducing C-HMCNN [3].
 
 ### Supported requirement types
 
@@ -83,7 +80,7 @@ The Shield Layer supports four types of requirements, specified as `requirements
 
 | `requirements_type` | Description | Example line |
 |---------------------|-------------|--------------|
-| `hierarchical`      | Class hierarchies (subsumption): whenever a class holds, all of its ancestors hold.| `0 :- 1` (if class `1` holds, its parent `0` holds) |
+| `hierarchical`      | Class hierarchies (subsumption): whenever a class holds, all of its ancestors hold. | `0 :- 1` (if class `1` holds, its parent `0` holds) |
 | `propositional`     | Propositional (Boolean) constraints, written either as Horn rules (`head :- body`) or as disjunctive clauses. | `0 :- 1 n2` or `y_0 or not y_1 or y_2` |
 | `linear`            | Linear inequality constraints over real variables. | `y_0 - y_1 >= 0` |
 | `qflra`             | Quantifier-free linear real arithmetic: disjunctions (`or`) and negations (`neg`) of linear inequalities [4]. | `y1 - 2y2 > 0 or neg y3 >= 0` |
