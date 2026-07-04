@@ -141,26 +141,16 @@ def correct_predictions(predictions: torch.Tensor, constraints_path: str):
 ```
 
 ### Training time: Shield Layer
-Assume a Deep Generative Model (DGM) is used to obtain synthetic tabular data.
-Using the Shield Layer at training time is easy, as it requires two steps:
-1. Building a Shield Layer with `build_shield_layer` in the DGM's constructor.
-2. Applying the Shield Layer on the generated data obtained from the DGM before computing the loss function of the DGM.
+The Shield Layer is differentiable, so it can be used *during* training, not only at inference: build it once (typically in the model's constructor with `build_shield_layer`) and apply it to the model's raw outputs before computing the loss. Because gradients flow back through the correction, the model learns to produce outputs that already satisfy the requirements. This is how, for instance, the Shield Layer is used to constrain a deep generative model for tabular data [1], where the outputs have no ground-truth labels.
 
-Because the Shield Layer is differentiable, gradients flow back through the correction, so the model learns to produce outputs that satisfy the requirements.
-
-### Hierarchical requirements (C-HMCNN)
-For hierarchical multi-label classification, PiShield provides a hierarchical Shield Layer implementing C-HMCNN's Max Constraint Module [3]: it corrects a model's per-class scores so that every class scores no higher than its ancestors, guaranteeing hierarchically coherent predictions. The hierarchy can be given as `parent :- child` rules or read directly from an `.arff` dataset.
+In a **fully supervised** setting — the typical case for `propositional` and `hierarchical` requirements, where every output has a ground-truth label — you should also pass the labels to the layer as `goal`:
 ```
-import torch
-from pishield.shield_layer import build_shield_layer
-
-# read the class hierarchy straight from a hierarchical dataset (FUN/GO-style .arff)
-shield_layer = build_shield_layer(num_variables=None, requirements_filepath='cellcycle_FUN.train.arff')
-
-scores = torch.rand(8, shield_layer.num_classes)      # per-class probabilities from a model
-corrected = shield_layer(scores)                      # score(child) <= score(parent) for every edge
+corrected = shield_layer(model_output, goal=labels)
+loss = criterion(corrected, labels)
 ```
-At training time, pass the ground-truth labels as `goal` (`shield_layer(scores, goal=labels)`) to reproduce C-HMCNN's max-constraint loss behaviour. See [`examples/shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb) for a full train/test example on the cellcycle dataset.
+The reason is that the Shield Layer enforces a requirement by *propagating* scores between the variables it links — for example, in the hierarchical case a class's corrected score becomes the maximum over its own subtree, so a descendant can raise its ancestors. If this propagation used the predictions alone, the model could satisfy a requirement through the *wrong* variable: a false-positive descendant could pull its parent up to match a positive parent label, so the loss would never penalise (and the model would never learn to fix) the actual mistake. Passing the ground truth as `goal` makes the correction respect which variables are truly active in each example, so the gradient is directed at the prediction that genuinely needs to change. Concretely, the hierarchical layer corrects a *positive* class with the maximum over its **true** descendants (`goal * predictions`), pushing the model to raise a genuinely relevant descendant rather than accept a spurious one, and a *negative* class with the ordinary correction — this reproduces C-HMCNN's max-constraint loss [3]. At inference you call the layer without `goal`, and it simply corrects the outputs to satisfy the requirements.
+
+For a full supervised example, see [`examples/shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb), which trains and tests a hierarchical multi-label classifier on the cellcycle dataset (reproducing C-HMCNN [3]).
 
 ### Training time: Memory-efficient Loss
 As an alternative (or complement) to the Shield Layer, PiShield provides a **Memory-efficient Loss** for **propositional** requirements — a memory-efficient t-norm loss [5] inspired by Logic Tensor Networks (LTN) [6]. Instead of correcting the outputs, it adds a penalty term computed via a t-norm (`godel`, `product` or `lukasiewicz`) that pushes the model towards satisfying the requirements.
