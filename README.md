@@ -22,9 +22,6 @@
 * [Authorship and maintenance](#authorship-and-maintenance)
 * :memo: [References](#memo-references)
 
-
-**Update**: DRL [4] is now part of PiShield's main branch! PiShield now natively supports **QFLRA** (quantifier-free linear real arithmetic) requirements, in addition to the **linear** and **propositional** requirements previously supported. The framework also ships with a **Memory-efficient Loss** (a memory-efficient t-norm loss [5] inspired by Logic Tensor Networks, LTN [6]) to encourage requirement satisfaction at training time via t-norms.
-
 ## :sparkles: Description
 
 <picture>
