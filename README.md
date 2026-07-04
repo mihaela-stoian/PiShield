@@ -69,7 +69,7 @@ PiShield exposes two main entry points:
 > - [`shield_layer_training.ipynb`](examples/general_usage/shield_layer_training.ipynb) — train a model with a Shield Layer (and compare against an unconstrained baseline).
 > - [`shield_loss.ipynb`](examples/general_usage/shield_loss.ipynb) — encourage requirement satisfaction with the Memory-efficient Loss.
 >
-> For hierarchical requirements, [`examples/shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb) trains and tests a hierarchical multi-label classifier on the real cellcycle dataset, reproducing C-HMCNN [3] (also one-click on Colab).
+> - [`examples/shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb) trains and tests a hierarchical multi-label classifier on the real cellcycle dataset, reproducing C-HMCNN [3] (also one-click on Colab).
 
 ### Supported requirement types
 
@@ -110,7 +110,7 @@ build_shield_layer(
 ```
 
 ### Training time: Shield Layer
-The Shield Layer is differentiable, so — in its most important use — it can be applied *during* training: build it once (typically in the model's constructor with `build_shield_layer`) and apply it to the model's raw outputs before computing the loss. Because gradients flow back through the correction, the model learns to produce outputs that already satisfy the requirements. This is how, for instance, the Shield Layer constrains a deep generative model for tabular data [1], where the outputs have no ground-truth labels.
+The Shield Layer is differentiable, hence it can be applied *during* training: build it once (typically in the model's constructor with `build_shield_layer`) and apply it to the model's raw outputs before computing the loss. Because gradients flow back through the correction, the model learns to produce outputs that already satisfy the requirements. This is how, for instance, the Shield Layer constrains a deep generative model for tabular data [1], where the outputs have no ground-truth labels.
 
 In a **fully supervised** setting — the typical case for `propositional` and `hierarchical` requirements, where every output has a ground-truth label — you should also pass the labels to the layer as `goal`:
 ```
@@ -119,7 +119,7 @@ loss = criterion(corrected, labels)
 ```
 The reason is that the Shield Layer enforces a requirement by *propagating* scores between the variables it links — for example, in the hierarchical case a class's corrected score becomes the maximum over its own subtree, so a descendant can raise its ancestors. If this propagation used the predictions alone, the model could satisfy a requirement through the *wrong* variable: a false-positive descendant could pull its parent up to match a positive parent label, so the loss would never penalise (and the model would never learn to fix) the actual mistake. Passing the ground truth as `goal` makes the correction respect which variables are truly active in each example, so the gradient is directed at the prediction that genuinely needs to change. Concretely, the hierarchical layer corrects a *positive* class with the maximum over its **true** descendants (`goal * predictions`), pushing the model to raise a genuinely relevant descendant rather than accept a spurious one, and a *negative* class with the ordinary correction — this reproduces C-HMCNN's max-constraint loss [3].
 
-For a full supervised example, see [`examples/shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb), which trains and tests a hierarchical multi-label classifier on the cellcycle dataset (reproducing C-HMCNN [3]).
+For a full supervised example, see [`examples/shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb), which trains and tests a hierarchical multi-label classifier on the cellcycle dataset.
 
 ### Inference only: Shield Layer
 The Shield Layer can also be used purely at inference, to make an **already-trained** model's outputs satisfy the requirements without retraining — for example, to constrain a model you cannot or do not want to fine-tune. You build the layer once and apply it to the model's predictions; no `goal` and no gradients are involved. For instance, with linear requirements:
