@@ -29,9 +29,10 @@ PiShield exposes two main building blocks:
 
 | Type | Description |
 | --- | --- |
+| `hierarchical` | Class hierarchies (subsumption): whenever a class holds, its ancestors hold. Given as `parent :- child` rules or read from an `.arff` dataset. |
+| `propositional` | Boolean logic, written as Horn rules (`head :- body`) or disjunctive clauses (`y_0 or not y_1`). |
 | `linear` | Linear arithmetic inequalities over the variables. |
 | `qflra` | Quantifier-free linear real arithmetic (inequalities combined with boolean operators). |
-| `propositional` | Boolean logic, written as Horn rules (`head :- body`) or disjunctive clauses (`y_0 or not y_1`). |
 
 ## Installation
 
@@ -82,7 +83,7 @@ If you use PiShield, please cite:
 }
 ```
 
-Depending on which feature you use, please additionally cite: the Shield Layer with linear requirements [1], with QFLRA requirements [4], or with propositional requirements [2]; and the Memory-efficient Loss with propositional requirements [5] (in addition to LTN [6]).
+Depending on which feature you use, please additionally cite: the Shield Layer with hierarchical requirements [3], with propositional requirements [2], with linear requirements [1], or with QFLRA requirements [4]; and the Memory-efficient Loss with propositional requirements [5] (in addition to LTN [6]).
 
 ## References
 

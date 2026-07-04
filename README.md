@@ -68,20 +68,25 @@ PiShield exposes two main entry points:
 > - [`shield_layer_inference.ipynb`](examples/general_usage/shield_layer_inference.ipynb) — correct a network's predictions with a Shield Layer.
 > - [`shield_layer_training.ipynb`](examples/general_usage/shield_layer_training.ipynb) — train a model with a Shield Layer (and compare against an unconstrained baseline).
 > - [`shield_loss.ipynb`](examples/general_usage/shield_loss.ipynb) — encourage requirement satisfaction with the Memory-efficient Loss.
+>
+> For hierarchical requirements, [`examples/shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb) trains and tests a hierarchical multi-label classifier on the real cellcycle dataset, reproducing C-HMCNN [3] (also one-click on Colab).
 
 ### Supported requirement types
 
-The Shield Layer supports three types of requirements, specified as `requirements_type`:
+The Shield Layer supports four types of requirements, specified as `requirements_type`:
 
 | `requirements_type` | Description | Example line |
 |---------------------|-------------|--------------|
+| `hierarchical`      | Class hierarchies (subsumption): whenever a class holds, all of its ancestors hold.| `0 :- 1` (if class `1` holds, its parent `0` holds) |
+| `propositional`     | Propositional (Boolean) constraints, written either as Horn rules (`head :- body`) or as disjunctive clauses. | `0 :- 1 n2` or `y_0 or not y_1 or y_2` |
 | `linear`            | Linear inequality constraints over real variables. | `y_0 - y_1 >= 0` |
 | `qflra`             | Quantifier-free linear real arithmetic: disjunctions (`or`) and negations (`neg`) of linear inequalities [4]. | `y1 - 2y2 > 0 or neg y3 >= 0` |
-| `propositional`     | Propositional (Boolean) constraints, written either as Horn rules (`head :- body`) or as disjunctive clauses. | `0 :- 1 n2` or `y_0 or not y_1 or y_2` |
+
+Hierarchical requirements are positive Horn rules `parent :- child` describing the class hierarchy (a subset of the propositional format). Alternatively, pass an **`.arff` dataset file** directly — the common format for hierarchical multi-label datasets such as the FUN/GO benchmarks: PiShield reads the hierarchy from the file's header (auto-detecting whether it is stored as full root-to-node **paths** or as **parent/child edges**; override with `arff_hierarchy_style='paths'` or `'edges'`).
 
 In the propositional Horn format, literals are variable indices, with an `n` prefix denoting negation (e.g. `n2` is the negation of variable `2`); in the clause format, literals are written as `y_<index>` and negated with `not`.
 
-By default `requirements_type='auto'`, in which case PiShield inspects the requirements file and selects the appropriate layer automatically. When in doubt — in particular for propositional clauses, whose `or` keyword overlaps with the QFLRA syntax — pass `requirements_type` explicitly.
+By default `requirements_type='auto'`, in which case PiShield inspects the requirements file and selects the appropriate layer automatically (an `.arff` file is always read as `hierarchical`). When in doubt — in particular for propositional clauses, whose `or` keyword overlaps with the QFLRA syntax, or for hierarchical `.txt` rules, which are also valid propositional files — pass `requirements_type` explicitly.
 
 Each requirements file must start with an `ordering` line listing the variables. For example, a file `example_constraints_tabular.txt` with linear requirements:
 ```
@@ -96,10 +101,11 @@ The signature of `build_shield_layer` is:
 ```
 build_shield_layer(
     num_variables: int,            # number of variables, matching the last dimension of the tensors to correct
-    requirements_filepath: str,    # path to a txt file containing the requirements
+    requirements_filepath: str,    # path to a txt file (or an .arff dataset, for hierarchical) with the requirements
     ordering_choice: str = 'given',# 'given', 'random', or a custom ordering
     custom_ordering: List = None,  # optional custom ordering (propositional only)
-    requirements_type='auto',      # 'auto', 'linear', 'qflra' or 'propositional'
+    requirements_type='auto',      # 'auto', 'hierarchical', 'propositional', 'linear' or 'qflra'
+    arff_hierarchy_style='auto',   # for .arff hierarchical files: 'auto', 'paths' or 'edges'
 )
 ```
 
@@ -141,6 +147,20 @@ Using the Shield Layer at training time is easy, as it requires two steps:
 2. Applying the Shield Layer on the generated data obtained from the DGM before computing the loss function of the DGM.
 
 Because the Shield Layer is differentiable, gradients flow back through the correction, so the model learns to produce outputs that satisfy the requirements.
+
+### Hierarchical requirements (C-HMCNN)
+For hierarchical multi-label classification, PiShield provides a hierarchical Shield Layer implementing C-HMCNN's Max Constraint Module [3]: it corrects a model's per-class scores so that every class scores no higher than its ancestors, guaranteeing hierarchically coherent predictions. The hierarchy can be given as `parent :- child` rules or read directly from an `.arff` dataset.
+```
+import torch
+from pishield.shield_layer import build_shield_layer
+
+# read the class hierarchy straight from a hierarchical dataset (FUN/GO-style .arff)
+shield_layer = build_shield_layer(num_variables=None, requirements_filepath='cellcycle_FUN.train.arff')
+
+scores = torch.rand(8, shield_layer.num_classes)      # per-class probabilities from a model
+corrected = shield_layer(scores)                      # score(child) <= score(parent) for every edge
+```
+At training time, pass the ground-truth labels as `goal` (`shield_layer(scores, goal=labels)`) to reproduce C-HMCNN's max-constraint loss behaviour. See [`examples/shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb) for a full train/test example on the cellcycle dataset.
 
 ### Training time: Memory-efficient Loss
 As an alternative (or complement) to the Shield Layer, PiShield provides a **Memory-efficient Loss** for **propositional** requirements — a memory-efficient t-norm loss [5] inspired by Logic Tensor Networks (LTN) [6]. Instead of correcting the outputs, it adds a penalty term computed via a t-norm (`godel`, `product` or `lukasiewicz`) that pushes the model towards satisfying the requirements.
@@ -279,7 +299,7 @@ If you use PiShield, please cite:
 }
 ```
 
-Depending on which feature you use, please additionally cite: the Shield Layer with linear requirements [1], with QFLRA requirements [4], or with propositional requirements [2]; and the Memory-efficient Loss with propositional requirements [5] (in addition to LTN [6]).
+Depending on which feature you use, please additionally cite: the Shield Layer with hierarchical requirements [3], with propositional requirements [2], with linear requirements [1], or with QFLRA requirements [4]; and the Memory-efficient Loss with propositional requirements [5] (in addition to LTN [6]).
 
 ## :memo: References
 

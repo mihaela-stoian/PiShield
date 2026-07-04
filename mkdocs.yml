@@ -76,6 +76,7 @@ nav:
   - API Reference:
       - Overview: api/index.md
       - Shield Layer & Memory-efficient Loss: api/core.md
+      - Hierarchical requirements: api/hierarchical.md
+      - Propositional requirements: api/propositional.md
       - Linear requirements: api/linear.md
       - QFLRA requirements: api/qflra.md
-      - Propositional requirements: api/propositional.md
