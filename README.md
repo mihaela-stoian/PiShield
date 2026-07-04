@@ -68,7 +68,7 @@ PiShield's main entry point is `build_shield_layer` (from `pishield.shield_layer
 >
 > The [`PiShield_quickstart.ipynb`](examples/general_usage/PiShield_quickstart.ipynb) notebook installs PiShield automatically on Colab. The following standalone notebooks run end-to-end with no external downloads:
 > - [`shield_layer_inference.ipynb`](examples/general_usage/shield_layer_inference.ipynb) — correct a network's predictions with a Shield Layer.
-> - [`shield_layer_training.ipynb`](examples/general_usage/shield_layer_training.ipynb) — train a model with a Shield Layer (and compare against an unconstrained baseline).
+> - [`shield_layer_linear.ipynb`](examples/shield_layer_linear.ipynb) — train a model with linear requirements, a Shield Layer vs an unconstrained baseline.
 > - [`shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb) — train and test a hierarchical multi-label classifier on the cellcycle dataset, reproducing C-HMCNN [3].
 
 ### Supported requirement types
