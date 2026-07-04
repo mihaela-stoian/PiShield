@@ -13,7 +13,7 @@
     - [Supported requirement types](#supported-requirement-types)
     - [Training time: Shield Layer](#training-time-shield-layer)
     - [Inference only: Shield Layer](#inference-only-shield-layer)
-    - [Training time: Memory-efficient Loss](#training-time-memory-efficient-loss)
+    - [Bonus: Memory-efficient Loss](#training-time-memory-efficient-loss)
 * :arrow_forward: [Demo video](#arrow_forward-demo-video)
 * :fire: [Performance](#fire-performance)
   + [1. Autonomous Driving](#1-autonomous-driving)
@@ -136,8 +136,8 @@ shield_layer = build_shield_layer(num_variables, constraints_path)
 corrected_predictions = shield_layer(predictions.clone())  # tensor([[ 3., -2., -3.]]), which satisfies the constraints
 ```
 
-### Training time: Memory-efficient Loss
-As an alternative (or complement) to the Shield Layer, PiShield provides a **Memory-efficient Loss** for **propositional** requirements — a memory-efficient t-norm loss [5] inspired by Logic Tensor Networks (LTN) [6]. Instead of correcting the outputs, it adds a penalty term computed via a t-norm (`godel`, `product` or `lukasiewicz`) that pushes the model towards satisfying the requirements.
+### Bonus: Memory-efficient Loss
+PiShield also provides a **Memory-efficient Loss** for **propositional** requirements — a memory-efficient t-norm loss [5] inspired by Logic Tensor Networks (LTN) [6]. The loss adds a penalty term computed via a t-norm (`godel`, `product` or `lukasiewicz`) that pushes the model towards satisfying the requirements. In order to make keep the memory requirements at a minimum, the loss is implemented using sparse matrices.
 
 The Memory-efficient Loss expects requirements in the Horn-rule format `<id> <head> :- <body>`, where `<id>` is a constraint identifier, and the head and body literals are variable indices (with an `n` prefix denoting negation). For example, a file `example_requirements.txt`:
 ```
