@@ -34,11 +34,15 @@
 
 Update: PiShield's **website** is now available [here](https://mihaela-stoian.github.io/PiShield/).
 
-PiShield is the first framework ever allowing for the integration of the requirements into the neural networks' topology.
+PiShield is the first framework ever allowing for the integration of requirements directly into a neural network's topology.
 
-:white_check_mark: The integration happens in a straightforward and efficient manner and allows for the creation of deep learning models that are guaranteed to be compliant with the given requirements, no matter the input.
+:white_check_mark: **Guaranteed compliance.** The integration is straightforward and efficient, producing deep learning models whose outputs are guaranteed to satisfy the given requirements, no matter the input.
 
-:pencil2: The requirements can be integrated both at inference and/or training time, depending on the practitioners' needs.
+:pencil2: **Inference and training.** The requirements can be integrated at inference time and at training time, depending on the practitioners' needs.
+
+:link: **Expressive requirements.** PiShield supports hierarchical, propositional, linear, and quantifier-free linear real arithmetic (QFLRA) requirements — from class hierarchies to boolean logic to numerical constraints.
+
+:zap: **Drop-in and differentiable.** A Shield Layer is a single differentiable layer you add on top of any model, so gradients flow through it and it fits into existing training loops with minimal changes.
 
 ## :pushpin: Dependencies
 PiShield requires Python 3.8 or later and PyTorch.
