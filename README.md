@@ -224,7 +224,7 @@ Below we aggregated the results from Table 3 of [3] and reported the performance
 As we can see, the models **Shield layers** outperform their standard counterparts.
 
 
-| Dataset    | Baseline* | PiShield  |
+| Dataset    | Baseline* | PiShield**  |
 |------------|-----------|-----------|
 | CELLCYCLE  | 0.220     | **0.232** |
 | DERISI     | 0.179     | **0.182** |
@@ -239,6 +239,7 @@ As we can see, the models **Shield layers** outperform their standard counterpar
 
 *Note: All baselines for the functional genomics scenario have a postprocessing step included, as functional genomics tasks always require that the constraints are satisfied.
 
+**Note: The results reported here differ from those in [3], as the C-HMCNN model in [3] is further retrained on the combined training and validation sets.
 
 ## Authorship and maintenance
 
