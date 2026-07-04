@@ -68,7 +68,6 @@ PiShield exposes two main entry points:
 > - [`shield_layer_inference.ipynb`](examples/general_usage/shield_layer_inference.ipynb) — correct a network's predictions with a Shield Layer.
 > - [`shield_layer_training.ipynb`](examples/general_usage/shield_layer_training.ipynb) — train a model with a Shield Layer (and compare against an unconstrained baseline).
 > - [`shield_loss.ipynb`](examples/general_usage/shield_loss.ipynb) — encourage requirement satisfaction with the Memory-efficient Loss.
->
 > - [`examples/shield_layer_hierarchical.ipynb`](examples/shield_layer_hierarchical.ipynb) trains and tests a hierarchical multi-label classifier on the real cellcycle dataset, reproducing C-HMCNN [3] (also one-click on Colab).
 
 ### Supported requirement types
