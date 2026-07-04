@@ -10,7 +10,8 @@ DESCRIPTION = 'Building Constraint Layers over Deep Neural Networks'
 # required packages
 REQUIRED = [
     'numpy',
-    'torch'
+    'torch',
+    'networkx'
 ]
 
 path_dir = os.path.abspath(os.path.dirname(__file__))
