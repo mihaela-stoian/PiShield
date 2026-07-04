@@ -17,3 +17,9 @@ _site/
 # IDE
 .idea/
 .pytest_cache/
+
+# macOS
+.DS_Store
+
+# Notebook runtime artifacts
+shapes_constraints.txt
