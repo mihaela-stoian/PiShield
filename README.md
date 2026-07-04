@@ -27,6 +27,11 @@
 
 ## :sparkles: Description
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./extra/overview-dark.svg">
+  <img align="right" width="300" alt="PiShield corrects a neural network's outputs so they are guaranteed to satisfy the given requirements" src="./extra/overview-light.svg">
+</picture>
+
 Update: PiShield's **website** is now available [here](https://mihaela-stoian.github.io/PiShield/).
 
 PiShield is the first framework ever allowing for the integration of the requirements into the neural networks' topology.
@@ -34,8 +39,6 @@ PiShield is the first framework ever allowing for the integration of the require
 :white_check_mark: The integration happens in a straightforward and efficient manner and allows for the creation of deep learning models that are guaranteed to be compliant with the given requirements, no matter the input.
 
 :pencil2: The requirements can be integrated both at inference and/or training time, depending on the practitioners' needs.
-
-<img height="240" src="./extra/overview.png" width="400"/>
 
 ## :pushpin: Dependencies
 PiShield requires Python 3.8 or later and PyTorch.
