@@ -1,0 +1,7 @@
+@RELATION toy_go
+
+@ATTRIBUTE feature1 numeric
+@ATTRIBUTE class hierarchical root/GO0001,root/GO0002,GO0001/GO0003,GO0002/GO0003,GO0003/GO0004
+
+@DATA
+0.3,GO0004

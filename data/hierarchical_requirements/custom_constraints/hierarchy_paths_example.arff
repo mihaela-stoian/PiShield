@@ -1,0 +1,9 @@
+@RELATION toy_fun
+
+@ATTRIBUTE feature1 numeric
+@ATTRIBUTE feature2 numeric
+@ATTRIBUTE class hierarchical 1,2,1/1,1/2,2/1,1/2/1
+
+@DATA
+0.1,0.2,1/2/1@2/1
+0.3,0.4,1/1

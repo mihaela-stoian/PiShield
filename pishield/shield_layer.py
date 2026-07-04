@@ -13,13 +13,15 @@ from typing import List
 from pishield.linear_requirements.shield_layer import ShieldLayer as LinearConstraintLayer
 from pishield.qflra_requirements.shield_layer import ShieldLayer as QFLRAConstraintLayer
 from pishield.propositional_requirements.shield_layer import ShieldLayer as PropositionalConstraintLayer
+from pishield.hierarchical_requirements.shield_layer import ShieldLayer as HierarchicalConstraintLayer
 
 
 def build_shield_layer(num_variables: int,
                        requirements_filepath: str,
                        ordering_choice: str = 'given',
                        custom_ordering: List = None,
-                       requirements_type='auto'):
+                       requirements_type='auto',
+                       arff_hierarchy_style: str = 'auto'):
     """Build a Shield Layer from the given requirements.
 
     Selects and constructs the appropriate Shield Layer backend (linear, QFLRA,
@@ -41,14 +43,18 @@ def build_shield_layer(num_variables: int,
         custom_ordering: An explicit ordering of the variables (only used by the
             propositional backend). Defaults to None.
         requirements_type: One of ``'auto'``, ``'linear'``, ``'propositional'``,
-            or ``'qflra'``. If ``'auto'``, the appropriate backend is detected
-            from the contents of ``requirements_filepath`` via
-            :func:`detect_requirements_type`.
+            ``'qflra'``, or ``'hierarchical'``. If ``'auto'``, the appropriate
+            backend is detected from the contents (or extension) of
+            ``requirements_filepath`` via :func:`detect_requirements_type`.
+        arff_hierarchy_style: For hierarchical requirements supplied as an
+            ``.arff`` file, the hierarchy style: ``'auto'`` (the default) detects
+            it from the file, or force ``'paths'`` (FUN-style) or ``'edges'``
+            (GO-style). Ignored by the other backends.
 
     Returns:
         A Shield Layer instance (``LinearConstraintLayer``, ``QFLRAConstraintLayer``,
-        or ``PropositionalConstraintLayer``) that corrects model outputs to
-        satisfy the requirements.
+        ``PropositionalConstraintLayer``, or ``HierarchicalConstraintLayer``) that
+        corrects model outputs to satisfy the requirements.
 
     Raises:
         Exception: If ``requirements_type`` is not one of the recognised values.
@@ -67,10 +73,13 @@ def build_shield_layer(num_variables: int,
         return QFLRAConstraintLayer(num_variables, requirements_filepath, ordering_choice)
     elif requirements_type == 'propositional':
         return PropositionalConstraintLayer(num_variables, requirements_filepath, ordering_choice, custom_ordering=custom_ordering)
+    elif requirements_type == 'hierarchical':
+        return HierarchicalConstraintLayer(num_variables, requirements_filepath, ordering_choice,
+                                           arff_hierarchy_style=arff_hierarchy_style)
     elif requirements_type == 'auto':
         detected_requirements_type = detect_requirements_type(requirements_filepath)
         return build_shield_layer(num_variables, requirements_filepath, ordering_choice, custom_ordering=custom_ordering,
-                                  requirements_type=detected_requirements_type)
+                                  requirements_type=detected_requirements_type, arff_hierarchy_style=arff_hierarchy_style)
     else:
         raise Exception('Unknown requirements type!')
 
@@ -95,6 +104,10 @@ def detect_requirements_type(requirements_filepath: str) -> str:
     # Otherwise, QFLRA and linear requirements both contain inequality signs, so we distinguish
     # them by the boolean operators ('or'/'neg') that only QFLRA uses. A clause-style
     # propositional requirement also uses 'or' but, unlike QFLRA, has no inequality sign.
+    # An .arff file stores a hierarchical dataset; only the hierarchical backend reads it.
+    if requirements_filepath.lower().endswith('.arff'):
+        print('Using auto mode ::: Detected hierarchical requirements (ARFF file)!')
+        return 'hierarchical'
     inequality_signs = ['>=', '>', '<=', '<']
     with open(requirements_filepath, 'r') as f:
         for line in f:
