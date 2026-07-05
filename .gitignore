@@ -23,4 +23,4 @@ _site/
 
 # Notebook runtime artifacts
 shapes_constraints.txt
-monotonic_requirements.txt
+band_requirements.txt
