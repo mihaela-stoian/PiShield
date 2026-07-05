@@ -37,6 +37,12 @@ def collapse_atoms(atom_list):
             if new_coefficient != 0:
                 new_atom = Atom(variable, float(np.abs(new_coefficient)), True if new_coefficient > 0 else False)
                 merged_atoms[var] = new_atom
+            else:
+                # EG: Mihaela can you please check this? It seems to be the same problem as the lineaer case
+                # The variable has cancelled out (net coefficient 0): drop it entirely,
+                # otherwise a stale atom would survive and inject a spurious bound during
+                # variable elimination (same failure as in the linear backend).
+                del merged_atoms[var]
     return list(merged_atoms.values())
 
 
