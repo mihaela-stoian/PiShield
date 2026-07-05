@@ -112,9 +112,14 @@ def detect_requirements_type(requirements_filepath: str) -> str:
     with open(requirements_filepath, 'r') as f:
         for line in f:
             line = line.strip()
-            if not line or 'ordering' in line:
-                continue
             tokens = line.split()
+            # EG: Mihaela please check. Reason: `'ordering' in line` matched the
+            # substring "ordering" ANYWHERE in the line, so a constraint line that
+            # merely contained that text (a variable name, or a comment like
+            # "# reordering") was silently skipped as if it were the ordering
+            # declaration. Fix: only skip a line whose first token is exactly "ordering".
+            if not line or (tokens and tokens[0] == 'ordering'):
+                continue
             if ':-' in tokens:
                 print('Using auto mode ::: Detected propositional requirements!')
                 return 'propositional'
