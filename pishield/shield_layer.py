@@ -87,24 +87,27 @@ def build_shield_layer(num_variables: int,
 def detect_requirements_type(requirements_filepath: str) -> str:
     """Infer the requirement type from the contents of a requirements file.
 
-    Scans the file and classifies it as ``'propositional'``, ``'qflra'``, or
-    ``'linear'`` based on the tokens it contains (see inline comments for the
-    exact detection rules).
+    Scans the file and classifies it as ``'hierarchical'``, ``'propositional'``,
+    ``'linear'`` or ``'qflra'`` based on its extension and the tokens it contains
+    (see inline comments for the exact detection rules).
 
     Args:
-        requirements_filepath: Path to a ``.txt`` file containing the requirements.
+        requirements_filepath: Path to a ``.txt`` (or ``.arff``) file containing the
+            requirements.
 
     Returns:
-        The detected requirement type as one of ``'propositional'``, ``'qflra'``,
-        or ``'linear'``, or None if no requirement type could be detected.
+        The detected requirement type as one of ``'hierarchical'``,
+        ``'propositional'``, ``'linear'`` or ``'qflra'``, or None if no requirement
+        type could be detected.
     """
-    # Propositional requirements can be written either as Horn rules ('head :- body') or as
-    # disjunctive clauses ('y_0 or not y_1'); both are accepted by the propositional parser.
-    # The detection order matters: a ':-' token unambiguously marks a propositional Horn rule.
-    # Otherwise, QFLRA and linear requirements both contain inequality signs, so we distinguish
-    # them by the boolean operators ('or'/'neg') that only QFLRA uses. A clause-style
-    # propositional requirement also uses 'or' but, unlike QFLRA, has no inequality sign.
-    # An .arff file stores a hierarchical dataset; only the hierarchical backend reads it.
+    # An .arff file stores a hierarchical dataset -> the hierarchical backend. For .txt
+    # files we scan every constraint line:
+    #  * inequality signs mean linear/qflra, distinguished by the boolean operators
+    #    ('or'/'neg') that only qflra uses;
+    #  * ':-' Horn rules mean hierarchical when every rule is a plain 'parent :- child'
+    #    (a single positive variable per side), and propositional otherwise (several body
+    #    literals, negation, ...);
+    #  * a clause of 'or'/'not' with no inequality is propositional.
     if requirements_filepath.lower().endswith('.arff'):
         print('Using auto mode ::: Detected hierarchical requirements (ARFF file)!')
         return 'hierarchical'
@@ -116,7 +119,8 @@ def detect_requirements_type(requirements_filepath: str) -> str:
     # linear backend then silently mishandles the disjunction). Fix: scan every
     # line, record whether any inequality and any boolean op appear, and decide
     # once after the loop.
-    has_inequality = has_boolean_op = False
+    has_inequality = has_boolean_op = has_horn = False
+    all_horn_binary = True
     with open(requirements_filepath, 'r') as f:
         for line in f:
             line = line.strip()
@@ -128,9 +132,21 @@ def detect_requirements_type(requirements_filepath: str) -> str:
             # declaration. Fix: only skip a line whose first token is exactly "ordering".
             if not line or (tokens and tokens[0] == 'ordering'):
                 continue
+            # EG: Mihaela please check. Reason: a ':-' line was always reported as
+            # propositional, but hierarchical requirements share the Horn syntax --
+            # they are the special case where every rule is a plain "parent :- child"
+            # (a single positive variable, an index optionally "y_" prefixed, on each
+            # side). Fix: remember the Horn rules and, after the loop, map them to
+            # "hierarchical" if they are ALL pure binary rules, otherwise to
+            # "propositional" (richer bodies, negation, or clause form).
             if ':-' in tokens:
-                print('Using auto mode ::: Detected propositional requirements!')
-                return 'propositional'
+                has_horn = True
+                rule = tokens[1:] if len(tokens) >= 3 and tokens[2] == ':-' else tokens  # drop optional weight
+                is_binary = (len(rule) == 3 and rule[1] == ':-'
+                             and all((t[2:] if t.startswith('y_') else t).isdigit() for t in (rule[0], rule[2])))
+                if not is_binary:
+                    all_horn_binary = False
+                continue
             if any(sign in line for sign in inequality_signs):
                 has_inequality = True
             if 'or' in tokens or 'neg' in tokens:
@@ -138,6 +154,10 @@ def detect_requirements_type(requirements_filepath: str) -> str:
     if has_inequality:
         detected = 'qflra' if has_boolean_op else 'linear'
         print(f'Using auto mode ::: Detected {detected.upper() if detected == "qflra" else detected} requirements!')
+        return detected
+    if has_horn:
+        detected = 'hierarchical' if all_horn_binary else 'propositional'
+        print(f'Using auto mode ::: Detected {detected} requirements!')
         return detected
     if has_boolean_op:
         print('Using auto mode ::: Detected propositional requirements!')
