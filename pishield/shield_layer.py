@@ -109,6 +109,14 @@ def detect_requirements_type(requirements_filepath: str) -> str:
         print('Using auto mode ::: Detected hierarchical requirements (ARFF file)!')
         return 'hierarchical'
     inequality_signs = ['>=', '>', '<=', '<']
+    # EG: Mihaela please check. Reason: the loop below returned on the FIRST
+    # constraint line -- if that line had an inequality but no "or"/"neg", it
+    # returned "linear" immediately, so a disjunction ("or"/"neg") appearing on a
+    # LATER line was never seen and a QFLRA file was misclassified as linear (the
+    # linear backend then silently mishandles the disjunction). Fix: scan every
+    # line, record whether any inequality and any boolean op appear, and decide
+    # once after the loop.
+    has_inequality = has_boolean_op = False
     with open(requirements_filepath, 'r') as f:
         for line in f:
             line = line.strip()
@@ -123,14 +131,16 @@ def detect_requirements_type(requirements_filepath: str) -> str:
             if ':-' in tokens:
                 print('Using auto mode ::: Detected propositional requirements!')
                 return 'propositional'
-            has_inequality = any(sign in line for sign in inequality_signs)
-            has_boolean_op = 'or' in tokens or 'neg' in tokens
-            if has_inequality:
-                detected = 'qflra' if has_boolean_op else 'linear'
-                print(f'Using auto mode ::: Detected {detected.upper() if detected == "qflra" else detected} requirements!')
-                return detected
-            if has_boolean_op:
-                print('Using auto mode ::: Detected propositional requirements!')
-                return 'propositional'
+            if any(sign in line for sign in inequality_signs):
+                has_inequality = True
+            if 'or' in tokens or 'neg' in tokens:
+                has_boolean_op = True
+    if has_inequality:
+        detected = 'qflra' if has_boolean_op else 'linear'
+        print(f'Using auto mode ::: Detected {detected.upper() if detected == "qflra" else detected} requirements!')
+        return detected
+    if has_boolean_op:
+        print('Using auto mode ::: Detected propositional requirements!')
+        return 'propositional'
     return None
 
