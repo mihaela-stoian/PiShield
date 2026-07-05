@@ -42,6 +42,12 @@ def collapse_atoms(atom_list):
             if new_coefficient != 0:
                 new_atom = Atom(variable, float(np.abs(new_coefficient)), True if new_coefficient > 0 else False)
                 merged_atoms[var] = new_atom
+            else:
+                # EG: MIHAELA PLEASE CHECK THIS --> I was writing some tests and there was some unexpected behaviour when the coefficient of a variable was 0, so I added this line to remove it from the list of atoms. I think it is correct, but please check it.
+                # The variable has cancelled out (net coefficient 0): drop it entirely,
+                # otherwise a stale atom would survive and inject a spurious bound
+                # (this is what breaks two-sided/band constraints during elimination).
+                del merged_atoms[var]
     return list(merged_atoms.values())
 
 
