@@ -42,6 +42,11 @@ def collapse_atoms(atom_list):
             if new_coefficient != 0:
                 new_atom = Atom(variable, float(np.abs(new_coefficient)), True if new_coefficient > 0 else False)
                 merged_atoms[var] = new_atom
+            else:
+                # atoms over the same variable that summed to a zero coefficient should not be left
+                # in the merged set, as they can produce phantom terms (and, on a third occurrence, sum onto the stale value).
+                # delete the entry when the merged coefficient is zero
+                del merged_atoms[var]
     return list(merged_atoms.values())
 
 
