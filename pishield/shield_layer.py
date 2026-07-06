@@ -95,7 +95,13 @@ def detect_requirements_type(requirements_filepath: str) -> str:
     # Otherwise, QFLRA and linear requirements both contain inequality signs, so we distinguish
     # them by the boolean operators ('or'/'neg') that only QFLRA uses. A clause-style
     # propositional requirement also uses 'or' but, unlike QFLRA, has no inequality sign.
+    #
+    # The linear-vs-QFLRA decision is a *whole-file* property: a QFLRA file may mix plain
+    # inequalities with disjunctive ones, so we must not conclude 'linear' from an early plain
+    # inequality line. We only settle on 'linear' after scanning the whole file without seeing
+    # any boolean operator; a single disjunction/negation anywhere makes the file QFLRA.
     inequality_signs = ['>=', '>', '<=', '<']
+    saw_inequality = False
     with open(requirements_filepath, 'r') as f:
         for line in f:
             line = line.strip()
@@ -108,11 +114,15 @@ def detect_requirements_type(requirements_filepath: str) -> str:
             has_inequality = any(sign in line for sign in inequality_signs)
             has_boolean_op = 'or' in tokens or 'neg' in tokens
             if has_inequality:
-                detected = 'qflra' if has_boolean_op else 'linear'
-                print(f'Using auto mode ::: Detected {detected.upper() if detected == "qflra" else detected} requirements!')
-                return detected
-            if has_boolean_op:
+                saw_inequality = True
+                if has_boolean_op:
+                    print('Using auto mode ::: Detected QFLRA requirements!')
+                    return 'qflra'
+            elif has_boolean_op:
                 print('Using auto mode ::: Detected propositional requirements!')
                 return 'propositional'
+    if saw_inequality:
+        print('Using auto mode ::: Detected linear requirements!')
+        return 'linear'
     return None
 
